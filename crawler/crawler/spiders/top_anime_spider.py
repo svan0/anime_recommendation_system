@@ -10,7 +10,7 @@ class TopAnimeSpider(scrapy.Spider):
     allowed_domains = ['myanimelist.net']
     start_urls = [
         f'https://myanimelist.net/topanime.php?limit={x}'
-        for x in range(0, 19150, 50)
+        for x in range(0, 1000, 50)
     ]
 
     def parse(self, response):
