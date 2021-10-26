@@ -1,4 +1,5 @@
 from math import isclose
+import logging
 
 from scrapy.exceptions import DropItem
 from crawler.items.data_items.anime_item import AnimeItem
@@ -98,8 +99,8 @@ class AnimeProcessPipeline:
         
         sum_score_voters = sum([item['score_{:02d}_count'.format(score)] for score in range(1, 11)])
         if ('score_count' in item) and (item['score_count'] != sum_score_voters):
-            raise DropItem(f"AnimeItem {item['url']} dropped because 'score_xx_count' do not sum up to 'score_count' count")
-        
+            logging.info(f"{item['url']} 'score_xx_count' do not sum up to 'score_count' count. Changing 'score_count' to the sum")
+
         average_score = sum([score * item['score_{:02d}_count'.format(score)] for score in range(1, 11)]) / sum_score_voters
         if ('score' in item) and (not isclose(item['score'] , average_score)):
             raise DropItem(f"AnimeItem {item['url']} dropped because computed average score is not close to 'score'")
