@@ -42,21 +42,21 @@ class PubSubPipeline:
 
         if isinstance(item, AnimeItem):
             anime_schedule_loader = ItemLoader(item=AnimeSchedulerItem())
-            anime_schedule_loader.add_value('url', item["url"])
-            anime_schedule_loader.add_value('status', item["status"])
-            anime_schedule_loader.add_value('num_watch', item["watching_count"])
-            anime_schedule_loader.add_value('num_completed', item["completed_count"])
-            anime_schedule_loader.add_value('num_dropped', item["dropped_count"])
-            anime_schedule_loader.add_value('last_crawl_date', item["crawl_date"])
-            anime_schedule_loader.add_value('last_inspect_date', item["crawl_date"])
+            anime_schedule_loader.add_value('url', item['url'])
+            anime_schedule_loader.add_value('end_date', item['end_date'] if 'end_date' in item else None)
+            anime_schedule_loader.add_value('watching_count', item['watching_count'])
+            anime_schedule_loader.add_value('last_crawl_date', item['crawl_date'])
+            anime_schedule_loader.add_value('last_inspect_date', item['crawl_date'])
             return anime_schedule_loader.load_item()
 
         elif isinstance(item, ProfileItem):
             profile_schedule_loader = ItemLoader(item=ProfileSchedulerItem())
-            profile_schedule_loader.add_value('url', item["url"])
-            profile_schedule_loader.add_value('last_crawl_date', item["crawl_date"])
-            profile_schedule_loader.add_value('last_inspect_date', item["crawl_date"])
+            profile_schedule_loader.add_value('url', item['url'])
+            profile_schedule_loader.add_value('last_online_date', item['last_online_date'])
+            profile_schedule_loader.add_value('last_crawl_date', item['crawl_date'])
+            profile_schedule_loader.add_value('last_inspect_date', item['crawl_date'])
             return profile_schedule_loader.load_item()
+        
         else:
             return item
 

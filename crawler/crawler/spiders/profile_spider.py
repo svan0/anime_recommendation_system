@@ -20,7 +20,14 @@ from crawler.items.scheduler_items.anime_item import AnimeSchedulerItem
 class ProfileSpider(scrapy.Spider):
     name = 'profile'
     allowed_domains = ['myanimelist.net']
-    start_urls = ['https://myanimelist.net/profile/svanO']
+    start_urls = [
+        'https://myanimelist.net/profile/Archaeon',
+        'https://myanimelist.net/profile/literaturenerd',
+        'https://myanimelist.net/profile/M0nkeyD_Luffy',
+        'https://myanimelist.net/profile/BiddingGortonio',
+        'https://myanimelist.net/profile/bakababe',
+        'https://myanimelist.net/profile/ryuu_zer0'
+    ]
 
     def parse(self, response):
         self.logger.info('Parsing profile url:  %s', response.url)
@@ -60,6 +67,8 @@ class ProfileSpider(scrapy.Spider):
         profile_loader = ItemLoader(item=ProfileItem(), selector = scrapy_selector)
         profile_loader.add_value('url', url)
         profile_loader.add_value('uid', user_id)
+        
+        profile_loader.add_xpath('last_online_date', '//span[contains(@class, "user-status-data")]/text()')
         profile_loader.add_xpath('num_forum_posts', '//a[contains(.//span, "Forum Posts")]/span[2]/text()')
         profile_loader.add_xpath('num_reviews', '//a[contains(.//span, "Reviews")]/span[2]/text()')
         profile_loader.add_xpath('num_recommendations', '//a[contains(.//span, "Recommendations")]/span[2]/text()')

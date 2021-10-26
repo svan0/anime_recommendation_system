@@ -7,7 +7,10 @@ class ProfileSchedulerItem(scrapy.Item):
     url = scrapy.Field(
         input_processor = MapCompose(get_url),
         output_processor = TakeFirst()
-    )    
+    )
+    last_online_date =  scrapy.Field(
+        output_processor = TakeFirst()
+    )   
     last_crawl_date = scrapy.Field(
         output_processor = TakeFirst()
     )

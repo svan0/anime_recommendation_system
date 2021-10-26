@@ -16,6 +16,10 @@ class ProfileItem(scrapy.Item):
         input_processor = MapCompose(get_url),
         output_processor = TakeFirst()
     )
+    last_online_date = scrapy.Field(
+        input_processor = MapCompose(get_last_online_date),
+        output_processor = TakeFirst()
+    )
     num_forum_posts = scrapy.Field(
         input_processor = MapCompose(transform_to_int),
         output_processor = TakeFirst()

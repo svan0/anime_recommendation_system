@@ -9,19 +9,10 @@ class AnimeSchedulerItem(scrapy.Item):
         output_processor = TakeFirst()
     )
 
-    status = scrapy.Field(
+    watching_count = scrapy.Field(
         output_processor = TakeFirst()
     )
-    num_watch = scrapy.Field(
-        output_processor = TakeFirst()
-    )
-    num_completed = scrapy.Field(
-        output_processor = TakeFirst()
-    )
-    num_dropped = scrapy.Field(
-        output_processor = TakeFirst()
-    )
-    
+        
     last_crawl_date = scrapy.Field(
         output_processor = TakeFirst()
     )

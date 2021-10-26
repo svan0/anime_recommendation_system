@@ -1,5 +1,15 @@
 import re
 from dateutil.parser import parse as dateutil_parse
+from datetime import datetime
+
+
+def get_last_online_date(text):
+    if text == "Now":
+        return datetime.now().strftime("%Y-%m-%dT%H:%M:%S:%f")
+    try:
+        return parse_date(text)
+    except:
+        return None
 
 def get_url(url):
     if "myanimelist.net" not in url:
