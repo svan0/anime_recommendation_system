@@ -52,6 +52,7 @@ class AnimeSpider(scrapy.Spider):
 
         for related_anime in response.xpath('//table[@class="anime_detail_related_anime"]/tr/td/a[contains(@href, "anime")]/@href').getall():
             related_anime_loader = ItemLoader(item=RelatedAnimeItem(), response=response)
+            related_anime_loader.add_value('crawl_date', datetime.now().strftime("%Y-%m-%dT%H:%M:%S"))
             related_anime_loader.add_value('src_anime', response.url)
             related_anime_loader.add_value('dest_anime', related_anime)
             yield related_anime_loader.load_item()

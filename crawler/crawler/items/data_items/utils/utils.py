@@ -3,6 +3,11 @@ from dateutil.parser import parse as dateutil_parse
 from datetime import datetime
 
 
+def none_text(text):
+    if text in {"add some", "None found", "N/A", "Unknown", "Not available"}:
+        return None
+    return text
+
 def get_last_online_date(text):
     if text == "Now":
         return datetime.now().strftime("%Y-%m-%dT%H:%M:%S:%f")

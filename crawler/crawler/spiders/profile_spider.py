@@ -57,6 +57,7 @@ class ProfileSpider(scrapy.Spider):
             favorite_loader = ItemLoader(item=FavoriteItem())
             favorite_loader.add_value('user_id', user_id)
             favorite_loader.add_value('anime_id', favorite)
+            favorite_loader.add_value('crawl_date', datetime.now().strftime("%Y-%m-%dT%H:%M:%S"))
             yield favorite_loader.load_item()
 
             anime_schedule_loader = ItemLoader(item=AnimeSchedulerItem())

@@ -9,18 +9,18 @@ class ActivityItem(scrapy.Item):
     )
     
     user_id = scrapy.Field(
-        input_processor = MapCompose(get_user_id),
+        input_processor = MapCompose(none_text, get_user_id),
         output_processor = TakeFirst()
     )
     anime_id = scrapy.Field(
-        input_processor = MapCompose(get_anime_id),
+        input_processor = MapCompose(none_text, get_anime_id),
         output_processor = TakeFirst()
     )
     activity_type = scrapy.Field(
-        input_processor = MapCompose(get_activity_type),
+        input_processor = MapCompose(none_text, get_activity_type),
         output_processor = TakeFirst()
     )
     date = scrapy.Field(
-        input_processor = MapCompose(parse_date),
+        input_processor = MapCompose(none_text, parse_date),
         output_processor = TakeFirst()
     )
