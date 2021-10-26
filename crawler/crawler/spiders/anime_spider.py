@@ -17,7 +17,12 @@ class AnimeSpider(scrapy.Spider):
     allowed_domains = ['myanimelist.net']
     start_urls = [
         'https://myanimelist.net/anime/46352/Blue_Period',
-        #'https://myanimelist.net/anime/5114/Fullmetal_Alchemist__Brotherhood'
+        'https://myanimelist.net/anime/5561/Yayoi',
+        'https://myanimelist.net/anime/43299/Wonder_Egg_Priority',
+        'https://myanimelist.net/anime/47778/Kimetsu_no_Yaiba__Yuukaku-hen',
+        'https://myanimelist.net/anime/40357/Tate_no_Yuusha_no_Nariagari_Season_3',
+        'https://myanimelist.net/anime/39486/Gintama__The_Final',
+        'https://myanimelist.net/anime/40356/Tate_no_Yuusha_no_Nariagari_Season_2'
     ]
 
     def parse(self, response):
@@ -77,9 +82,28 @@ class AnimeSpider(scrapy.Spider):
         for review in response.xpath('//div[@class="borderDark"]'):
             review_url = review.xpath('.//a[@class="lightLink"]/@href').get()
             last_review = review_url
-            yield Request(url = review_url,
-                          callback = self.parse_review
-            )
+            
+            review_loader = ItemLoader(item=ReviewItem(), selector=review)
+            review_loader.add_value('url', review_url)
+            review_loader.add_value('uid', review_url.split("id=")[1])
+            review_loader.add_xpath('anime_id', response.url)
+            review_loader.add_xpath('user_id', '//a[contains(@href, "profile")]/@href')
+            review_loader.add_xpath('review_date', '//div[@class="spaceit"]/div[@class="mb8"]/div[1]/text()')
+            review_loader.add_xpath('num_useful', '//div[@class="lightLink spaceit"]/strong/span/text()')
+            review_loader.add_xpath('overall_score', '//table/tr[contains(string(./td), "Overall")]/td[2]/strong/text()')
+            review_loader.add_xpath('story_score', '//table/tr[contains(string(./td), "Story")]/td[2]/text()')
+            review_loader.add_xpath('animation_score', '//table/tr[contains(string(./td), "Animation")]/td[2]/text()')
+            review_loader.add_xpath('sound_score', '//table/tr[contains(string(./td), "Sound")]/td[2]/text()')
+            review_loader.add_xpath('character_score', '//table/tr[contains(string(./td), "Character")]/td[2]/text()')
+            review_loader.add_xpath('enjoyment_score', '//table/tr[contains(string(./td), "Enjoyment")]/td[2]/text()')
+            review_loader.add_value('crawl_date', datetime.now().strftime("%Y-%m-%dT%H:%M:%S"))
+            yield review_loader.load_item()
+
+            profile_schedule_loader = ItemLoader(item=ProfileSchedulerItem(), response=response)
+            profile_schedule_loader.add_xpath('url', '//a[contains(@href, "profile")]/@href')
+            profile_schedule_loader.add_value('last_inspect_date', datetime.now().strftime("%Y-%m-%dT%H:%M:%S"))
+            yield profile_schedule_loader.load_item()
+
         
         next_page = response.xpath('//div[@class="ml4"]/a/@href').getall()
         if last_review is not None and next_page is not None and (len(next_page) > 0) and (p == '1' or len(next_page) > 1):
@@ -87,32 +111,6 @@ class AnimeSpider(scrapy.Spider):
             yield Request(url = next_page, 
                           callback = self.parse_list_reviews
             )
-
-    def parse_review(self, response):
-        self.logger.info('Parsing review url:  %s', response.url)
-        review_loader = ItemLoader(item=ReviewItem(), response=response)
-        review_loader.add_value('url', response.url)
-        review_loader.add_value('uid', response.url.split("id=")[1])
-        review_loader.add_xpath('anime_id', '//a[@class="hoverinfo_trigger"]/@href')
-        review_loader.add_xpath('user_id', '//a[contains(@href, "profile")]/@href')
-        review_loader.add_xpath('review_date', '//div[@class="spaceit"]/div[@class="mb8"]/div[1]/text()')
-        review_loader.add_xpath('num_useful', '//div[@class="lightLink spaceit"]/strong/span/text()')
-        review_loader.add_xpath('overall_score', '//table/tr[contains(string(./td), "Overall")]/td[2]/strong/text()')
-        review_loader.add_xpath('story_score', '//table/tr[contains(string(./td), "Story")]/td[2]/text()')
-        review_loader.add_xpath('animation_score', '//table/tr[contains(string(./td), "Animation")]/td[2]/text()')
-        review_loader.add_xpath('sound_score', '//table/tr[contains(string(./td), "Sound")]/td[2]/text()')
-        review_loader.add_xpath('character_score', '//table/tr[contains(string(./td), "Character")]/td[2]/text()')
-        review_loader.add_xpath('enjoyment_score', '//table/tr[contains(string(./td), "Enjoyment")]/td[2]/text()')
-        review_loader.add_xpath('text', '//div[contains(@class, "textReadability")]/text()')
-        review_loader.add_value('crawl_date', datetime.now().strftime("%Y-%m-%dT%H:%M:%S"))
-        yield review_loader.load_item()
-
-        profile_schedule_loader = ItemLoader(item=ProfileSchedulerItem(), response=response)
-        profile_schedule_loader.add_xpath('url', '//a[contains(@href, "profile")]/@href')
-        profile_schedule_loader.add_value('last_inspect_date', datetime.now().strftime("%Y-%m-%dT%H:%M:%S"))
-        yield profile_schedule_loader.load_item()
-
-
     
     def parse_recommendations(self, response):
         self.logger.info('Parsing recommendations url:  %s', response.url)
