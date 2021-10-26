@@ -43,7 +43,7 @@ def get_top_priority_profiles(max_num_urls):
             FROM profile_schedule 
             ORDER BY (last_crawl_date IS NULL) ASC,
                      DATEDIFF(last_crawl_date, last_inspect_date) DESC,
-                     DATEDIFF(last_inspect_date, last_online) DESC 
+                     DATEDIFF(last_inspect_date, last_online_date) DESC 
             LIMIT {max_num_urls}
         """
     )
