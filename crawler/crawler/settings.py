@@ -63,14 +63,16 @@ CONCURRENT_REQUESTS_PER_IP = 16
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'crawler.pipelines.process_pipelines.activity_process_pipeline.ActivityProcessPipeline': 10,
-    'crawler.pipelines.process_pipelines.anime_process_pipeline.AnimeProcessPipeline': 10,
-    'crawler.pipelines.process_pipelines.favorite_process_pipeline.FavoriteProcessPipeline': 10,
-    'crawler.pipelines.process_pipelines.profile_process_pipeline.ProfileProcessPipeline': 10,
-    'crawler.pipelines.process_pipelines.recommendation_process_pipeline.RecommendationProcessPipeline': 10,
-    'crawler.pipelines.process_pipelines.related_anime_process_pipeline.RelatedAnimeProcessPipeline': 10,
-    'crawler.pipelines.process_pipelines.review_process_pipeline.ReviewProcessPipeline': 10,
-    'crawler.pipelines.process_pipelines.watch_status_process_pipeline.WatchStatusProcessPipeline': 10,
+    'crawler.pipelines.data_process_pipelines.activity_process_pipeline.ActivityProcessPipeline': 10,
+    'crawler.pipelines.data_process_pipelines.anime_process_pipeline.AnimeProcessPipeline': 10,
+    'crawler.pipelines.data_process_pipelines.favorite_process_pipeline.FavoriteProcessPipeline': 10,
+    'crawler.pipelines.data_process_pipelines.profile_process_pipeline.ProfileProcessPipeline': 10,
+    'crawler.pipelines.data_process_pipelines.recommendation_process_pipeline.RecommendationProcessPipeline': 10,
+    'crawler.pipelines.data_process_pipelines.related_anime_process_pipeline.RelatedAnimeProcessPipeline': 10,
+    'crawler.pipelines.data_process_pipelines.review_process_pipeline.ReviewProcessPipeline': 10,
+    'crawler.pipelines.data_process_pipelines.watch_status_process_pipeline.WatchStatusProcessPipeline': 10,
+    'crawler.pipelines.scheduler_process_pipelines.anime_process_pipeline.AnimeSchedulerProcessPipeline': 10,
+    'crawler.pipelines.scheduler_process_pipelines.profile_process_pipeline.ProfileSchedulerProcessPipeline': 10,
     'crawler.pipelines.local_json_pipeline.LocalJSONSavePipeline': 100,
 #    'crawler.pipelines.pub_sub_pipeline.PubSubPipeline' : 300,
 #    'crawler.pipelines.cloud_sql_pipeline.CloudSQLPipeline' : 500

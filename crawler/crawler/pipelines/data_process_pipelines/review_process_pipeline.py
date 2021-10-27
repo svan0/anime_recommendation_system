@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from scrapy.exceptions import DropItem
 from crawler.items.data_items.review_item import ReviewItem
 
@@ -7,6 +9,8 @@ class ReviewProcessPipeline:
 
         if not isinstance(item, ReviewItem):
             return item
+        
+        item['crawl_date'] = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
         
         if 'url' not in item:
             raise DropItem("ReviewItem dropped because url is null")

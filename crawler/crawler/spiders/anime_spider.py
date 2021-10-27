@@ -25,8 +25,7 @@ class AnimeSpider(scrapy.Spider):
         'https://myanimelist.net/anime/40356/Tate_no_Yuusha_no_Nariagari_Season_2'
     ]
 
-    def parse(self, response):
-        self.logger.info('Parsing anime url:  %s', response.url)
+    def parse_anime_main_page_for_info(self, response):
 
         anime_loader = ItemLoader(item=AnimeItem(), response=response)
         anime_loader.add_value('uid', response.url)
@@ -49,40 +48,28 @@ class AnimeSpider(scrapy.Spider):
         anime_loader.add_xpath('popularity_rank', '//span[@class="numbers popularity"]/strong/text()')
         anime_loader.add_xpath('members_count', '//span[@class="numbers members"]/strong/text()')
         anime_loader.add_xpath('favorites_count', '//div[@class="spaceit_pad" and contains(./span/text(), "Favorites:")]/text()')
+        return anime_loader.load_item()
+
+    def parse_anime_main_page_for_related_anime(self, response):
 
         for related_anime in response.xpath('//table[@class="anime_detail_related_anime"]/tr/td/a[contains(@href, "anime")]/@href').getall():
             related_anime_loader = ItemLoader(item=RelatedAnimeItem(), response=response)
-            related_anime_loader.add_value('crawl_date', datetime.now().strftime("%Y-%m-%dT%H:%M:%S"))
             related_anime_loader.add_value('src_anime', response.url)
             related_anime_loader.add_value('dest_anime', related_anime)
             yield related_anime_loader.load_item()
 
+    def parse_anime_main_page_for_schedule_anime(self, response):
+
+        for related_anime in response.xpath('//table[@class="anime_detail_related_anime"]/tr/td/a[contains(@href, "anime")]/@href').getall():
             anime_schedule_loader = ItemLoader(item=AnimeSchedulerItem(), response=response)
-            anime_schedule_loader.add_value('url', response.url)
+            anime_schedule_loader.add_value('url', related_anime)
             anime_schedule_loader.add_value('last_inspect_date', datetime.now().strftime("%Y-%m-%dT%H:%M:%S"))
             yield anime_schedule_loader.load_item()
         
-        yield Request(url = f"{response.url}/reviews?p=1", 
-                      callback = self.parse_list_reviews,
-        )
-        
-        yield Request(url = f"{response.url}/userrecs", 
-                      callback = self.parse_recommendations
-        ) 
+    def parse_review_page_for_reviews(self, response):
 
-        yield Request(url = f"{response.url}/stats", 
-                      callback = self.parse_stats,
-                      meta = {"anime_item" : anime_loader.load_item()}
-        )       
-
-    def parse_list_reviews(self, response):
-        self.logger.info('Parsing review url:  %s', response.url)
-        p = response.url.split("p=")[1]
-
-        last_review = None
         for review in response.xpath('//div[@class="borderDark"]'):
             review_url = review.xpath('.//a[@class="lightLink"]/@href').get()
-            last_review = review_url
             
             review_loader = ItemLoader(item=ReviewItem(), selector=review)
             review_loader.add_value('url', review_url)
@@ -97,24 +84,17 @@ class AnimeSpider(scrapy.Spider):
             review_loader.add_xpath('sound_score', './/table/tr[contains(string(./td), "Sound")]/td[2]/text()')
             review_loader.add_xpath('character_score', './/table/tr[contains(string(./td), "Character")]/td[2]/text()')
             review_loader.add_xpath('enjoyment_score', './/table/tr[contains(string(./td), "Enjoyment")]/td[2]/text()')
-            review_loader.add_value('crawl_date', datetime.now().strftime("%Y-%m-%dT%H:%M:%S"))
             yield review_loader.load_item()
+    
+    def parse_review_page_for_schedule_profiles(self, response):
 
-            profile_schedule_loader = ItemLoader(item=ProfileSchedulerItem(), response=response)
-            profile_schedule_loader.add_xpath('url', '//a[contains(@href, "profile")]/@href')
+        for review in response.xpath('//div[@class="borderDark"]'):
+            profile_schedule_loader = ItemLoader(item=ProfileSchedulerItem(), selector=review)
+            profile_schedule_loader.add_xpath('url', './/a[contains(@href, "profile")]/@href')
             profile_schedule_loader.add_value('last_inspect_date', datetime.now().strftime("%Y-%m-%dT%H:%M:%S"))
             yield profile_schedule_loader.load_item()
-
-        
-        next_page = response.xpath('//div[@class="ml4"]/a/@href').getall()
-        if last_review is not None and next_page is not None and (len(next_page) > 0) and (p == '1' or len(next_page) > 1):
-            next_page = next_page[0] if p == '1' else next_page[1]
-            yield Request(url = next_page, 
-                          callback = self.parse_list_reviews
-            )
     
-    def parse_recommendations(self, response):
-        self.logger.info('Parsing recommendations url:  %s', response.url)
+    def parse_recommendation_page_for_recommendations(self, response):
         
         current_anime = response.url.split('/')[4]
         recommendations = response.xpath('//div[@class="borderClass"]/table/tr/td[2]')
@@ -124,20 +104,19 @@ class AnimeSpider(scrapy.Spider):
             rec_loader.add_value('src_anime', current_anime)
             rec_loader.add_xpath('dest_anime', './/div[@style="margin-bottom: 2px;"]/a[contains(@href, "/anime/")]/@href')
             rec_loader.add_xpath('num_recs', './/div[@class="spaceit"]/a[contains(@href, "javascript")]/strong/text()')
-            rec_loader.add_value('crawl_date', datetime.now().strftime("%Y-%m-%dT%H:%M:%S"))
             yield rec_loader.load_item()
-
+    
+    def parse_recommendation_page_for_schedule_anime(self, response):
+        recommendations = response.xpath('//div[@class="borderClass"]/table/tr/td[2]')
+        for recommendation in recommendations:
             anime_schedule_loader = ItemLoader(item=AnimeSchedulerItem(), selector=recommendation)
             anime_schedule_loader.add_xpath('url', './/div[@style="margin-bottom: 2px;"]/a[contains(@href, "/anime/")]/@href')
             anime_schedule_loader.add_value('last_inspect_date', datetime.now().strftime("%Y-%m-%dT%H:%M:%S"))
             yield anime_schedule_loader.load_item()
-        
-    
-    def parse_stats(self, response):
-        self.logger.info('Parsing stats url:  %s', response.url)
-        
-        anime_url = response.meta['anime_item']['url']
-        anime_loader = ItemLoader(item=response.meta['anime_item'], response=response)
+
+    def parse_stats_page_for_stats(self, response):
+
+        anime_loader = ItemLoader(item=AnimeItem(), response=response)
         
         anime_loader.add_xpath('watching_count', '//div[contains(./span/text(), "Watching:")]/text()')
         anime_loader.add_xpath('completed_count', '//div[contains(./span/text(), "Completed:")]/text()')
@@ -157,26 +136,114 @@ class AnimeSpider(scrapy.Spider):
         anime_loader.add_xpath("score_02_count", '//table[@class="score-stats"]/tr[contains(./td[contains(@class, "score-label")], "2")]/td/div/span/small/text()')
         anime_loader.add_xpath("score_01_count", '//table[@class="score-stats"]/tr[contains(./td[contains(@class, "score-label")], "1") and not(contains(./td[contains(@class, "score-label")], "10"))]/td/div/span/small/text()')
         
+        return anime_loader.load_item()
+
+    def parse_clubs_page_for_clubs(self, response):
+        
+        anime_loader = ItemLoader(AnimeItem(), response=response)
+        anime_loader.add_xpath('clubs', '//div[@class="borderClass"]/a/@href')
+        return anime_loader.load_item()
+
+    def parse_pics_page_for_pics(self, response):
+
+        anime_loader = ItemLoader(AnimeItem(), response=response)
+        anime_loader.add_xpath('pics', '//div[@class="picSurround"]/a/img/@data-src')
+        return anime_loader.load_item()
+
+
+    def parse(self, response):
+
+        self.logger.info('Parsing anime url:  %s', response.url)
+        
+        anime_item = self.parse_anime_main_page_for_info(response)
+
+        for x in self.parse_anime_main_page_for_related_anime(response):
+            yield x
+        
+        for x in self.parse_anime_main_page_for_schedule_anime(response):
+            yield x
+
+        yield Request(url = f"{response.url}/reviews?p=1", 
+                      callback = self.parse_list_reviews,
+        )
+        
+        yield Request(url = f"{response.url}/userrecs", 
+                      callback = self.parse_recommendations
+        ) 
+
+        yield Request(url = f"{response.url}/stats", 
+                      callback = self.parse_stats,
+                      meta = {"anime_item" : anime_item}
+        )       
+
+    def parse_list_reviews(self, response):
+
+        self.logger.info('Parsing review url:  %s', response.url)
+        p = response.url.split("p=")[1]
+
+        review_page_empty = True
+        
+        for review in self.parse_review_page_for_reviews(response):
+            review_page_empty = False
+            yield review
+        
+        for profile_schedule in self.parse_review_page_for_schedule_profiles(response):
+            yield profile_schedule
+
+        next_page = response.xpath('//div[@class="ml4"]/a/@href').getall()
+        if (not review_page_empty) and (next_page is not None) and (len(next_page) > 0) and (p == '1' or len(next_page) > 1):
+            next_page = next_page[0] if p == '1' else next_page[1]
+            yield Request(url = next_page, 
+                          callback = self.parse_list_reviews
+            )
+
+    def parse_recommendations(self, response):
+        
+        self.logger.info('Parsing recommendations url:  %s', response.url)
+        for recommended_anime in self.parse_recommendation_page_for_recommendations(response):
+            yield recommended_anime
+        
+        for schedule_anime in self.parse_recommendation_page_for_schedule_anime(response):
+            yield schedule_anime
+        
+    def parse_stats(self, response):
+
+        self.logger.info('Parsing stats url:  %s', response.url)
+        
+        anime_main_item = response.meta['anime_item']
+        anime_stats_item = self.parse_stats_page_for_stats(response)
+
+        anime_item = AnimeItem({**dict(anime_main_item), **dict(anime_stats_item)})
+
+        anime_url = anime_main_item['url']
+        
         yield Request(url = f"{anime_url}/clubs", 
                       callback = self.parse_clubs,
-                      meta = {"anime_item" : anime_loader.load_item()}
+                      meta = {"anime_item" : anime_item}
         )
 
     def parse_clubs(self, response):
+
         self.logger.info('Parsing clubs url:  %s', response.url)
 
-        anime_url = response.meta['anime_item']['url']
+        anime_main_item = response.meta['anime_item']
+        anime_clubs_item = self.parse_clubs_page_for_clubs(response)
 
-        anime_loader = ItemLoader(item=response.meta['anime_item'], response=response)
-        anime_loader.add_xpath('clubs', '//div[@class="borderClass"]/a/@href')
+        anime_item = AnimeItem({**dict(anime_main_item), **dict(anime_clubs_item)})
+
+        anime_url = anime_main_item['url']
+        
         yield Request(url = f"{anime_url}/pics", 
-                      callback = self.parse_images,
-                      meta = {"anime_item" : anime_loader.load_item()}
+                      callback = self.parse_pics,
+                      meta = {"anime_item" : anime_item}
         )
 
-    def parse_images(self, response):
+    def parse_pics(self, response):
         self.logger.info('Parsing images url:  %s', response.url)
-        anime_loader = ItemLoader(item=response.meta['anime_item'], response=response)
-        anime_loader.add_xpath('pics', '//div[@class="picSurround"]/a/img/@data-src')
-        anime_loader.add_value('crawl_date', datetime.now().strftime("%Y-%m-%dT%H:%M:%S"))
-        yield anime_loader.load_item()
+        
+        anime_main_item = response.meta['anime_item']
+        anime_pics_item = self.parse_pics_page_for_pics(response)
+
+        anime_item = AnimeItem({**dict(anime_main_item), **dict(anime_pics_item)})
+
+        yield anime_item

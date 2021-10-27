@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from math import isclose
 import logging
 
@@ -10,6 +12,8 @@ class AnimeProcessPipeline:
         if not isinstance(item, AnimeItem):
             return item
         
+        item['crawl_date'] = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+
         if 'url' not in item:
             raise DropItem("AnimeItem dropped because 'url' is null")
         
