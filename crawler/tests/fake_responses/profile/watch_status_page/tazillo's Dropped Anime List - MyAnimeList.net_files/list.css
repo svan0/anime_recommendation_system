@@ -1,0 +1,144 @@
+@charset "utf-8";
+/* CSS Document */
+
+html {
+	height: 100%;
+}
+
+ body {
+	margin: 0;
+	min-height: 100%;
+}
+
+#mal_control_strip {
+	width: 100%;
+    padding: 0;
+    margin: 0;
+    left: 0;
+    background:url(/images/list-top-bg.gif);
+    background-repeat:repeat-x;
+    background-color: #000000;
+    color: #ffffff;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-variant: normal;
+	text-transform: none;
+}
+
+#mal_control_strip a {
+	color: #ffffff;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-variant: normal;
+	font-weight: normal;
+    text-decoration: underline;
+	background: transparent;
+	text-transform: none;
+}
+
+
+#mal_control_strip img {
+	background: transparent none repeat scroll 0%;
+    border: 0 none;
+    margin: 0;
+    padding: 0;
+}
+
+#mal_control_strip table {
+	width: auto;
+	height: 40px;
+}
+
+#mal_control_strip td {
+	height: 40px;
+	color: #ffffff;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-variant: normal;
+	text-transform: none;
+}
+
+#mal_control_strip td div {
+	margin: 3px 0;
+    color: #ffffff;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	font-variant: normal;
+}
+
+#mal_cs_pic {
+	width: 80px;
+    padding-right: 8px;
+    padding: 0 1em;
+}
+
+#mal_cs_listinfo {
+	width: 75px;
+    padding: 0 1em;
+}
+
+#mal_cs_links {
+	width: 150px;
+    padding: 0 1em;
+}
+
+#mal_cs_otherlinks {
+	padding: 0 1em;
+}
+
+#mal_cs_powered {
+	position: absolute;
+	top: 4px;
+	right: 7px;
+}
+
+#mal_cs_powered #search {
+	padding-top: 3px;
+}
+
+#mal_cs_powered #search #searchBox {
+	width: 125px;
+	font-size: 10px;
+}
+
+#searchListButton:hover {
+	cursor: pointer;
+}
+
+#mal_cs_pic, #mal_cs_listinfo, #mal_cs_links {
+	border-right: 1px solid #7e7e7e;
+}
+
+.hide {
+	display: none;
+}
+
+.borderRBL {
+	border-width: 0 1px 1px 1px;
+}
+
+
+/* Back to Mobile site */
+#btn-back_to_mobile {
+	position: absolute;
+	top: 4px;
+	right: 170px;
+	background-image: url('/images/back_to_mobile_site02.png?v=2');
+	background-size: 142px 20px;
+	background-position: 4px 4px;
+	background-repeat: no-repeat;
+	display: block;
+	width: 142px!important;
+	height: 20px!important;
+	background-color: #F0F3FA;
+	border: #2E51A2 2px solid;
+	border-radius: 4px;
+	padding: 4px;
+	z-index: 10;
+	text-indent: -9999px;
+}
+
+#mal_control_strip #btn-back_to_mobile {
+	top: 4px;
+	left: 470px;
+}
