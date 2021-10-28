@@ -61,9 +61,14 @@ class AnimeProcessPipeline:
         
 
         if  (item['status'] == "Not yet aired") or ('score' not in item) or ('score_count' not in item):
+            item['score'] = None
+            item['score_count'] = None
+            item['score_rank'] = None
+
             del item['score']
             del item['score_count']
             del item['score_rank']
+
             for score in range(1, 11):
                 item['score_{:02d}_count'.format(score)] = 0
         
@@ -84,6 +89,9 @@ class AnimeProcessPipeline:
 
             if 'start_date' not in item:
                 raise DropItem(f"AnimeItem {item['url']} dropped because it is airing but 'start_date' is not known")
+            
+            if item['type'] == 'TV' and 'season' not in item:
+                raise DropItem(f"AnimeItem {item['url']} dropped because it is an airing TV show but 'season' is not known")
         
         if item['status'] == "Finished Airing":
             if 'num_episodes' not in item:
@@ -98,6 +106,9 @@ class AnimeProcessPipeline:
             if 'end_date' not in item:
                 raise DropItem(f"AnimeItem {item['url']} dropped because it has finished airing but 'end_date' is not known")
 
+            if item['type'] == 'TV' and 'season' not in item:
+                raise DropItem(f"AnimeItem {item['url']} dropped because it is a finished airing TV show but 'season' is not known")
+        
         if item['total_count'] != (item['watching_count'] + item['completed_count'] + item['on_hold_count'] + item['dropped_count'] + item['plan_to_watch_count']):
             raise DropItem(f"AnimeItem {item['url']} dropped because watch 'status_count' do not sum up to 'total_count'")
         
@@ -106,9 +117,12 @@ class AnimeProcessPipeline:
             item['score_count'] = sum_score_voters
             logging.info(f"{item['url']} 'score_xx_count' do not sum up to 'score_count' count. Changing 'score_count' to the sum")
 
-        average_score = sum([score * item['score_{:02d}_count'.format(score)] for score in range(1, 11)]) / sum_score_voters
-        if ('score' in item) and (not isclose(item['score'] , average_score)):
-            raise DropItem(f"AnimeItem {item['url']} dropped because computed average score is not close to 'score'")
+        if ('score' in item):
+            average_score = sum([score * item['score_{:02d}_count'.format(score)] for score in range(1, 11)]) / sum_score_voters
+            average_score = int(100 * average_score) / 100
+            if not isclose(item['score'] , average_score):
+                item['score'] = average_score
+                logging.info(f"{item['url']} xx * 'score_xx_count' do not average up to 'score' count. Changing 'score' to the average")
 
         return item
         

@@ -25,7 +25,7 @@ class AnimeSpider(scrapy.Spider):
         'https://myanimelist.net/anime/40356/Tate_no_Yuusha_no_Nariagari_Season_2'
     ]
 
-    def parse_anime_main_page_for_info(self, response):
+    def parse_anime_main_page_for_info(self, response, local_file_response = False):
 
         anime_loader = ItemLoader(item=AnimeItem(), response=response)
         anime_loader.add_value('uid', response.url)
@@ -50,101 +50,169 @@ class AnimeSpider(scrapy.Spider):
         anime_loader.add_xpath('favorites_count', '//div[@class="spaceit_pad" and contains(./span/text(), "Favorites:")]/text()')
         return anime_loader.load_item()
 
-    def parse_anime_main_page_for_related_anime(self, response):
+    def parse_anime_main_page_for_related_anime(self, response, local_file_response = False):
 
-        for related_anime in response.xpath('//table[@class="anime_detail_related_anime"]/tr/td/a[contains(@href, "anime")]/@href').getall():
-            related_anime_loader = ItemLoader(item=RelatedAnimeItem(), response=response)
-            related_anime_loader.add_value('src_anime', response.url)
-            related_anime_loader.add_value('dest_anime', related_anime)
-            yield related_anime_loader.load_item()
+        if local_file_response == False:
+            for related_anime in response.xpath('//table[@class="anime_detail_related_anime"]/tr/td/a[contains(@href, "/anime/")]/@href').getall():
+                related_anime_loader = ItemLoader(item=RelatedAnimeItem(), response=response)
+                related_anime_loader.add_value('src_anime', response.url)
+                related_anime_loader.add_value('dest_anime', related_anime)
+                yield related_anime_loader.load_item()
+        else:
+            for related_anime in response.xpath('//table[@class="anime_detail_related_anime"]/tbody/tr/td/a[contains(@href, "/anime/")]/@href').getall():
+                related_anime_loader = ItemLoader(item=RelatedAnimeItem(), response=response)
+                related_anime_loader.add_value('src_anime', response.url)
+                related_anime_loader.add_value('dest_anime', related_anime)
+                yield related_anime_loader.load_item()
 
-    def parse_anime_main_page_for_schedule_anime(self, response):
-
-        for related_anime in response.xpath('//table[@class="anime_detail_related_anime"]/tr/td/a[contains(@href, "anime")]/@href').getall():
-            anime_schedule_loader = ItemLoader(item=AnimeSchedulerItem(), response=response)
-            anime_schedule_loader.add_value('url', related_anime)
-            anime_schedule_loader.add_value('last_inspect_date', datetime.now().strftime("%Y-%m-%dT%H:%M:%S"))
-            yield anime_schedule_loader.load_item()
+    def parse_anime_main_page_for_schedule_anime(self, response, local_file_response = False):
         
-    def parse_review_page_for_reviews(self, response):
+        if local_file_response == False:
+            for related_anime in response.xpath('//table[@class="anime_detail_related_anime"]/tr/td/a[contains(@href, "/anime/")]/@href').getall():
+                anime_schedule_loader = ItemLoader(item=AnimeSchedulerItem(), response=response)
+                anime_schedule_loader.add_value('url', related_anime)
+                yield anime_schedule_loader.load_item()
+        
+        else:
+            for related_anime in response.xpath('//table[@class="anime_detail_related_anime"]/tbody/tr/td/a[contains(@href, "/anime/")]/@href').getall():
+                anime_schedule_loader = ItemLoader(item=AnimeSchedulerItem(), response=response)
+                anime_schedule_loader.add_value('url', related_anime)
+                yield anime_schedule_loader.load_item()
+        
+    def parse_review_page_for_reviews(self, response, local_file_response = False):
 
-        for review in response.xpath('//div[@class="borderDark"]'):
-            review_url = review.xpath('.//a[@class="lightLink"]/@href').get()
-            
-            review_loader = ItemLoader(item=ReviewItem(), selector=review)
-            review_loader.add_value('url', review_url)
-            review_loader.add_value('uid', review_url.split("id=")[1])
-            review_loader.add_value('anime_id', response.url)
-            review_loader.add_xpath('user_id', './/a[contains(@href, "profile")]/@href')
-            review_loader.add_xpath('review_date', './/div[@class="spaceit"]/div[@class="mb8"]/div[1]/text()')
-            review_loader.add_xpath('num_useful', './/div[@class="lightLink spaceit"]/strong/span/text()')
-            review_loader.add_xpath('overall_score', './/table/tr[contains(string(./td), "Overall")]/td[2]/strong/text()')
-            review_loader.add_xpath('story_score', './/table/tr[contains(string(./td), "Story")]/td[2]/text()')
-            review_loader.add_xpath('animation_score', './/table/tr[contains(string(./td), "Animation")]/td[2]/text()')
-            review_loader.add_xpath('sound_score', './/table/tr[contains(string(./td), "Sound")]/td[2]/text()')
-            review_loader.add_xpath('character_score', './/table/tr[contains(string(./td), "Character")]/td[2]/text()')
-            review_loader.add_xpath('enjoyment_score', './/table/tr[contains(string(./td), "Enjoyment")]/td[2]/text()')
-            yield review_loader.load_item()
+        if local_file_response == False:
+            for review in response.xpath('//div[@class="borderDark"]'):
+                review_loader = ItemLoader(item=ReviewItem(), selector=review)
+                review_loader.add_xpath('url', './/a[@class="lightLink"]/@href')
+                review_loader.add_xpath('uid', './/a[@class="lightLink"]/@href')
+                review_loader.add_value('anime_id', response.url)
+                review_loader.add_xpath('user_id', './/a[contains(@href, "profile")]/@href')
+                review_loader.add_xpath('review_date', './/div[@class="spaceit"]/div[@class="mb8"]/div[1]/text()')
+                review_loader.add_xpath('num_useful', './/div[@class="lightLink spaceit"]/strong/span/text()')
+                review_loader.add_xpath('overall_score', './/table/tr[contains(string(./td), "Overall")]/td[2]/strong/text()')
+                review_loader.add_xpath('story_score', './/table/tr[contains(string(./td), "Story")]/td[2]/text()')
+                review_loader.add_xpath('animation_score', './/table/tr[contains(string(./td), "Animation")]/td[2]/text()')
+                review_loader.add_xpath('sound_score', './/table/tr[contains(string(./td), "Sound")]/td[2]/text()')
+                review_loader.add_xpath('character_score', './/table/tr[contains(string(./td), "Character")]/td[2]/text()')
+                review_loader.add_xpath('enjoyment_score', './/table/tr[contains(string(./td), "Enjoyment")]/td[2]/text()')
+                yield review_loader.load_item()
+        else:
+            for review in response.xpath('//div[@class="borderDark"]'):
+
+                review_loader = ItemLoader(item=ReviewItem(), selector=review)
+                review_loader.add_xpath('url', './/a[@class="lightLink"]/@href')
+                review_loader.add_xpath('uid', './/a[@class="lightLink"]/@href')
+                review_loader.add_value('anime_id', response.url)
+                review_loader.add_xpath('user_id', './/a[contains(@href, "profile")]/@href')
+                review_loader.add_xpath('review_date', './/div[@class="spaceit"]/div[@class="mb8"]/div[1]/text()')
+                review_loader.add_xpath('num_useful', './/div[@class="lightLink spaceit"]/strong/span/text()')
+                review_loader.add_xpath('overall_score', './/table/tbody/tr[contains(string(./td), "Overall")]/td[2]/strong/text()')
+                review_loader.add_xpath('story_score', './/table/tbody/tr[contains(string(./td), "Story")]/td[2]/text()')
+                review_loader.add_xpath('animation_score', './/table/tbody/tr[contains(string(./td), "Animation")]/td[2]/text()')
+                review_loader.add_xpath('sound_score', './/table/tbody/tr[contains(string(./td), "Sound")]/td[2]/text()')
+                review_loader.add_xpath('character_score', './/table/tbody/tr[contains(string(./td), "Character")]/td[2]/text()')
+                review_loader.add_xpath('enjoyment_score', './/table/tbody/tr[contains(string(./td), "Enjoyment")]/td[2]/text()')
+                yield review_loader.load_item()
     
-    def parse_review_page_for_schedule_profiles(self, response):
+    def parse_review_page_for_schedule_profiles(self, response, local_file_response = False):
 
         for review in response.xpath('//div[@class="borderDark"]'):
             profile_schedule_loader = ItemLoader(item=ProfileSchedulerItem(), selector=review)
             profile_schedule_loader.add_xpath('url', './/a[contains(@href, "profile")]/@href')
-            profile_schedule_loader.add_value('last_inspect_date', datetime.now().strftime("%Y-%m-%dT%H:%M:%S"))
             yield profile_schedule_loader.load_item()
     
-    def parse_recommendation_page_for_recommendations(self, response):
+    def parse_recommendation_page_for_recommendations(self, response, local_file_response = False):
         
-        current_anime = response.url.split('/')[4]
-        recommendations = response.xpath('//div[@class="borderClass"]/table/tr/td[2]')
-        for recommendation in recommendations:
-            rec_loader = ItemLoader(item=RecommendationItem(), selector=recommendation)
-            rec_loader.add_xpath('url', './/div/span/a[@title="Permalink"]/@href')
-            rec_loader.add_value('src_anime', current_anime)
-            rec_loader.add_xpath('dest_anime', './/div[@style="margin-bottom: 2px;"]/a[contains(@href, "/anime/")]/@href')
-            rec_loader.add_xpath('num_recs', './/div[@class="spaceit"]/a[contains(@href, "javascript")]/strong/text()')
-            yield rec_loader.load_item()
+        if local_file_response == False:
+            current_anime = response.url.split('/')[4]
+            recommendations = response.xpath('//div[@class="borderClass"]/table/tr/td[2]')
+            for recommendation in recommendations:
+                rec_loader = ItemLoader(item=RecommendationItem(), selector=recommendation)
+                rec_loader.add_xpath('url', './/div/span/a[@title="Permalink"]/@href')
+                rec_loader.add_value('src_anime', current_anime)
+                rec_loader.add_xpath('dest_anime', './/div[@style="margin-bottom: 2px;"]/a[contains(@href, "/anime/")]/@href')
+                rec_loader.add_xpath('num_recs', './/div[@class="spaceit"]/a[contains(@href, "javascript")]/strong/text()')
+                yield rec_loader.load_item()
+        else:
+            current_anime = response.url.split('/')[4]
+            recommendations = response.xpath('//div[@class="borderClass"]/table/tbody/tr/td[2]')
+            for recommendation in recommendations:
+                rec_loader = ItemLoader(item=RecommendationItem(), selector=recommendation)
+                rec_loader.add_xpath('url', './/div/span/a[@title="Permalink"]/@href')
+                rec_loader.add_value('src_anime', current_anime)
+                rec_loader.add_xpath('dest_anime', './/div[@style="margin-bottom: 2px;"]/a[contains(@href, "/anime/")]/@href')
+                rec_loader.add_xpath('num_recs', './/div[@class="spaceit"]/a[contains(@href, "javascript")]/strong/text()')
+                yield rec_loader.load_item()
     
-    def parse_recommendation_page_for_schedule_anime(self, response):
-        recommendations = response.xpath('//div[@class="borderClass"]/table/tr/td[2]')
-        for recommendation in recommendations:
-            anime_schedule_loader = ItemLoader(item=AnimeSchedulerItem(), selector=recommendation)
-            anime_schedule_loader.add_xpath('url', './/div[@style="margin-bottom: 2px;"]/a[contains(@href, "/anime/")]/@href')
-            anime_schedule_loader.add_value('last_inspect_date', datetime.now().strftime("%Y-%m-%dT%H:%M:%S"))
-            yield anime_schedule_loader.load_item()
+    def parse_recommendation_page_for_schedule_anime(self, response, local_file_response = False):
+        if local_file_response == False:
+            recommendations = response.xpath('//div[@class="borderClass"]/table/tr/td[2]')
+            for recommendation in recommendations:
+                anime_schedule_loader = ItemLoader(item=AnimeSchedulerItem(), selector=recommendation)
+                anime_schedule_loader.add_xpath('url', './/div[@style="margin-bottom: 2px;"]/a[contains(@href, "/anime/")]/@href')
+                yield anime_schedule_loader.load_item()
+        else:
+            recommendations = response.xpath('//div[@class="borderClass"]/table/tbody/tr/td[2]')
+            for recommendation in recommendations:
+                anime_schedule_loader = ItemLoader(item=AnimeSchedulerItem(), selector=recommendation)
+                anime_schedule_loader.add_xpath('url', './/div[@style="margin-bottom: 2px;"]/a[contains(@href, "/anime/")]/@href')
+                yield anime_schedule_loader.load_item()
 
-    def parse_stats_page_for_stats(self, response):
 
-        anime_loader = ItemLoader(item=AnimeItem(), response=response)
+    def parse_stats_page_for_stats(self, response, local_file_response = False):
+
+        if local_file_response == False:
+            anime_loader = ItemLoader(item=AnimeItem(), response=response)
+            
+            anime_loader.add_xpath('watching_count', '//div[contains(./span/text(), "Watching:")]/text()')
+            anime_loader.add_xpath('completed_count', '//div[contains(./span/text(), "Completed:")]/text()')
+            anime_loader.add_xpath('on_hold_count', '//div[contains(./span/text(), "On-Hold:")]/text()')
+            anime_loader.add_xpath('dropped_count', '//div[contains(./span/text(), "Dropped:")]/text()')
+            anime_loader.add_xpath('plan_to_watch_count', '//div[contains(./span/text(), "Plan to Watch:")]/text()')
+            anime_loader.add_xpath('total_count', '//div[contains(./span/text(), "Total:")]/text()')
+
+            anime_loader.add_xpath("score_10_count", '//table[@class="score-stats"]/tr[contains(./td[contains(@class, "score-label")], "10")]/td/div/span/small/text()')
+            anime_loader.add_xpath("score_09_count", '//table[@class="score-stats"]/tr[contains(./td[contains(@class, "score-label")], "9")]/td/div/span/small/text()')
+            anime_loader.add_xpath("score_08_count", '//table[@class="score-stats"]/tr[contains(./td[contains(@class, "score-label")], "8")]/td/div/span/small/text()')
+            anime_loader.add_xpath("score_07_count", '//table[@class="score-stats"]/tr[contains(./td[contains(@class, "score-label")], "7")]/td/div/span/small/text()')
+            anime_loader.add_xpath("score_06_count", '//table[@class="score-stats"]/tr[contains(./td[contains(@class, "score-label")], "6")]/td/div/span/small/text()')
+            anime_loader.add_xpath("score_05_count", '//table[@class="score-stats"]/tr[contains(./td[contains(@class, "score-label")], "5")]/td/div/span/small/text()')
+            anime_loader.add_xpath("score_04_count", '//table[@class="score-stats"]/tr[contains(./td[contains(@class, "score-label")], "4")]/td/div/span/small/text()')
+            anime_loader.add_xpath("score_03_count", '//table[@class="score-stats"]/tr[contains(./td[contains(@class, "score-label")], "3")]/td/div/span/small/text()')
+            anime_loader.add_xpath("score_02_count", '//table[@class="score-stats"]/tr[contains(./td[contains(@class, "score-label")], "2")]/td/div/span/small/text()')
+            anime_loader.add_xpath("score_01_count", '//table[@class="score-stats"]/tr[contains(./td[contains(@class, "score-label")], "1") and not(contains(./td[contains(@class, "score-label")], "10"))]/td/div/span/small/text()')
         
-        anime_loader.add_xpath('watching_count', '//div[contains(./span/text(), "Watching:")]/text()')
-        anime_loader.add_xpath('completed_count', '//div[contains(./span/text(), "Completed:")]/text()')
-        anime_loader.add_xpath('on_hold_count', '//div[contains(./span/text(), "On-Hold:")]/text()')
-        anime_loader.add_xpath('dropped_count', '//div[contains(./span/text(), "Dropped:")]/text()')
-        anime_loader.add_xpath('plan_to_watch_count', '//div[contains(./span/text(), "Plan to Watch:")]/text()')
-        anime_loader.add_xpath('total_count', '//div[contains(./span/text(), "Total:")]/text()')
+        else:
+            anime_loader = ItemLoader(item=AnimeItem(), response=response)
+            
+            anime_loader.add_xpath('watching_count', '//div[contains(./span/text(), "Watching:")]/text()')
+            anime_loader.add_xpath('completed_count', '//div[contains(./span/text(), "Completed:")]/text()')
+            anime_loader.add_xpath('on_hold_count', '//div[contains(./span/text(), "On-Hold:")]/text()')
+            anime_loader.add_xpath('dropped_count', '//div[contains(./span/text(), "Dropped:")]/text()')
+            anime_loader.add_xpath('plan_to_watch_count', '//div[contains(./span/text(), "Plan to Watch:")]/text()')
+            anime_loader.add_xpath('total_count', '//div[contains(./span/text(), "Total:")]/text()')
 
-        anime_loader.add_xpath("score_10_count", '//table[@class="score-stats"]/tr[contains(./td[contains(@class, "score-label")], "10")]/td/div/span/small/text()')
-        anime_loader.add_xpath("score_09_count", '//table[@class="score-stats"]/tr[contains(./td[contains(@class, "score-label")], "9")]/td/div/span/small/text()')
-        anime_loader.add_xpath("score_08_count", '//table[@class="score-stats"]/tr[contains(./td[contains(@class, "score-label")], "8")]/td/div/span/small/text()')
-        anime_loader.add_xpath("score_07_count", '//table[@class="score-stats"]/tr[contains(./td[contains(@class, "score-label")], "7")]/td/div/span/small/text()')
-        anime_loader.add_xpath("score_06_count", '//table[@class="score-stats"]/tr[contains(./td[contains(@class, "score-label")], "6")]/td/div/span/small/text()')
-        anime_loader.add_xpath("score_05_count", '//table[@class="score-stats"]/tr[contains(./td[contains(@class, "score-label")], "5")]/td/div/span/small/text()')
-        anime_loader.add_xpath("score_04_count", '//table[@class="score-stats"]/tr[contains(./td[contains(@class, "score-label")], "4")]/td/div/span/small/text()')
-        anime_loader.add_xpath("score_03_count", '//table[@class="score-stats"]/tr[contains(./td[contains(@class, "score-label")], "3")]/td/div/span/small/text()')
-        anime_loader.add_xpath("score_02_count", '//table[@class="score-stats"]/tr[contains(./td[contains(@class, "score-label")], "2")]/td/div/span/small/text()')
-        anime_loader.add_xpath("score_01_count", '//table[@class="score-stats"]/tr[contains(./td[contains(@class, "score-label")], "1") and not(contains(./td[contains(@class, "score-label")], "10"))]/td/div/span/small/text()')
+            anime_loader.add_xpath("score_10_count", '//table[@class="score-stats"]/tbody/tr[contains(./td[contains(@class, "score-label")], "10")]/td/div/span/small/text()')
+            anime_loader.add_xpath("score_09_count", '//table[@class="score-stats"]/tbody/tr[contains(./td[contains(@class, "score-label")], "9")]/td/div/span/small/text()')
+            anime_loader.add_xpath("score_08_count", '//table[@class="score-stats"]/tbody/tr[contains(./td[contains(@class, "score-label")], "8")]/td/div/span/small/text()')
+            anime_loader.add_xpath("score_07_count", '//table[@class="score-stats"]/tbody/tr[contains(./td[contains(@class, "score-label")], "7")]/td/div/span/small/text()')
+            anime_loader.add_xpath("score_06_count", '//table[@class="score-stats"]/tbody/tr[contains(./td[contains(@class, "score-label")], "6")]/td/div/span/small/text()')
+            anime_loader.add_xpath("score_05_count", '//table[@class="score-stats"]/tbody/tr[contains(./td[contains(@class, "score-label")], "5")]/td/div/span/small/text()')
+            anime_loader.add_xpath("score_04_count", '//table[@class="score-stats"]/tbody/tr[contains(./td[contains(@class, "score-label")], "4")]/td/div/span/small/text()')
+            anime_loader.add_xpath("score_03_count", '//table[@class="score-stats"]/tbody/tr[contains(./td[contains(@class, "score-label")], "3")]/td/div/span/small/text()')
+            anime_loader.add_xpath("score_02_count", '//table[@class="score-stats"]/tbody/tr[contains(./td[contains(@class, "score-label")], "2")]/td/div/span/small/text()')
+            anime_loader.add_xpath("score_01_count", '//table[@class="score-stats"]/tbody/tr[contains(./td[contains(@class, "score-label")], "1") and not(contains(./td[contains(@class, "score-label")], "10"))]/td/div/span/small/text()')
         
         return anime_loader.load_item()
 
-    def parse_clubs_page_for_clubs(self, response):
+    def parse_clubs_page_for_clubs(self, response, local_file_response = False):
         
         anime_loader = ItemLoader(AnimeItem(), response=response)
         anime_loader.add_xpath('clubs', '//div[@class="borderClass"]/a/@href')
         return anime_loader.load_item()
 
-    def parse_pics_page_for_pics(self, response):
+    def parse_pics_page_for_pics(self, response, local_file_response = False):
 
         anime_loader = ItemLoader(AnimeItem(), response=response)
         anime_loader.add_xpath('pics', '//div[@class="picSurround"]/a/img/@data-src')
