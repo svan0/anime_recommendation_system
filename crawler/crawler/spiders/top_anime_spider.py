@@ -18,5 +18,4 @@ class TopAnimeSpider(scrapy.Spider):
         for link in response.xpath('//tr[@class="ranking-list"]/td[contains(@class, "title")]/a/@href').getall():
             anime_schedule_loader = ItemLoader(item=AnimeSchedulerItem())
             anime_schedule_loader.add_value('url', link)
-            anime_schedule_loader.add_value('last_inspect_date', datetime.now().strftime("%Y-%m-%dT%H:%M:%S"))
             yield anime_schedule_loader.load_item()
