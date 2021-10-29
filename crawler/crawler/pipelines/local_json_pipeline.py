@@ -1,6 +1,7 @@
 import os
 import json
-from datetime import datetime
+import datetime
+from pathlib import Path
 
 from crawler.items.data_items.anime_item import AnimeItem
 from crawler.items.data_items.review_item import ReviewItem
@@ -19,17 +20,19 @@ from crawler.items.data_items.utils.utils import *
 class LocalJSONSavePipeline:
 
     def open_spider(self, spider):
-        os.makedirs('local_output/', exist_ok=True)
-        os.makedirs('local_output/AnimeItem/', exist_ok=True)
-        os.makedirs('local_output/ReviewItem/', exist_ok=True)
-        os.makedirs('local_output/RecommendationItem/', exist_ok=True)
-        os.makedirs('local_output/RelatedAnimeItem/', exist_ok=True)
-        os.makedirs('local_output/ProfileItem/', exist_ok=True)
-        os.makedirs('local_output/FavoriteItem/', exist_ok=True)
-        os.makedirs('local_output/ActivityItem/', exist_ok=True)
-        os.makedirs('local_output/WatchStatusItem/', exist_ok=True)
-        os.makedirs('local_output/AnimeSchedulerItem/', exist_ok=True)
-        os.makedirs('local_output/ProfileSchedulerItem/', exist_ok=True)
+        self.folder_path = Path(os.path.realpath(__file__)).parent.parent.parent.absolute()
+
+        os.makedirs(os.path.join(self.folder_path, 'local_output/'), exist_ok=True)
+        os.makedirs(os.path.join(self.folder_path, 'local_output/AnimeItem/'), exist_ok=True)
+        os.makedirs(os.path.join(self.folder_path, 'local_output/ReviewItem/'), exist_ok=True)
+        os.makedirs(os.path.join(self.folder_path, 'local_output/RecommendationItem/'), exist_ok=True)
+        os.makedirs(os.path.join(self.folder_path, 'local_output/RelatedAnimeItem/'), exist_ok=True)
+        os.makedirs(os.path.join(self.folder_path, 'local_output/ProfileItem/'), exist_ok=True)
+        os.makedirs(os.path.join(self.folder_path, 'local_output/FavoriteItem/'), exist_ok=True)
+        os.makedirs(os.path.join(self.folder_path, 'local_output/ActivityItem/'), exist_ok=True)
+        os.makedirs(os.path.join(self.folder_path, 'local_output/WatchStatusItem/'), exist_ok=True)
+        os.makedirs(os.path.join(self.folder_path, 'local_output/AnimeSchedulerItem/'), exist_ok=True)
+        os.makedirs(os.path.join(self.folder_path, 'local_output/ProfileSchedulerItem/'), exist_ok=True)
 
 
     def process_item(self, item, spider):
@@ -68,9 +71,10 @@ class LocalJSONSavePipeline:
             return item
         
         item_class = item.__class__.__name__
-        time_now = datetime.now().strftime("%Y-%m-%dT%H:%M:%S:%f")
+        time_now = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S:%f")
 
-        file_path = f"local_output/{item_class}/{uid}_{time_now}.json"
+        file_path = os.path.join(self.folder_path, f"local_output/{item_class}/{uid}_{time_now}.json")
+        
         with open(file_path, 'w+') as f:
             f.write(json.dumps(dict(item), indent=4, sort_keys=True))
         

@@ -13,7 +13,7 @@ class WatchStatusProcessPipeline:
         item['crawl_date'] = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
         
         fields_not_null = [
-            'url', 'crawl_date', 'watching_count', 'anime_id', 'status'
+            'crawl_date', 'user_id', 'anime_id', 'status'
         ]
         for field in fields_not_null:
             if field not in item:

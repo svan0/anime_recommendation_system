@@ -8,10 +8,6 @@ from crawler.items.scheduler_items.anime_item import AnimeSchedulerItem
 class TopAnimeSpider(scrapy.Spider):
     name = 'top_anime'
     allowed_domains = ['myanimelist.net']
-    start_urls = [
-        f'https://myanimelist.net/topanime.php?limit={x}'
-        for x in range(0, 1000, 50)
-    ]
 
     def parse(self, response):
         self.logger.info('Parse function called on %s', response.url)

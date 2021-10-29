@@ -20,14 +20,6 @@ from crawler.items.scheduler_items.anime_item import AnimeSchedulerItem
 class ProfileSpider(scrapy.Spider):
     name = 'profile'
     allowed_domains = ['myanimelist.net']
-    start_urls = [
-        'https://myanimelist.net/profile/Archaeon',
-        'https://myanimelist.net/profile/literaturenerd',
-        'https://myanimelist.net/profile/M0nkeyD_Luffy',
-        'https://myanimelist.net/profile/BiddingGortonio',
-        'https://myanimelist.net/profile/bakababe',
-        'https://myanimelist.net/profile/ryuu_zer0'
-    ]
 
     def parse_profile_main_page(self, response, local_file_response = False):
         

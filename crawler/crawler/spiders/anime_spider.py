@@ -15,15 +15,6 @@ from crawler.items.scheduler_items.profile_item import ProfileSchedulerItem
 class AnimeSpider(scrapy.Spider):
     name = 'anime'
     allowed_domains = ['myanimelist.net']
-    start_urls = [
-        'https://myanimelist.net/anime/46352/Blue_Period',
-        'https://myanimelist.net/anime/5561/Yayoi',
-        'https://myanimelist.net/anime/43299/Wonder_Egg_Priority',
-        'https://myanimelist.net/anime/47778/Kimetsu_no_Yaiba__Yuukaku-hen',
-        'https://myanimelist.net/anime/40357/Tate_no_Yuusha_no_Nariagari_Season_3',
-        'https://myanimelist.net/anime/39486/Gintama__The_Final',
-        'https://myanimelist.net/anime/40356/Tate_no_Yuusha_no_Nariagari_Season_2'
-    ]
 
     def parse_anime_main_page_for_info(self, response, local_file_response = False):
 
