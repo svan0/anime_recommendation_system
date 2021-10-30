@@ -31,7 +31,7 @@ class AnimeItem(scrapy.Item):
         output_processor = TakeFirst()
     )
     source_type = scrapy.Field(
-        input_processor = MapCompose(clean_text),
+        input_processor = MapCompose(none_text, clean_text),
         output_processor = Join(separator = '')
     )
     num_episodes = scrapy.Field(
@@ -39,7 +39,7 @@ class AnimeItem(scrapy.Item):
         output_processor = TakeFirst()
     )
     status = scrapy.Field(
-        input_processor = MapCompose(clean_text),
+        input_processor = MapCompose(none_text, clean_text),
         output_processor = Join(separator = '')
     )
     start_date = scrapy.Field(
@@ -61,8 +61,13 @@ class AnimeItem(scrapy.Item):
     season = scrapy.Field(
         output_processor = TakeFirst()
     )
-    studios = scrapy.Field()
-    genres = scrapy.Field()
+    studios = scrapy.Field(
+        input_processor = MapCompose(none_text)
+    )
+    genres = scrapy.Field(
+        input_processor = MapCompose(none_text)
+    )
+    
     score = scrapy.Field(
         input_processor = MapCompose(transform_to_float),
         output_processor = TakeFirst()
@@ -75,6 +80,7 @@ class AnimeItem(scrapy.Item):
         input_processor = MapCompose(transform_to_int),
         output_processor = TakeFirst()
     )
+
     popularity_rank = scrapy.Field(
         input_processor = MapCompose(transform_to_int),
         output_processor = TakeFirst()
@@ -87,6 +93,7 @@ class AnimeItem(scrapy.Item):
         input_processor = MapCompose(transform_to_int),
         output_processor = TakeFirst()
     )
+    
     watching_count = scrapy.Field(
         input_processor = MapCompose(transform_to_int),
         output_processor = TakeFirst()
@@ -111,6 +118,7 @@ class AnimeItem(scrapy.Item):
         input_processor = MapCompose(transform_to_int),
         output_processor = TakeFirst()
     )
+
     score_10_count = scrapy.Field(
         input_processor = MapCompose(transform_to_int),
         output_processor = TakeFirst()
@@ -151,6 +159,7 @@ class AnimeItem(scrapy.Item):
         input_processor = MapCompose(transform_to_int),
         output_processor = TakeFirst()
     )
+
     clubs = scrapy.Field(
         input_processor = MapCompose(get_club_id)
     )

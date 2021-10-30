@@ -18,73 +18,7 @@ class CloudSQLPipeline:
         self.db_conn = None
         self.cursor = None
 
-    def insert_anime(self, item):
-        url = f"'{item['url']}'"
-        end_date = f"'{item['end_date']}'" if 'end_date' in item else "NULL"
-        watching_count = item['watching_count'] if 'watching_count' in item else "NULL"
-        last_crawl_date = f"'{item['last_crawl_date']}'" if 'last_crawl_date' in item else "NULL"
-        last_inspect_date = f"'{item['last_inspect_date']}'"
-        
-        sql_query = f"""
-            INSERT INTO anime_schedule (
-                url, 
-                end_date,
-                watching_count,
-                last_crawl_date, 
-                last_inspect_date
-            )
-            VALUES (
-                {url},
-                {end_date},
-                {watching_count},
-                {last_crawl_date},
-                {last_inspect_date}
-            )
-            ON DUPLICATE KEY UPDATE
-                end_date = COALESCE({end_date}, watching_count),
-                watching_count = COALESCE({watching_count}, watching_count),
-                last_crawl_date  = COALESCE({last_crawl_date}, last_inspect_date),
-                last_inspect_date = {last_inspect_date}
-            ;
-        """
-        self.cursor.execute(sql_query)
-        self.db_conn.commit()
-    
-    def insert_profile(self, item):
-        url = f"'{item['url']}'"
-        last_online_date = f"'{item['last_online_date']}'" if 'last_online_date' in item else "NULL"
-        last_crawl_date = f"'{item['last_crawl_date']}'" if 'last_crawl_date' in item else "NULL"
-        last_inspect_date = f"'{item['last_inspect_date']}'"
-
-        sql_query = f"""
-            INSERT INTO profile_schedule 
-                (url, last_online_date, last_crawl_date, last_inspect_date)
-            VALUES (
-                {url},
-                {last_online_date},
-                {last_crawl_date},
-                {last_inspect_date}
-            )
-            ON DUPLICATE KEY UPDATE
-                last_online_date = COALESCE({last_online_date}, last_online_date),
-                last_crawl_date = COALESCE({last_crawl_date}, last_crawl_date),
-                last_inspect_date = {last_inspect_date}
-            ;
-        """
-        self.cursor.execute(sql_query)
-        self.db_conn.commit()
-    
-    def open_spider(self, spider):
-
-        self.db_conn = connector.connect(
-            os.getenv("SCHEDULER_DB_INSTANCE"),
-            "pymysql",
-            user=os.getenv("SCHEDULER_DB_USER"),
-            password=os.getenv("SCHEDULER_DB_PASSWORD"),
-            db=os.getenv("SCHEDULER_DB")
-        )
-        self.cursor = self.db_conn.cursor()
-        
+    def create_tables(self):
         self.cursor.execute(
             """
                 CREATE TABLE IF NOT EXISTS anime_schedule (
@@ -107,6 +41,148 @@ class CloudSQLPipeline:
             """
         )
         self.db_conn.commit()
+    
+    def drop_tables(self):
+        self.cursor.execute(
+            """
+                DROP TABLE IF EXISTS anime_schedule
+            """
+        )
+        self.cursor.execute(
+            """
+                DROP TABLE IF EXISTS profile_schedule 
+            """
+        )
+        self.db_conn.commit()
+
+    def insert_anime(self, item):
+        url = f"'{item['url']}'"
+        end_date = f"'{item['end_date']}'" if 'end_date' in item else "NULL"
+        watching_count = item['watching_count'] if 'watching_count' in item else "NULL"
+        last_crawl_date = f"'{item['last_crawl_date']}'" if 'last_crawl_date' in item else "NULL"
+        last_inspect_date = f"'{item['last_inspect_date']}'"
+        
+        sql_query = f"""
+            INSERT INTO anime_schedule (
+                url, 
+                end_date,
+                watching_count,
+                last_crawl_date, 
+                last_inspect_date
+            )
+            VALUES (
+                {url},
+                {end_date},
+                {watching_count},
+                {last_crawl_date},
+                {last_inspect_date}
+            )
+            ON CONFLICT(url) DO UPDATE
+                SET end_date = 
+                        CASE WHEN last_crawl_date IS NULL THEN {end_date}
+                        ELSE (
+                            CASE WHEN {last_crawl_date} IS NULL THEN end_date
+                            ELSE (
+                                CASE WHEN {last_crawl_date} > last_crawl_date THEN {end_date}
+                                ELSE end_date
+                                END
+                            )
+                            END
+                        )
+                        END,
+                    watching_count = 
+                        CASE WHEN last_crawl_date IS NULL THEN {watching_count}
+                        ELSE (
+                            CASE WHEN {last_crawl_date} IS NULL THEN watching_count
+                            ELSE (
+                                CASE WHEN {last_crawl_date} > last_crawl_date THEN {watching_count}
+                                ELSE watching_count
+                                END
+                            )
+                            END
+                        )
+                        END,
+                    last_crawl_date  = 
+                        CASE WHEN last_crawl_date IS NULL THEN {last_crawl_date}
+                        ELSE (
+                            CASE WHEN {last_crawl_date} IS NULL THEN last_crawl_date
+                            ELSE (
+                                CASE WHEN {last_crawl_date} > last_crawl_date THEN {last_crawl_date}
+                                ELSE last_crawl_date
+                                END
+                            )
+                            END
+                        )
+                        END,
+                    last_inspect_date = 
+                        CASE WHEN last_inspect_date > {last_inspect_date} THEN last_inspect_date
+                        ELSE {last_inspect_date}
+                        END
+            ;
+        """
+        self.cursor.execute(sql_query)
+        self.db_conn.commit()
+    
+    def insert_profile(self, item):
+        url = f"'{item['url']}'"
+        last_online_date = f"'{item['last_online_date']}'" if 'last_online_date' in item else "NULL"
+        last_crawl_date = f"'{item['last_crawl_date']}'" if 'last_crawl_date' in item else "NULL"
+        last_inspect_date = f"'{item['last_inspect_date']}'"
+
+        sql_query = f"""
+            INSERT INTO profile_schedule 
+                (url, last_online_date, last_crawl_date, last_inspect_date)
+            VALUES (
+                {url},
+                {last_online_date},
+                {last_crawl_date},
+                {last_inspect_date}
+            )
+            ON CONFLICT(url) DO UPDATE
+                SET last_online_date = 
+                        CASE WHEN last_crawl_date IS NULL THEN {last_online_date}
+                        ELSE (
+                            CASE WHEN {last_crawl_date} IS NULL THEN last_online_date
+                            ELSE (
+                                CASE WHEN {last_crawl_date} > last_crawl_date THEN {last_online_date}
+                                ELSE last_online_date
+                                END
+                            )
+                            END
+                        )
+                        END,
+                    last_crawl_date = 
+                        CASE WHEN last_crawl_date IS NULL THEN {last_crawl_date}
+                        ELSE (
+                            CASE WHEN {last_crawl_date} IS NULL THEN last_crawl_date
+                            ELSE (
+                                CASE WHEN {last_crawl_date} > last_crawl_date THEN {last_crawl_date}
+                                ELSE last_crawl_date
+                                END
+                            )
+                            END
+                        )
+                        END,
+                    last_inspect_date = 
+                        CASE WHEN last_inspect_date > {last_inspect_date} THEN last_inspect_date
+                        ELSE {last_inspect_date}
+                        END
+            ;
+        """
+        self.cursor.execute(sql_query)
+        self.db_conn.commit()
+    
+    def open_spider(self, spider):
+
+        self.db_conn = connector.connect(
+            os.getenv("SCHEDULER_DB_INSTANCE"),
+            "pymysql",
+            user=os.getenv("SCHEDULER_DB_USER"),
+            password=os.getenv("SCHEDULER_DB_PASSWORD"),
+            db=os.getenv("SCHEDULER_DB")
+        )
+        self.cursor = self.db_conn.cursor()
+        self.create_tables()
 
     def process_item(self, item, spider):
 

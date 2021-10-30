@@ -1,15 +1,60 @@
 import re
 from dateutil.parser import parse as dateutil_parse
-from datetime import datetime
+from dateutil.relativedelta import relativedelta
+import datetime
 
+
+def none_text(text):
+    if text in {"add some", "None found", "N/A", "Unknown", "Not available"}:
+        return None
+    return text
+
+def get_past_date(str_days_ago):
+    
+    TODAY = datetime.date.today()
+    splitted = str_days_ago.split()
+    
+    if len(splitted) == 1 and splitted[0].lower() == 'now':
+        return datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S:%f")
+    
+    elif len(splitted) == 1 and splitted[0].lower() == 'today':
+        return TODAY.strftime("%Y-%m-%dT%H:%M:%S:%f")
+    
+    elif len(splitted) == 1 and splitted[0].lower() == 'yesterday':
+        date = TODAY - relativedelta(days=1)
+        return date.strftime("%Y-%m-%dT%H:%M:%S:%f")
+    
+    elif splitted[1].lower() in ['hour', 'hours', 'hr', 'hrs', 'h']:
+        date = datetime.datetime.now() - relativedelta(hours=int(splitted[0]))
+        return date.strftime("%Y-%m-%dT%H:%M:%S:%f")
+
+    elif splitted[1].lower() in ['day', 'days', 'd']:
+        date = TODAY - relativedelta(days=int(splitted[0]))
+        return date.strftime("%Y-%m-%dT%H:%M:%S:%f")
+    
+    elif splitted[1].lower() in ['wk', 'wks', 'week', 'weeks', 'w']:
+        date = TODAY - relativedelta(weeks=int(splitted[0]))
+        return date.strftime("%Y-%m-%dT%H:%M:%S:%f")
+    
+    elif splitted[1].lower() in ['mon', 'mons', 'month', 'months', 'm']:
+        date = TODAY - relativedelta(months=int(splitted[0]))
+        return date.strftime("%Y-%m-%dT%H:%M:%S:%f")
+    
+    elif splitted[1].lower() in ['yrs', 'yr', 'years', 'year', 'y']:
+        date = TODAY - relativedelta(years=int(splitted[0]))
+        return date.strftime("%Y-%m-%dT%H:%M:%S:%f")
+    
+    else:
+        raise Exception()
 
 def get_last_online_date(text):
-    if text == "Now":
-        return datetime.now().strftime("%Y-%m-%dT%H:%M:%S:%f")
     try:
-        return parse_date(text)
+        return get_past_date(text)
     except:
-        return None
+        try:
+            return parse_date(text)
+        except:
+            return None
 
 def get_url(url):
     if "myanimelist.net" not in url:
@@ -26,7 +71,7 @@ def get_anime_id(anime_id):
     # If anime_id is the URL to the anime, extract the id
     # else return the anime_id
     try:
-        return anime_id.split('anime/')[1].split('/')[0]
+        return anime_id.split('/anime/')[1].split('/')[0]
     except:
         return anime_id
 
@@ -34,9 +79,12 @@ def get_user_id(user_id):
     # If user_id is the URL to the user, extract the id
     # else return the user_id
     try:
-        return user_id.split('profile/')[1].split('/')[0]
+        return user_id.split('/profile/')[1].split('/')[0]
     except:
-        return user_id
+        try:
+            return user_id.split('type=rw&u=')[1]
+        except:
+            return user_id
 
 def get_club_id(club_id):
     # If club_id is the URL to the club, extract the id

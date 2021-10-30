@@ -56,7 +56,3 @@ class ReviewItem(scrapy.Item):
         input_processor = MapCompose(transform_to_int),
         output_processor = TakeFirst()
     )
-    text = scrapy.Field(
-        input_processor = MapCompose(clean_text),
-        output_processor = Join(separator = ' ')
-    )
