@@ -15,20 +15,22 @@ class CloudSQLPipeline:
             """
                 CREATE TABLE IF NOT EXISTS anime_schedule (
                     url VARCHAR(255) PRIMARY KEY NOT NULL,
-                    end_date DATETIME,
+                    end_date TIMESTAMP,
                     watching_count INT,
-                    last_crawl_date DATETIME,
-                    last_inspect_date DATETIME
+                    last_crawl_date TIMESTAMP,
+                    last_inspect_date TIMESTAMP
                 )
             """
         )
+        self.db_conn.commit()
+        
         self.cursor.execute(
             """
                 CREATE TABLE IF NOT EXISTS profile_schedule (
                     url VARCHAR(255) PRIMARY KEY NOT NULL,
-                    last_online_date DATETIME,
-                    last_crawl_date DATETIME,
-                    last_inspect_date DATETIME
+                    last_online_date TIMESTAMP,
+                    last_crawl_date TIMESTAMP,
+                    last_inspect_date TIMESTAMP
                 )
             """
         )
@@ -71,44 +73,44 @@ class CloudSQLPipeline:
             )
             ON CONFLICT(url) DO UPDATE
                 SET end_date = 
-                        CASE WHEN last_crawl_date IS NULL THEN {end_date}
+                        CASE WHEN anime_schedule.last_crawl_date IS NULL THEN excluded.end_date
                         ELSE (
-                            CASE WHEN {last_crawl_date} IS NULL THEN end_date
+                            CASE WHEN excluded.last_crawl_date IS NULL THEN anime_schedule.end_date
                             ELSE (
-                                CASE WHEN {last_crawl_date} > last_crawl_date THEN {end_date}
-                                ELSE end_date
+                                CASE WHEN excluded.last_crawl_date > anime_schedule.last_crawl_date THEN excluded.end_date
+                                ELSE anime_schedule.end_date
                                 END
                             )
                             END
                         )
                         END,
                     watching_count = 
-                        CASE WHEN last_crawl_date IS NULL THEN {watching_count}
+                        CASE WHEN anime_schedule.last_crawl_date IS NULL THEN excluded.watching_count
                         ELSE (
-                            CASE WHEN {last_crawl_date} IS NULL THEN watching_count
+                            CASE WHEN excluded.last_crawl_date IS NULL THEN anime_schedule.watching_count
                             ELSE (
-                                CASE WHEN {last_crawl_date} > last_crawl_date THEN {watching_count}
-                                ELSE watching_count
+                                CASE WHEN excluded.last_crawl_date > anime_schedule.last_crawl_date THEN excluded.watching_count
+                                ELSE anime_schedule.watching_count
                                 END
                             )
                             END
                         )
                         END,
                     last_crawl_date  = 
-                        CASE WHEN last_crawl_date IS NULL THEN {last_crawl_date}
+                        CASE WHEN anime_schedule.last_crawl_date IS NULL THEN excluded.last_crawl_date
                         ELSE (
-                            CASE WHEN {last_crawl_date} IS NULL THEN last_crawl_date
+                            CASE WHEN excluded.last_crawl_date IS NULL THEN anime_schedule.last_crawl_date
                             ELSE (
-                                CASE WHEN {last_crawl_date} > last_crawl_date THEN {last_crawl_date}
-                                ELSE last_crawl_date
+                                CASE WHEN excluded.last_crawl_date > anime_schedule.last_crawl_date THEN excluded.last_crawl_date
+                                ELSE anime_schedule.last_crawl_date
                                 END
                             )
                             END
                         )
                         END,
                     last_inspect_date = 
-                        CASE WHEN last_inspect_date > {last_inspect_date} THEN last_inspect_date
-                        ELSE {last_inspect_date}
+                        CASE WHEN anime_schedule.last_inspect_date > excluded.last_inspect_date THEN anime_schedule.last_inspect_date
+                        ELSE excluded.last_inspect_date
                         END
             ;
         """
@@ -132,32 +134,32 @@ class CloudSQLPipeline:
             )
             ON CONFLICT(url) DO UPDATE
                 SET last_online_date = 
-                        CASE WHEN last_crawl_date IS NULL THEN {last_online_date}
+                        CASE WHEN profile_schedule.last_crawl_date IS NULL THEN excluded.last_online_date
                         ELSE (
-                            CASE WHEN {last_crawl_date} IS NULL THEN last_online_date
+                            CASE WHEN excluded.last_crawl_date IS NULL THEN profile_schedule.last_online_date
                             ELSE (
-                                CASE WHEN {last_crawl_date} > last_crawl_date THEN {last_online_date}
-                                ELSE last_online_date
+                                CASE WHEN excluded.last_crawl_date > profile_schedule.last_crawl_date THEN excluded.last_online_date
+                                ELSE profile_schedule.last_online_date
                                 END
                             )
                             END
                         )
                         END,
                     last_crawl_date = 
-                        CASE WHEN last_crawl_date IS NULL THEN {last_crawl_date}
+                        CASE WHEN profile_schedule.last_crawl_date IS NULL THEN excluded.last_crawl_date
                         ELSE (
-                            CASE WHEN {last_crawl_date} IS NULL THEN last_crawl_date
+                            CASE WHEN excluded.last_crawl_date IS NULL THEN profile_schedule.last_crawl_date
                             ELSE (
-                                CASE WHEN {last_crawl_date} > last_crawl_date THEN {last_crawl_date}
-                                ELSE last_crawl_date
+                                CASE WHEN last_crawl_date > profile_schedule.last_crawl_date THEN last_crawl_date
+                                ELSE profile_schedule.last_crawl_date
                                 END
                             )
                             END
                         )
                         END,
                     last_inspect_date = 
-                        CASE WHEN last_inspect_date > {last_inspect_date} THEN last_inspect_date
-                        ELSE {last_inspect_date}
+                        CASE WHEN profile_schedule.last_inspect_date > excluded.last_inspect_date THEN profile_schedule.last_inspect_date
+                        ELSE excluded.last_inspect_date
                         END
             ;
         """
@@ -171,19 +173,22 @@ class CloudSQLPipeline:
             "pg8000",
             user=os.getenv("SCHEDULER_DB_USER"),
             password=os.getenv("SCHEDULER_DB_PASSWORD"),
-            db=os.getenv("SCHEDULER_DB")
+            db=os.getenv("SCHEDULER_DB"),
+            port='5432'
         )
         self.cursor = self.db_conn.cursor()
         self.create_tables()
+        self.cursor.execute("SELECT * from anime_schedule")
+        result = self.cursor.fetchall()
+        for row in result:
+            print(row)
 
     def process_item(self, item, spider):
-
         if isinstance(item, AnimeSchedulerItem):
             self.insert_anime(item)
         
         if isinstance(item, ProfileSchedulerItem):
             self.insert_profile(item)
-        
         return item
 
 
