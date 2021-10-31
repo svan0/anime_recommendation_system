@@ -1,5 +1,4 @@
 import time
-import re
 from datetime import datetime
 
 from selenium import webdriver
