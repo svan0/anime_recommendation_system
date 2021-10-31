@@ -167,8 +167,7 @@ class ProfileSpider(scrapy.Spider):
         self.logger.info('Parsing profile clubs url:  %s', response.url)
 
         profile_item = response.meta['profile_item']
-        profile_item = {**profile_item, **self.parse_clubs_page_for_clubs(response)}
-        
+        profile_item = ProfileItem({**profile_item, **self.parse_clubs_page_for_clubs(response)})
         yield profile_item
     
     def parse_user_activity(self, response):
@@ -180,11 +179,10 @@ class ProfileSpider(scrapy.Spider):
         for activity_anime_schedule in self.parse_activity_page_for_scheduler(response):
             yield activity_anime_schedule
         
-    
     def parse_anime_status(self, response):
         self.logger.info('Parsing anime status url:  %s', response.url)
 
-        pause_time = 1
+        pause_time = 10
         driver = webdriver.Chrome(ChromeDriverManager().install())
         driver.get(response.url)
 

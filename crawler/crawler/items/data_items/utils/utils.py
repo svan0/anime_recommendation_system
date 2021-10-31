@@ -10,39 +10,42 @@ def none_text(text):
     return text
 
 def get_past_date(str_days_ago):
-    
     TODAY = datetime.date.today()
     splitted = str_days_ago.split()
     
     if len(splitted) == 1 and splitted[0].lower() == 'now':
-        return datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S:%f")
+        return datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
     
-    elif len(splitted) == 1 and splitted[0].lower() == 'today':
-        return TODAY.strftime("%Y-%m-%dT%H:%M:%S:%f")
+    elif splitted[0].lower() == 'today':
+        if len(splitted) > 1:
+            TODAY = dateutil_parse(" ".join(splitted[1:]))
+        return TODAY.strftime("%Y-%m-%dT%H:%M:%S")
     
-    elif len(splitted) == 1 and splitted[0].lower() == 'yesterday':
+    elif splitted[0].lower() == 'yesterday,':
+        if len(splitted) > 1:
+            TODAY = dateutil_parse(" ".join(splitted[1:]))
         date = TODAY - relativedelta(days=1)
-        return date.strftime("%Y-%m-%dT%H:%M:%S:%f")
+        return date.strftime("%Y-%m-%dT%H:%M:%S")
     
     elif splitted[1].lower() in ['hour', 'hours', 'hr', 'hrs', 'h']:
         date = datetime.datetime.now() - relativedelta(hours=int(splitted[0]))
-        return date.strftime("%Y-%m-%dT%H:%M:%S:%f")
+        return date.strftime("%Y-%m-%dT%H:%M:%S")
 
     elif splitted[1].lower() in ['day', 'days', 'd']:
         date = TODAY - relativedelta(days=int(splitted[0]))
-        return date.strftime("%Y-%m-%dT%H:%M:%S:%f")
+        return date.strftime("%Y-%m-%dT%H:%M:%S")
     
     elif splitted[1].lower() in ['wk', 'wks', 'week', 'weeks', 'w']:
         date = TODAY - relativedelta(weeks=int(splitted[0]))
-        return date.strftime("%Y-%m-%dT%H:%M:%S:%f")
+        return date.strftime("%Y-%m-%dT%H:%M:%S")
     
     elif splitted[1].lower() in ['mon', 'mons', 'month', 'months', 'm']:
         date = TODAY - relativedelta(months=int(splitted[0]))
-        return date.strftime("%Y-%m-%dT%H:%M:%S:%f")
+        return date.strftime("%Y-%m-%dT%H:%M:%S")
     
     elif splitted[1].lower() in ['yrs', 'yr', 'years', 'year', 'y']:
         date = TODAY - relativedelta(years=int(splitted[0]))
-        return date.strftime("%Y-%m-%dT%H:%M:%S:%f")
+        return date.strftime("%Y-%m-%dT%H:%M:%S")
     
     else:
         raise Exception()

@@ -2,7 +2,7 @@ terraform {
   required_providers {
     google = {
       source  = "hashicorp/google"
-      version = "3.5.0"
+      version = "3.90.0"
     }
   }
 }
@@ -28,9 +28,9 @@ resource "google_storage_bucket_object" "scheduler_cloud_functions_artifact" {
 }
 
 resource "google_sql_database_instance" "crawl_scheduler_db_instance" {
-  name             = "scheduler-db-instance-dev-small-2"
+  name             = "scheduler-db-instance-dev-small-3"
   region           = "us-central1"
-  database_version = "POSTGRES_13"
+  database_version = "POSTGRES_11"
   settings {
     availability_type = "ZONAL"
     tier              = "db-custom-1-3840"
@@ -41,7 +41,7 @@ resource "google_sql_database" "crawl_scheduler_db" {
   instance = google_sql_database_instance.crawl_scheduler_db_instance.name
 }
 resource "google_sql_user" "user" {
-  name     = "root"
+  name     = "svanO"
   instance = google_sql_database_instance.crawl_scheduler_db_instance.name
   password = "1123581321"
 }

@@ -1,4 +1,5 @@
 from datetime import datetime
+import logging
 
 from scrapy.exceptions import DropItem
 from crawler.items.data_items.profile_item import ProfileItem
@@ -24,6 +25,7 @@ class ProfileProcessPipeline:
             if field not in item:
                 raise DropItem(f"ProfileItem {item['url']} dropped because '{field}' is null")
         
+        logging.info(f"ProfileItem {item['url']} processed")
         return item
 
 

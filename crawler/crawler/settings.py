@@ -33,6 +33,8 @@ CONCURRENT_REQUESTS_PER_IP = 16
 # Disable cookies (enabled by default)
 COOKIES_ENABLED = False
 
+HTTPERROR_ALLOWED_CODES = [404]
+
 # Disable Telnet Console (enabled by default)
 #TELNETCONSOLE_ENABLED = False
 

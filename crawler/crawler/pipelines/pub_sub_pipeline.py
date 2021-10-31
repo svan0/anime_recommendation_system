@@ -1,6 +1,6 @@
 import os
 import json
-from datetime import datetime
+import logging
 
 from google.cloud import pubsub
 
@@ -43,43 +43,64 @@ class PubSubPipeline:
 
         message = dict(item)
         message = json.dumps(message).encode("utf-8")
+        
+        topic_path = None
 
         if isinstance(item, AnimeItem):
             topic_path = self.publish_client.topic_path(
                 self.project, self.anime_topic
             )
-        if isinstance(item, ProfileItem):
+            logging.info(f"{item['url']} anime published to PubSub")
+        
+        elif isinstance(item, ProfileItem):
             topic_path = self.publish_client.topic_path(
                 self.project, self.profile_topic
             )
-        if isinstance(item, FavoriteItem):
+            logging.info(f"{item['url']} profile published to PubSub")
+        
+        elif isinstance(item, FavoriteItem):
             topic_path = self.publish_client.topic_path(
                 self.project, self.favorite_topic
             )
-        if isinstance(item, ReviewItem):
+            logging.info("favorite published to PubSub")
+        
+        elif isinstance(item, ReviewItem):
             topic_path = self.publish_client.topic_path(
                 self.project, self.review_topic
             )
-        if isinstance(item, WatchStatusItem):
+            logging.info(f"{item['url']} review published to PubSub")
+        
+        elif isinstance(item, WatchStatusItem):
             topic_path = self.publish_client.topic_path(
                 self.project, self.watch_status_topic
             )
-        if isinstance(item, ActivityItem):
+            logging.info("watch status published to PubSub")
+
+        elif isinstance(item, ActivityItem):
             topic_path = self.publish_client.topic_path(
                 self.project, self.activity_topic
             )
-        if isinstance(item, RecommendationItem):
+            logging.info("activity published to PubSub")
+        
+        elif isinstance(item, RecommendationItem):
             topic_path = self.publish_client.topic_path(
                 self.project, self.recommendation_topic
             )
-        if isinstance(item, RelatedAnimeItem):
+            logging.info("recommended anime published to PubSub")
+        
+        elif isinstance(item, RelatedAnimeItem):
             topic_path = self.publish_client.topic_path(
                 self.project, self.related_anime_topic
             )
+            logging.info("related anime published to PubSub")
 
+        else:
+            return item
+        
         self.publish_client.publish(topic_path, message)
 
         if isinstance(item, AnimeItem):
+            logging.info(f"anime {item['url']} prepare anime schedule")
             anime_schedule_loader = ItemLoader(item=AnimeSchedulerItem())
             anime_schedule_loader.add_value('url', item['url'])
             anime_schedule_loader.add_value('end_date', item['end_date'] if 'end_date' in item else None)
@@ -89,6 +110,7 @@ class PubSubPipeline:
             return anime_schedule_loader.load_item()
 
         elif isinstance(item, ProfileItem):
+            logging.info(f"profile {item['url']} prepare profile schedule")
             profile_schedule_loader = ItemLoader(item=ProfileSchedulerItem())
             profile_schedule_loader.add_value('url', item['url'])
             profile_schedule_loader.add_value('last_online_date', item['last_online_date'])

@@ -109,3 +109,6 @@ def schedule_profile(request):
         }
         message = json.dumps(message).encode("utf-8")
         publish_client.publish(topic_path, message)
+
+if __name__ == '__main__':
+    print(get_top_priority_profiles(10))

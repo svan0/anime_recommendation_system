@@ -1,4 +1,6 @@
 import os
+import logging
+import time
 
 from crawler.items.scheduler_items.anime_item import AnimeSchedulerItem
 from crawler.items.scheduler_items.profile_item import ProfileSchedulerItem
@@ -7,10 +9,13 @@ from google.cloud.sql.connector import connector
 
 class CloudSQLPipeline:
     def __init__(self):
+        
         self.db_conn = None
         self.cursor = None
+        self.last_commit_time = time.time()
 
     def create_tables(self):
+        
         self.cursor.execute(
             """
                 CREATE TABLE IF NOT EXISTS anime_schedule (
@@ -22,7 +27,6 @@ class CloudSQLPipeline:
                 )
             """
         )
-        self.db_conn.commit()
         
         self.cursor.execute(
             """
@@ -34,9 +38,13 @@ class CloudSQLPipeline:
                 )
             """
         )
+
         self.db_conn.commit()
+        
+        logging.info("create data tables if not exist")
     
     def drop_tables(self):
+        
         self.cursor.execute(
             """
                 DROP TABLE IF EXISTS anime_schedule
@@ -48,8 +56,10 @@ class CloudSQLPipeline:
             """
         )
         self.db_conn.commit()
+        logging.info("drop data tables if exist")
 
     def insert_anime(self, item):
+        
         url = f"'{item['url']}'"
         end_date = f"'{item['end_date']}'" if 'end_date' in item else "NULL"
         watching_count = item['watching_count'] if 'watching_count' in item else "NULL"
@@ -115,7 +125,12 @@ class CloudSQLPipeline:
             ;
         """
         self.cursor.execute(sql_query)
-        self.db_conn.commit()
+        
+        if time.time() - self.last_commit_time > 30:
+            self.last_commit_time = time.time()
+            self.db_conn.commit()
+        
+        logging.info(f"insert anime {url} for scheduling")
     
     def insert_profile(self, item):
         url = f"'{item['url']}'"
@@ -150,7 +165,7 @@ class CloudSQLPipeline:
                         ELSE (
                             CASE WHEN excluded.last_crawl_date IS NULL THEN profile_schedule.last_crawl_date
                             ELSE (
-                                CASE WHEN last_crawl_date > profile_schedule.last_crawl_date THEN last_crawl_date
+                                CASE WHEN excluded.last_crawl_date > profile_schedule.last_crawl_date THEN excluded.last_crawl_date
                                 ELSE profile_schedule.last_crawl_date
                                 END
                             )
@@ -163,8 +178,14 @@ class CloudSQLPipeline:
                         END
             ;
         """
+        
         self.cursor.execute(sql_query)
-        self.db_conn.commit()
+        
+        if time.time() - self.last_commit_time > 30:
+            self.last_commit_time = time.time()
+            self.db_conn.commit()
+        
+        logging.info(f"insert profile {url} for scheduling")
     
     def open_spider(self, spider):
 
@@ -178,12 +199,15 @@ class CloudSQLPipeline:
         )
         self.cursor = self.db_conn.cursor()
         self.create_tables()
-        self.cursor.execute("SELECT * from anime_schedule")
-        result = self.cursor.fetchall()
-        for row in result:
-            print(row)
+
+    def close_spider(self, spider):
+        
+        self.db_conn.commit()
+        self.cursor.close()
+        self.db_conn.close()
 
     def process_item(self, item, spider):
+        
         if isinstance(item, AnimeSchedulerItem):
             self.insert_anime(item)
         

@@ -1,4 +1,5 @@
 from datetime import datetime
+import logging
 
 from scrapy.exceptions import DropItem
 from crawler.items.data_items.favorite_item import FavoriteItem
@@ -15,4 +16,5 @@ class FavoriteProcessPipeline:
             if field not in item:
                 raise DropItem(f"FavoriteItem dropped because '{field}' is null")
         
+        logging.info("FavoriteItem processed")
         return item

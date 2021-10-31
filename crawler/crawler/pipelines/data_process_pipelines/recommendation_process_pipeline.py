@@ -1,4 +1,5 @@
 from datetime import datetime
+import logging
 
 from scrapy.exceptions import DropItem
 from crawler.items.data_items.recommendation_item import RecommendationItem
@@ -24,6 +25,7 @@ class RecommendationProcessPipeline:
             if field not in item:
                 raise DropItem(f"RecommendationItem {item['url']} dropped because '{field}' is null")
         
+        logging.info("RecommendationItem processed")
         return item
         
         

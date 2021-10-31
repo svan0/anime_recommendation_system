@@ -150,7 +150,6 @@ def cloud_crawl_recent_profile(request):
 
 def cloud_crawl_anime(event, context):
     anime_url = base64.b64decode(event['data']).decode('utf-8')
-    print("ANIME URL : ", anime_url)
     settings = get_project_settings()
     settings['ITEM_PIPELINES'] = {
         'crawler.pipelines.data_process_pipelines.activity_process_pipeline.ActivityProcessPipeline': 100,
@@ -193,14 +192,14 @@ def cloud_crawl_profile(event, context):
 
 if __name__ == '__main__':
     load_dotenv()
-
-    anime_url_message = 'https://myanimelist.net/anime/21561/Ryuugajou_Nanana_no_Maizoukin_TV'
+    """
+    anime_url_message = 'https://myanimelist.net/anime/48926/Komi-san_wa_Comyushou_desu'
     anime_url_message = anime_url_message.encode("utf-8")
     anime_url_message = base64.b64encode(anime_url_message)
     event = {'data' : anime_url_message}
     cloud_crawl_anime(event = event, context = None)
-
-    profile_url_message = 'https://myanimelist.net/profile/svanO'
+    """
+    profile_url_message = 'https://myanimelist.net/profile/RealKurapikaTard'
     profile_url_message = profile_url_message.encode("utf-8")
     profile_url_message = base64.b64encode(profile_url_message)
     event = {'data' : profile_url_message}

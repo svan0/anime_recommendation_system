@@ -31,7 +31,7 @@ class ProfileTest(unittest.TestCase):
         result = self.spider.parse_profile_main_page(response)
 
         self.assertAlmostEqual(
-            datetime.datetime.strptime(result['last_online_date'], "%Y-%m-%dT%H:%M:%S:%f"),
+            datetime.datetime.strptime(result['last_online_date'], "%Y-%m-%dT%H:%M:%S"),
             datetime.datetime.now() - relativedelta(hours=12), 
             delta=datetime.timedelta(seconds=10)
         )
@@ -61,7 +61,7 @@ class ProfileTest(unittest.TestCase):
         result = self.spider.parse_profile_main_page(response)
 
         self.assertAlmostEqual(
-            datetime.datetime.strptime(result['last_online_date'], "%Y-%m-%dT%H:%M:%S:%f"),
+            datetime.datetime.strptime(result['last_online_date'], "%Y-%m-%dT%H:%M:%S"),
             datetime.datetime.now(), 
             delta=datetime.timedelta(seconds=10)
         )

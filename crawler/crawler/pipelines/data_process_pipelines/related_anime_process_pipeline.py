@@ -1,4 +1,5 @@
 from datetime import datetime
+import logging
 
 from scrapy.exceptions import DropItem
 from crawler.items.data_items.related_anime_item import RelatedAnimeItem
@@ -16,4 +17,5 @@ class RelatedAnimeProcessPipeline:
             if field not in item:
                 raise DropItem(f"RelatedAnimeItem dropped because {field} is null")
         
+        logging.info("RelatedAnimeItem processed")
         return item

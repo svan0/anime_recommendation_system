@@ -124,6 +124,7 @@ class AnimeProcessPipeline:
                 item['score'] = average_score
                 logging.info(f"{item['url']} xx * 'score_xx_count' do not average up to 'score' count. Changing 'score' to the average")
 
+        logging.info(f"AnimeItem {item['url']} processed")
         return item
         
         
