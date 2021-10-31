@@ -1,15 +1,7 @@
 import os
-import json
-from datetime import datetime
-
-from google.cloud import pubsub
-
-from scrapy.loader import ItemLoader
 
 from crawler.items.scheduler_items.anime_item import AnimeSchedulerItem
 from crawler.items.scheduler_items.profile_item import ProfileSchedulerItem
-
-from dotenv import load_dotenv
 
 from google.cloud.sql.connector import connector
 
@@ -176,7 +168,7 @@ class CloudSQLPipeline:
 
         self.db_conn = connector.connect(
             os.getenv("SCHEDULER_DB_INSTANCE"),
-            "pymysql",
+            "pg8000",
             user=os.getenv("SCHEDULER_DB_USER"),
             password=os.getenv("SCHEDULER_DB_PASSWORD"),
             db=os.getenv("SCHEDULER_DB")
