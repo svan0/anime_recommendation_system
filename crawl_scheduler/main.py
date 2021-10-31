@@ -66,7 +66,7 @@ def get_top_priority_profiles(max_num_urls):
 def schedule_anime(request):
     publish_client = pubsub.PublisherClient()
     project = os.getenv('PROJECT_ID')
-    topic = os.getenv('SCHEDULE_PUBSUB_TOPIC')
+    topic = os.getenv('SCHEDULE_ANIME_PUBSUB_TOPIC')
     topic_path = publish_client.topic_path(project, topic)
 
     request_json = request.get_json(silent=True)
@@ -86,17 +86,13 @@ def schedule_anime(request):
     
     list_urls = get_top_priority_animes(max_num_urls)
     for anime_url in list_urls:
-        message = {
-            'type' : 'anime',
-            'url' : anime_url
-        }
-        message = json.dumps(message).encode("utf-8")
+        message = anime_url.encode("utf-8")
         publish_client.publish(topic_path, message)
 
 def schedule_profile(request):
     publish_client = pubsub.PublisherClient()
     project = os.getenv('PROJECT_ID')
-    topic = os.getenv('SCHEDULE_PUBSUB_TOPIC')
+    topic = os.getenv('SCHEDULE_PROFILE_PUBSUB_TOPIC')
     topic_path = publish_client.topic_path(project, topic)
 
     request_json = request.get_json(silent=True)
@@ -115,12 +111,8 @@ def schedule_profile(request):
         max_num_urls = 1000
     
     list_urls = get_top_priority_profiles(max_num_urls)
-    for anime_url in list_urls:
-        message = {
-            'type' : 'anime',
-            'url' : anime_url
-        }
-        message = json.dumps(message).encode("utf-8")
+    for profile_url in list_urls:
+        message = profile_url.encode("utf-8")
         publish_client.publish(topic_path, message)
 
 if __name__ == '__main__':
