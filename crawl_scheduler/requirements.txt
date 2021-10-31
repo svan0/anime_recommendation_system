@@ -1,2 +1,2 @@
-cloud-sql-python-connector[pymysql]==0.4.1
+cloud-sql-python-connector[pg8000]==0.4.1
 google-cloud-pubsub==2.8.0
