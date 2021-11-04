@@ -3,6 +3,7 @@ from datetime import datetime
 
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.options import Options
 
 import scrapy
 from scrapy.http import Request, HtmlResponse
@@ -114,6 +115,7 @@ class ProfileSpider(scrapy.Spider):
                 watch_status_loader.add_xpath('progress', './td[contains(@class, "progress")]/div//span/a/text()')
             
             yield watch_status_loader.load_item()
+        self.logger.info(f"{response.url} scrapped {len(animes)} from")
     
     def parse_status_page_for_anime_schedule(self, response, local_file_response = False):
         
@@ -126,7 +128,15 @@ class ProfileSpider(scrapy.Spider):
     def parse(self, response):
         self.logger.info('Parsing profile url:  %s', response.url)
 
-        driver = webdriver.Chrome(ChromeDriverManager().install())
+        chrome_options = Options()
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--headless")
+        
+        driver = webdriver.Chrome(
+            ChromeDriverManager().install(), 
+            options = chrome_options
+        )
+
         driver.get(response.url)
         time.sleep(1)
 
@@ -182,11 +192,22 @@ class ProfileSpider(scrapy.Spider):
         self.logger.info('Parsing anime status url:  %s', response.url)
 
         pause_time = 10
-        driver = webdriver.Chrome(ChromeDriverManager().install())
+
+        chrome_options = Options()
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--headless")
+        chrome_options.add_argument('--disable-dev-shm-usage')   
+        chrome_options.add_argument("window-size=1920,1080")
+
+        driver = webdriver.Chrome(
+            ChromeDriverManager().install(), 
+            options = chrome_options
+        )
         driver.get(response.url)
 
         time.sleep(pause_time)
 
+        
         next_scroll_height = driver.execute_script("return document.body.scrollHeight;")
 
         while True:

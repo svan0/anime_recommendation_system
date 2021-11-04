@@ -15,7 +15,8 @@ from crawler.items.scheduler_items.profile_item import ProfileSchedulerItem
 class AnimeSpider(scrapy.Spider):
     name = 'anime'
     allowed_domains = ['myanimelist.net']
-
+    db_conn = None
+    
     def parse_anime_main_page_for_info(self, response, local_file_response = False):
 
         anime_loader = ItemLoader(item=AnimeItem(), response=response)

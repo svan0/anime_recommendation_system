@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: crawler
+  labels:
+    app: crawler
+spec:
+  selector:
+    matchLabels: 
+      app: crawler
+  template:
+    metadata:
+      labels:
+        app: crawler
+    spec:
+      containers:
+        - name: crawler
+          image: gcr.io/anime-rec-dev/crawler_image
+          env:
+            - name: SCHEDULER_DB
+              valueFrom:
+                secretKeyRef:
+                  name: scheduler-db-credentials
+                  key: dbname
+            - name: SCHEDULER_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: scheduler-db-credentials
+                  key: user
+            - name: SCHEDULER_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: scheduler-db-credentials
+                  key: password
+            - name: PROJECT_ID
+              value: anime-rec-dev
+            - name: ANIME_ITEM_PUBSUB_TOPIC
+              value: anime_data_ingestion
+            - name: PROFILE_ITEM_PUBSUB_TOPIC
+              value: profile_data_ingestion
+            - name: FAVORITE_ITEM_PUBSUB_TOPIC
+              value: favorite_data_ingestion
+            - name: REVIEW_ITEM_PUBSUB_TOPIC
+              value: review_data_ingestion
+            - name: WATCH_STATUS_ITEM_PUBSUB_TOPIC
+              value: watch_status_data_ingestion
+            - name: ACTIVITY_ITEM_PUBSUB_TOPIC
+              value: activity_data_ingestion
+            - name: RECOMMENDATION_ITEM_PUBSUB_TOPIC
+              value: recommendation_anime_data_ingestion
+            - name: RELATED_ANIME_ITEM_PUBSUB_TOPIC
+              value: related_anime_data_ingestion
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: /secrets/scheduler_db_instance_credentials.json
+          volumeMounts:
+            - name: secrets-volume
+              mountPath: /secrets
+              readOnly: true
+        - name: cloudsql-proxy
+          image: gcr.io/cloudsql-docker/gce-proxy:1.23.0
+          command : ["/cloud_sql_proxy",
+                     "-instances=anime-rec-dev:us-central1:scheduler-db-instance-dev-small-3=tcp:5432",
+                     "-credential_file=/secrets/scheduler_db_instance_credentials.json"]
+          volumeMounts:
+            - name: secrets-volume
+              mountPath: /secrets
+              readOnly: true
+      volumes:
+        - name: secrets-volume
+          secret:
+            secretName: scheduler-db-instance-credentials

@@ -5,7 +5,7 @@ import time
 from crawler.items.scheduler_items.anime_item import AnimeSchedulerItem
 from crawler.items.scheduler_items.profile_item import ProfileSchedulerItem
 
-from google.cloud.sql.connector import connector
+import psycopg2
 
 class CloudSQLPipeline:
     def __init__(self):
@@ -188,16 +188,16 @@ class CloudSQLPipeline:
         logging.info(f"insert profile {url} for scheduling")
     
     def open_spider(self, spider):
-
-        self.db_conn = connector.connect(
-            os.getenv("SCHEDULER_DB_INSTANCE"),
-            "pg8000",
+        print("CONNECTING")
+        self.db_conn = psycopg2.connect(
+            host = os.getenv("SCHEDULER_DB_HOST", default = "127.0.0.1"),
             user=os.getenv("SCHEDULER_DB_USER"),
             password=os.getenv("SCHEDULER_DB_PASSWORD"),
-            db=os.getenv("SCHEDULER_DB"),
-            port='5432'
+            port=5432,
+            database=os.getenv("SCHEDULER_DB"),
         )
         self.cursor = self.db_conn.cursor()
+        print("CONNECTED TO DB")
         self.create_tables()
 
     def close_spider(self, spider):
@@ -214,6 +214,4 @@ class CloudSQLPipeline:
         if isinstance(item, ProfileSchedulerItem):
             self.insert_profile(item)
         return item
-
-
-    
+ 
