@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: crawler
+  name: crawler-anime
   labels:
-    app: crawler
+    app: crawler-anime
 spec:
   selector:
     matchLabels: 
-      app: crawler
+      app: crawler-anime
   template:
     metadata:
       labels:
-        app: crawler
+        app: crawler-anime
     spec:
       containers:
-        - name: crawler
+        - name: crawler-anime
           image: gcr.io/anime-rec-dev/crawler_image
           env:
             - name: SCHEDULER_DB
@@ -52,6 +52,12 @@ spec:
               value: related_anime_data_ingestion
             - name: GOOGLE_APPLICATION_CREDENTIALS
               value: /secrets/scheduler_db_instance_credentials.json
+            - name: SCHEDULE_ANIME_PUBSUB_SUBSCRIPTION
+              value: test_anime_crawl_sub
+            - name: SCHEDULE_PROFILE_PUBSUB_SUBSCRIPTION
+              value: test_view_profiles_to_crawl
+          command: ["python3"] 
+          args: ["anime_crawl_worker.py"]
           volumeMounts:
             - name: secrets-volume
               mountPath: /secrets
