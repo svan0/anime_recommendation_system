@@ -1,5 +1,6 @@
 import time
 from datetime import datetime
+import requests
 
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
@@ -16,6 +17,7 @@ from crawler.items.data_items.activity_item import ActivityItem
 from crawler.items.data_items.watch_status_item import WatchStatusItem
 
 from crawler.items.scheduler_items.anime_item import AnimeSchedulerItem
+from crawler.items.scheduler_items.profile_item import ProfileSchedulerItem
 
 class ProfileSpider(scrapy.Spider):
     name = 'profile'
@@ -54,6 +56,7 @@ class ProfileSpider(scrapy.Spider):
         for favorite in favorites:
             anime_schedule_loader = ItemLoader(item=AnimeSchedulerItem())
             anime_schedule_loader.add_value('url', favorite)
+            anime_schedule_loader.add_value('last_inspect_date', datetime.now().strftime("%Y-%m-%dT%H:%M:%S"))
             yield anime_schedule_loader.load_item()
         
     def parse_clubs_page_for_clubs(self, response, local_file_response = False):
@@ -84,6 +87,7 @@ class ProfileSpider(scrapy.Spider):
         for activity in activities:
             anime_schedule_loader = ItemLoader(item=AnimeSchedulerItem(), selector=activity)
             anime_schedule_loader.add_xpath('url', './/link/text()')
+            anime_schedule_loader.add_value('last_inspect_date', datetime.now().strftime("%Y-%m-%dT%H:%M:%S"))
             yield anime_schedule_loader.load_item()
     
     def parse_status_page_for_anime_status(self, response, local_file_response = False):
@@ -123,10 +127,13 @@ class ProfileSpider(scrapy.Spider):
         for anime in animes:
             anime_schedule_loader = ItemLoader(item=AnimeSchedulerItem(), selector=anime)
             anime_schedule_loader.add_xpath('url', './td/a[contains(@href, "/anime/")]/@href')
+            anime_schedule_loader.add_value('last_inspect_date', datetime.now().strftime("%Y-%m-%dT%H:%M:%S"))
             yield anime_schedule_loader.load_item()
 
     def parse(self, response):
         self.logger.info('Parsing profile url:  %s', response.url)
+
+        self.logger.info(requests.get('http://checkip.dyndns.org/').text)
 
         chrome_options = Options()
         chrome_options.add_argument("--no-sandbox")
@@ -177,7 +184,15 @@ class ProfileSpider(scrapy.Spider):
 
         profile_item = response.meta['profile_item']
         profile_item = ProfileItem({**profile_item, **self.parse_clubs_page_for_clubs(response)})
+        profile_item['crawl_date'] = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
         yield profile_item
+
+        profile_schedule_loader = ItemLoader(item=ProfileSchedulerItem())
+        profile_schedule_loader.add_value('url', profile_item['url'])
+        profile_schedule_loader.add_value('last_online_date', profile_item['last_online_date'] if 'last_online_date' in profile_item else None)
+        profile_schedule_loader.add_value('last_crawl_date', profile_item['crawl_date'])
+        profile_schedule_loader.add_value('last_inspect_date', profile_item['crawl_date'])
+        yield profile_schedule_loader.load_item()
     
     def parse_user_activity(self, response):
         self.logger.info('Parsing user activity RSS url:  %s', response.url)

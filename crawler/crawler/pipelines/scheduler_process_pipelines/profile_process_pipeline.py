@@ -11,8 +11,6 @@ class ProfileSchedulerProcessPipeline:
         if not isinstance(item, ProfileSchedulerItem):
             return item
         
-        item['last_inspect_date'] = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
-        
         if 'url' not in item:
             raise DropItem("ProfileSchedulerItem dropped because 'url' is null")
 

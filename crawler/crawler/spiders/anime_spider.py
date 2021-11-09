@@ -1,4 +1,5 @@
 from datetime import datetime
+import requests
 
 import scrapy
 from scrapy.http import Request
@@ -63,12 +64,14 @@ class AnimeSpider(scrapy.Spider):
             for related_anime in response.xpath('//table[@class="anime_detail_related_anime"]/tr/td/a[contains(@href, "/anime/")]/@href').getall():
                 anime_schedule_loader = ItemLoader(item=AnimeSchedulerItem(), response=response)
                 anime_schedule_loader.add_value('url', related_anime)
+                anime_schedule_loader.add_value('last_inspect_date', datetime.now().strftime("%Y-%m-%dT%H:%M:%S"))
                 yield anime_schedule_loader.load_item()
         
         else:
             for related_anime in response.xpath('//table[@class="anime_detail_related_anime"]/tbody/tr/td/a[contains(@href, "/anime/")]/@href').getall():
                 anime_schedule_loader = ItemLoader(item=AnimeSchedulerItem(), response=response)
                 anime_schedule_loader.add_value('url', related_anime)
+                anime_schedule_loader.add_value('last_inspect_date', datetime.now().strftime("%Y-%m-%dT%H:%M:%S"))
                 yield anime_schedule_loader.load_item()
         
     def parse_review_page_for_reviews(self, response, local_file_response = False):
@@ -112,6 +115,7 @@ class AnimeSpider(scrapy.Spider):
         for review in response.xpath('//div[@class="borderDark"]'):
             profile_schedule_loader = ItemLoader(item=ProfileSchedulerItem(), selector=review)
             profile_schedule_loader.add_xpath('url', './/a[contains(@href, "profile")]/@href')
+            profile_schedule_loader.add_value('last_inspect_date', datetime.now().strftime("%Y-%m-%dT%H:%M:%S"))
             yield profile_schedule_loader.load_item()
     
     def parse_recommendation_page_for_recommendations(self, response, local_file_response = False):
@@ -143,12 +147,14 @@ class AnimeSpider(scrapy.Spider):
             for recommendation in recommendations:
                 anime_schedule_loader = ItemLoader(item=AnimeSchedulerItem(), selector=recommendation)
                 anime_schedule_loader.add_xpath('url', './/div[@style="margin-bottom: 2px;"]/a[contains(@href, "/anime/")]/@href')
+                anime_schedule_loader.add_value('last_inspect_date', datetime.now().strftime("%Y-%m-%dT%H:%M:%S"))
                 yield anime_schedule_loader.load_item()
         else:
             recommendations = response.xpath('//div[@class="borderClass"]/table/tbody/tr/td[2]')
             for recommendation in recommendations:
                 anime_schedule_loader = ItemLoader(item=AnimeSchedulerItem(), selector=recommendation)
                 anime_schedule_loader.add_xpath('url', './/div[@style="margin-bottom: 2px;"]/a[contains(@href, "/anime/")]/@href')
+                anime_schedule_loader.add_value('last_inspect_date', datetime.now().strftime("%Y-%m-%dT%H:%M:%S"))
                 yield anime_schedule_loader.load_item()
 
 
@@ -213,6 +219,8 @@ class AnimeSpider(scrapy.Spider):
 
     def parse(self, response):
 
+        self.logger.info(requests.get('http://checkip.dyndns.org/').text)
+
         self.logger.info('Parsing anime url:  %s', response.url)
         
         anime_item = self.parse_anime_main_page_for_info(response)
@@ -235,7 +243,7 @@ class AnimeSpider(scrapy.Spider):
                       callback = self.parse_stats,
                       meta = {"anime_item" : anime_item}
         )       
-
+        
     def parse_list_reviews(self, response):
 
         self.logger.info('Parsing review url:  %s', response.url)
@@ -305,5 +313,15 @@ class AnimeSpider(scrapy.Spider):
         anime_pics_item = self.parse_pics_page_for_pics(response)
 
         anime_item = AnimeItem({**dict(anime_main_item), **dict(anime_pics_item)})
+        anime_item['crawl_date'] = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
 
         yield anime_item
+
+        anime_schedule_loader = ItemLoader(item=AnimeSchedulerItem())
+        anime_schedule_loader.add_value('url', anime_item['url'])
+        anime_schedule_loader.add_value('end_date', anime_item['end_date'] if 'end_date' in anime_item else None)
+        anime_schedule_loader.add_value('watching_count', anime_item['watching_count'] if 'watching_count' in anime_item else None)
+        anime_schedule_loader.add_value('last_crawl_date', anime_item['crawl_date'])
+        anime_schedule_loader.add_value('last_inspect_date', anime_item['crawl_date'])
+        
+        yield anime_schedule_loader.load_item()

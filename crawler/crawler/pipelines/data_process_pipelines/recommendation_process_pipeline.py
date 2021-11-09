@@ -11,8 +11,6 @@ class RecommendationProcessPipeline:
         if not isinstance(item, RecommendationItem):
             return item
         
-        item['crawl_date'] = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
-        
         if 'num_recs' not in item:
             item['num_recs'] = 1
         

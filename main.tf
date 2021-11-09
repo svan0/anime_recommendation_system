@@ -36,6 +36,12 @@ resource "google_storage_bucket_object" "scheduler_cloud_functions_artifact" {
   bucket = google_storage_bucket.artifacts_bucket.name
 }
 
+resource "google_storage_bucket_object" "dataflow_ingestion_artifact" {
+  name   = "etl/ingestion.py"
+  source = "/Users/marouenesfargandoura/Desktop/personal_projects/anime_recommendation_system/etl/ingestion.py"
+  bucket = google_storage_bucket.artifacts_bucket.name
+}
+
 resource "google_sql_database_instance" "crawl_scheduler_db_instance" {
   name             = "scheduler-db-instance-dev-small-3"
   region           = "us-central1"
@@ -62,29 +68,21 @@ resource "google_pubsub_topic" "profile_crawl_topic" {
   name = "profile_crawl_queue"
 }
 
-resource "google_pubsub_topic" "anime_data_topic" {
-  name = "anime_data_ingestion"
+resource "google_pubsub_subscription" "anime_crawl_subscription" {
+  name = "anime_crawl_subscription"
+  topic = google_pubsub_topic.anime_crawl_topic.name
+  message_retention_duration = "604800s"
+  ack_deadline_seconds = 300
 }
-resource "google_pubsub_topic" "profile_data_topic" {
-  name = "profile_data_ingestion"
+resource "google_pubsub_subscription" "profile_crawl_subscription" {
+  name = "profile_crawl_subscription"
+  topic = google_pubsub_topic.profile_crawl_topic.name
+  message_retention_duration = "604800s"
+  ack_deadline_seconds = 300
 }
-resource "google_pubsub_topic" "review_data_topic" {
-  name = "review_data_ingestion"
-}
-resource "google_pubsub_topic" "watch_status_data_topic" {
-  name = "watch_status_data_ingestion"
-}
-resource "google_pubsub_topic" "favorite_data_topic" {
-  name = "favorite_data_ingestion"
-}
-resource "google_pubsub_topic" "activity_data_topic" {
-  name = "activity_data_ingestion"
-}
-resource "google_pubsub_topic" "related_anime_data_topic" {
-  name = "related_anime_data_ingestion"
-}
-resource "google_pubsub_topic" "recommendation_anime_data_topic" {
-  name = "recommendation_anime_data_ingestion"
+
+resource "google_pubsub_topic" "data_ingestion_topic" {
+  name = "data_ingestion_queue"
 }
 
 resource "google_cloudfunctions_function" "anime_crawl_scheduler" {
@@ -130,240 +128,22 @@ resource "google_cloudfunctions_function" "profile_crawl_scheduler" {
   }
 }
 
-resource "google_pubsub_subscription" "anime_crawl_subscription" {
-  name = "anime_crawl_subscription"
-  topic = google_pubsub_topic.anime_crawl_topic.name
-  message_retention_duration = "604800s"
-  ack_deadline_seconds = 300
-}
-resource "google_pubsub_subscription" "profile_crawl_subscription" {
-  name = "profile_crawl_subscription"
-  topic = google_pubsub_topic.profile_crawl_topic.name
-  message_retention_duration = "604800s"
-  ack_deadline_seconds = 300
-}
-
-
-resource "google_bigquery_dataset" "landing_area" {
-  dataset_id = "landing_area"
-  location = "us-central1"
-}
-resource "google_bigquery_table" "anime_item" {
-  dataset_id = google_bigquery_dataset.landing_area.dataset_id
-  table_id = "anime_item"
-  schema = <<EOF
-  [
-    {
-      "mode" : "REQUIRED",
-      "name" : "crawl_date",
-      "type" : "DATETIME"
-    },
-    {
-      "mode" : "REQUIRED",
-      "name" : "uid",
-      "type" : "STRING"
-    },
-    {
-      "mode" : "REQUIRED",
-      "name" : "url",
-      "type" : "STRING"
-    },
-    {
-      "mode" : "REQUIRED",
-      "name" : "title",
-      "type" : "STRING"
-    },
-    {
-      "mode" : "REQUIRED",
-      "name" : "synopsis",
-      "type" : "STRING"
-    },
-    {
-      "mode" : "REQUIRED",
-      "name" : "main_pic",
-      "type" : "STRING"
-    },
-    {
-      "mode" : "REQUIRED",
-      "name" : "type",
-      "type" : "STRING"
-    },
-    {
-      "mode" : "REQUIRED",
-      "name" : "source_type",
-      "type" : "STRING"
-    },
-    {
-      "mode" : "NULLABLE",
-      "name" : "num_episodes",
-      "type" : "INT64"
-    },
-    {
-      "mode" : "REQUIRED",
-      "name" : "status",
-      "type" : "STRING"
-    },
-    {
-      "mode" : "NULLABLE",
-      "name" : "start_date",
-      "type" : "DATETIME"
-    },
-    {
-      "mode" : "NULLABLE",
-      "name" : "end_date",
-      "type" : "DATETIME"
-    },
-    {
-      "mode" : "NULLABLE",
-      "name" : "season",
-      "type" : "STRING"
-    },
-    {
-      "mode" : "REPEATED",
-      "name" : "studios",
-      "type" : "STRING"
-    },
-    {
-      "mode" : "REPEATED",
-      "name" : "genres",
-      "type" : "STRING"
-    },
-    {
-      "mode" : "NULLABLE",
-      "name" : "score",
-      "type" : "FLOAT64"
-    },
-    {
-      "mode" : "NULLABLE",
-      "name" : "score_count",
-      "type" : "INT64"
-    },
-    {
-      "mode" : "NULLABLE",
-      "name" : "score_rank",
-      "type" : "INT64"
-    },
-    {
-      "mode" : "REQUIRED",
-      "name" : "popularity_rank",
-      "type" : "INT64"
-    },
-    {
-      "mode" : "REQUIRED",
-      "name" : "members_count",
-      "type" : "INT64"
-    },
-    {
-      "mode" : "REQUIRED",
-      "name" : "favorites_count",
-      "type" : "INT64"
-    },
-    {
-      "mode" : "REQUIRED",
-      "name" : "watching_count",
-      "type" : "INT64"
-    },
-    {
-      "mode" : "REQUIRED",
-      "name" : "completed_count",
-      "type" : "INT64"
-    },
-    {
-      "mode" : "REQUIRED",
-      "name" : "on_hold_count",
-      "type" : "INT64"
-    },
-    {
-      "mode" : "REQUIRED",
-      "name" : "dropped_count",
-      "type" : "INT64"
-    },
-    {
-      "mode" : "REQUIRED",
-      "name" : "plan_to_watch_count",
-      "type" : "INT64"
-    },
-    {
-      "mode" : "REQUIRED",
-      "name" : "total_count",
-      "type" : "INT64"
-    },
-    {
-      "mode" : "REQUIRED",
-      "name" : "score_10_count",
-      "type" : "INT64"
-    },
-    {
-      "mode" : "REQUIRED",
-      "name" : "score_09_count",
-      "type" : "INT64"
-    },
-    {
-      "mode" : "REQUIRED",
-      "name" : "score_08_count",
-      "type" : "INT64"
-    },
-    {
-      "mode" : "REQUIRED",
-      "name" : "score_07_count",
-      "type" : "INT64"
-    },
-    {
-      "mode" : "REQUIRED",
-      "name" : "score_06_count",
-      "type" : "INT64"
-    },
-    {
-      "mode" : "REQUIRED",
-      "name" : "score_05_count",
-      "type" : "INT64"
-    },
-    {
-      "mode" : "REQUIRED",
-      "name" : "score_04_count",
-      "type" : "INT64"
-    },
-    {
-      "mode" : "REQUIRED",
-      "name" : "score_03_count",
-      "type" : "INT64"
-    },
-    {
-      "mode" : "REQUIRED",
-      "name" : "score_02_count",
-      "type" : "INT64"
-    },
-    {
-      "mode" : "REQUIRED",
-      "name" : "score_01_count",
-      "type" : "INT64"
-    },
-    {
-      "mode" : "REPEATED",
-      "name" : "clubs",
-      "type" : "STRING"
-    },
-    {
-      "mode" : "REPEATED",
-      "name" : "pics",
-      "type" : "STRING"
+resource "google_dataflow_job" "data_ingestion_job" {
+    name = "data_ingestion_to_bq"
+    template_gcs_path = "gs://anime-rec-dev-artifacts/etl/ingestion.py"
+    temp_gcs_location = "gs://anime-rec-dev-dataflow-temp/"
+    enable_streaming_engine = true
+    region = "us-central1"
+    zone = "us-central1-a"
+    parameters = {
+      input_topic = google_pubsub_topic.data_ingestion_topic.id
+      window_interval_sec = 90
     }
-  ]
-  EOF
+    on_delete = "cancel"
 }
 
-resource "google_dataflow_job" "anime_data_to_bq"{
-  name = "anime_data_to_bq"
-  template_gcs_path = "gs://dataflow-templates/latest/PubSub_to_BigQuery"
-  temp_gcs_location = google_storage_bucket.dataflow_temp.url
-  enable_streaming_engine = true
-  region = "us-central1"
-  zone = "us-central1-a"
-  parameters = {
-    inputTopic = google_pubsub_topic.anime_data_topic.id
-    outputTableSpec = "anime-rec-dev:landing_area.anime_item"
-  }
-}
+
+
 
 
 

@@ -11,8 +11,6 @@ class RelatedAnimeProcessPipeline:
         if not isinstance(item, RelatedAnimeItem):
             return item
         
-        item['crawl_date'] = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
-        
         for field in ['crawl_date', 'src_anime', 'dest_anime']:
             if field not in item:
                 raise DropItem(f"RelatedAnimeItem dropped because {field} is null")

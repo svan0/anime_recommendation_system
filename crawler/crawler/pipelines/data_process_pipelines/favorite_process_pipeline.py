@@ -9,8 +9,6 @@ class FavoriteProcessPipeline:
     def process_item(self, item, spider):
         if not isinstance(item, FavoriteItem):
             return item
-        
-        item['crawl_date'] = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
 
         for field in ['crawl_date', 'user_id', 'anime_id']:
             if field not in item:

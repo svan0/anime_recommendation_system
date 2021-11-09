@@ -11,8 +11,6 @@ class ProfileProcessPipeline:
         if not isinstance(item, ProfileItem):
             return item
         
-        item['crawl_date'] = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
-        
         if 'url' not in item:
             raise DropItem("ProfileItem dropped because 'url' is null")
         

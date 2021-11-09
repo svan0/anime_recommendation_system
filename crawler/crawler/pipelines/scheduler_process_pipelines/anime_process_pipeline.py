@@ -11,8 +11,6 @@ class AnimeSchedulerProcessPipeline:
         if not isinstance(item, AnimeSchedulerItem):
             return item
         
-        item['last_inspect_date'] = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
-        
         if 'url' not in item:
             raise DropItem("AnimeSchedulerItem dropped because 'url' is null")
 

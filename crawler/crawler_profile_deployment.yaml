@@ -5,6 +5,7 @@ metadata:
   labels:
     app: crawler-profile
 spec:
+  replicas: 10
   selector:
     matchLabels: 
       app: crawler-profile
@@ -34,28 +35,14 @@ spec:
                   key: password
             - name: PROJECT_ID
               value: anime-rec-dev
-            - name: ANIME_ITEM_PUBSUB_TOPIC
-              value: anime_data_ingestion
-            - name: PROFILE_ITEM_PUBSUB_TOPIC
-              value: profile_data_ingestion
-            - name: FAVORITE_ITEM_PUBSUB_TOPIC
-              value: favorite_data_ingestion
-            - name: REVIEW_ITEM_PUBSUB_TOPIC
-              value: review_data_ingestion
-            - name: WATCH_STATUS_ITEM_PUBSUB_TOPIC
-              value: watch_status_data_ingestion
-            - name: ACTIVITY_ITEM_PUBSUB_TOPIC
-              value: activity_data_ingestion
-            - name: RECOMMENDATION_ITEM_PUBSUB_TOPIC
-              value: recommendation_anime_data_ingestion
-            - name: RELATED_ANIME_ITEM_PUBSUB_TOPIC
-              value: related_anime_data_ingestion
-            - name: GOOGLE_APPLICATION_CREDENTIALS
-              value: /secrets/scheduler_db_instance_credentials.json
             - name: SCHEDULE_ANIME_PUBSUB_SUBSCRIPTION
               value: anime_crawl_subscription
             - name: SCHEDULE_PROFILE_PUBSUB_SUBSCRIPTION
               value: profile_crawl_subscription
+            - name: DATA_INGESTION_PUBSUB_TOPIC
+              value: data_ingestion_queue
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: /secrets/scheduler_db_instance_credentials.json
           command: ["python3"] 
           args: ["profile_crawl_worker.py"]
           volumeMounts:

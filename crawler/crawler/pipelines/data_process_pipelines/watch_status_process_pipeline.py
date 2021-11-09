@@ -11,8 +11,6 @@ class WatchStatusProcessPipeline:
         if not isinstance(item, WatchStatusItem):
             return item
         
-        item['crawl_date'] = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
-        
         fields_not_null = [
             'crawl_date', 'user_id', 'anime_id', 'status'
         ]
