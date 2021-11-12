@@ -15,7 +15,7 @@ class ProfileProcessPipeline:
             raise DropItem("ProfileItem dropped because 'url' is null")
         
         not_null_fields = [
-            'crawl_date', 'uid', 'last_online_date',
+            'crawl_date', 'uid', #'last_online_date',
             'num_forum_posts', 'num_reviews', 'num_recommendations',
             'num_blog_posts', 'num_days', 'mean_score'
         ]

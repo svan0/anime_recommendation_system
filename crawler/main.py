@@ -1,8 +1,8 @@
 import base64
 import logging
 
-from crawler.utils import GCP_PIPELINES, LOCAL_PIPELINES
-from crawler.utils import run_top_anime_crawler, run_recent_profile_crawler, run_anime_crawler, run_profile_crawler
+from utils import GCP_PIPELINES, LOCAL_PIPELINES
+from utils import run_top_anime_crawler, run_recent_profile_crawler, run_anime_crawler, run_profile_crawler
 
 from scrapy.utils.project import get_project_settings
 

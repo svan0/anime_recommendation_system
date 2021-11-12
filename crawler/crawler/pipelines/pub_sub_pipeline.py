@@ -4,6 +4,8 @@ import logging
 
 from google.cloud import pubsub
 
+from scrapy.loader import ItemLoader
+
 from crawler.items.data_items.anime_item import AnimeItem
 from crawler.items.data_items.profile_item import ProfileItem
 from crawler.items.data_items.favorite_item import FavoriteItem
@@ -12,6 +14,7 @@ from crawler.items.data_items.watch_status_item import WatchStatusItem
 from crawler.items.data_items.activity_item import ActivityItem
 from crawler.items.data_items.recommendation_item import RecommendationItem
 from crawler.items.data_items.related_anime_item import RelatedAnimeItem
+from crawler.items.data_items.friend_item import FriendItem
 
 from crawler.items.scheduler_items.anime_item import AnimeSchedulerItem
 from crawler.items.scheduler_items.profile_item import ProfileSchedulerItem
@@ -62,6 +65,9 @@ class PubSubPipeline:
         
         elif isinstance(item, RelatedAnimeItem):
             message['bq_table'] = "related_anime_item"
+        
+        elif isinstance(item, FriendItem):
+            message['bq_table'] = "friends_item"
 
         else:
             return item
@@ -70,7 +76,27 @@ class PubSubPipeline:
         self.publish_client.publish(topic_path, message)
         logging.info(f"Published to PubSub {self.ingestion_topic}")
 
-        return item
+        if isinstance(item, AnimeItem):
+            logging.info(f"anime {item['url']} prepare anime schedule")
+            anime_schedule_loader = ItemLoader(item=AnimeSchedulerItem())
+            anime_schedule_loader.add_value('url', item['url'])
+            anime_schedule_loader.add_value('end_date', item['end_date'] if 'end_date' in item else None)
+            anime_schedule_loader.add_value('watching_count', item['watching_count'])
+            anime_schedule_loader.add_value('last_crawl_date', item['crawl_date'])
+            anime_schedule_loader.add_value('last_inspect_date', item['crawl_date'])
+            return anime_schedule_loader.load_item()
+
+        elif isinstance(item, ProfileItem):
+            logging.info(f"profile {item['url']} prepare profile schedule")
+            profile_schedule_loader = ItemLoader(item=ProfileSchedulerItem())
+            profile_schedule_loader.add_value('url', item['url'])
+            profile_schedule_loader.add_value('last_online_date', item['last_online_date'])
+            profile_schedule_loader.add_value('last_crawl_date', item['crawl_date'])
+            profile_schedule_loader.add_value('last_inspect_date', item['crawl_date'])
+            return profile_schedule_loader.load_item()
+        
+        else:
+            return item
 
 
     

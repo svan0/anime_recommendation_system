@@ -124,7 +124,10 @@ class CloudSQLPipeline:
                         END
             ;
         """
-        self.cursor.execute(sql_query)
+        try:
+            self.cursor.execute(sql_query)
+        except:
+            self.db_conn.rollback()
         
         if time.time() - self.last_commit_time > 30:
             self.last_commit_time = time.time()
@@ -179,7 +182,10 @@ class CloudSQLPipeline:
             ;
         """
         
-        self.cursor.execute(sql_query)
+        try:
+            self.cursor.execute(sql_query)
+        except:
+            self.db_conn.rollback()
         
         if time.time() - self.last_commit_time > 30:
             self.last_commit_time = time.time()
@@ -188,7 +194,6 @@ class CloudSQLPipeline:
         logging.info(f"insert profile {url} for scheduling")
     
     def open_spider(self, spider):
-        print("CONNECTING")
         self.db_conn = psycopg2.connect(
             host = os.getenv("SCHEDULER_DB_HOST", default = "127.0.0.1"),
             user=os.getenv("SCHEDULER_DB_USER"),
@@ -197,7 +202,6 @@ class CloudSQLPipeline:
             database=os.getenv("SCHEDULER_DB"),
         )
         self.cursor = self.db_conn.cursor()
-        print("CONNECTED TO DB")
         self.create_tables()
 
     def close_spider(self, spider):

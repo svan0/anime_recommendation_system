@@ -11,6 +11,7 @@ from crawler.items.data_items.profile_item import ProfileItem
 from crawler.items.data_items.favorite_item import FavoriteItem
 from crawler.items.data_items.activity_item import ActivityItem
 from crawler.items.data_items.watch_status_item import WatchStatusItem
+from crawler.items.data_items.friend_item import FriendItem
 
 from crawler.items.scheduler_items.anime_item import AnimeSchedulerItem
 from crawler.items.scheduler_items.profile_item import ProfileSchedulerItem
@@ -31,6 +32,7 @@ class LocalJSONSavePipeline:
         os.makedirs(os.path.join(self.folder_path, 'local_output/FavoriteItem/'), exist_ok=True)
         os.makedirs(os.path.join(self.folder_path, 'local_output/ActivityItem/'), exist_ok=True)
         os.makedirs(os.path.join(self.folder_path, 'local_output/WatchStatusItem/'), exist_ok=True)
+        os.makedirs(os.path.join(self.folder_path, 'local_output/FriendItem/'), exist_ok=True)
         os.makedirs(os.path.join(self.folder_path, 'local_output/AnimeSchedulerItem/'), exist_ok=True)
         os.makedirs(os.path.join(self.folder_path, 'local_output/ProfileSchedulerItem/'), exist_ok=True)
 
@@ -60,6 +62,9 @@ class LocalJSONSavePipeline:
         
         elif isinstance(item, ActivityItem):
             uid = f"{item['user_id']}_{item['anime_id']}_{item['activity_type']}_{item['date']}"
+        
+        elif isinstance(item, FriendItem):
+            uid = f"{item['src_profile']}_{item['dest_profile']}"
         
         elif isinstance(item, AnimeSchedulerItem):
             uid = get_anime_id(item['url'])

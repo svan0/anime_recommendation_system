@@ -16,7 +16,10 @@ from crawler.items.scheduler_items.profile_item import ProfileSchedulerItem
 class AnimeSpider(scrapy.Spider):
     name = 'anime'
     allowed_domains = ['myanimelist.net']
-    db_conn = None
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.crawl_date = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
     
     def parse_anime_main_page_for_info(self, response, local_file_response = False):
 
@@ -48,12 +51,14 @@ class AnimeSpider(scrapy.Spider):
         if local_file_response == False:
             for related_anime in response.xpath('//table[@class="anime_detail_related_anime"]/tr/td/a[contains(@href, "/anime/")]/@href').getall():
                 related_anime_loader = ItemLoader(item=RelatedAnimeItem(), response=response)
+                related_anime_loader.add_value('crawl_date', self.crawl_date)
                 related_anime_loader.add_value('src_anime', response.url)
                 related_anime_loader.add_value('dest_anime', related_anime)
                 yield related_anime_loader.load_item()
         else:
             for related_anime in response.xpath('//table[@class="anime_detail_related_anime"]/tbody/tr/td/a[contains(@href, "/anime/")]/@href').getall():
                 related_anime_loader = ItemLoader(item=RelatedAnimeItem(), response=response)
+                related_anime_loader.add_value('crawl_date', self.crawl_date)
                 related_anime_loader.add_value('src_anime', response.url)
                 related_anime_loader.add_value('dest_anime', related_anime)
                 yield related_anime_loader.load_item()
@@ -64,14 +69,14 @@ class AnimeSpider(scrapy.Spider):
             for related_anime in response.xpath('//table[@class="anime_detail_related_anime"]/tr/td/a[contains(@href, "/anime/")]/@href').getall():
                 anime_schedule_loader = ItemLoader(item=AnimeSchedulerItem(), response=response)
                 anime_schedule_loader.add_value('url', related_anime)
-                anime_schedule_loader.add_value('last_inspect_date', datetime.now().strftime("%Y-%m-%dT%H:%M:%S"))
+                anime_schedule_loader.add_value('last_inspect_date', self.crawl_date)
                 yield anime_schedule_loader.load_item()
         
         else:
             for related_anime in response.xpath('//table[@class="anime_detail_related_anime"]/tbody/tr/td/a[contains(@href, "/anime/")]/@href').getall():
                 anime_schedule_loader = ItemLoader(item=AnimeSchedulerItem(), response=response)
                 anime_schedule_loader.add_value('url', related_anime)
-                anime_schedule_loader.add_value('last_inspect_date', datetime.now().strftime("%Y-%m-%dT%H:%M:%S"))
+                anime_schedule_loader.add_value('last_inspect_date', self.crawl_date)
                 yield anime_schedule_loader.load_item()
         
     def parse_review_page_for_reviews(self, response, local_file_response = False):
@@ -79,6 +84,7 @@ class AnimeSpider(scrapy.Spider):
         if local_file_response == False:
             for review in response.xpath('//div[@class="borderDark"]'):
                 review_loader = ItemLoader(item=ReviewItem(), selector=review)
+                review_loader.add_value('crawl_date', self.crawl_date)
                 review_loader.add_xpath('url', './/a[@class="lightLink"]/@href')
                 review_loader.add_xpath('uid', './/a[@class="lightLink"]/@href')
                 review_loader.add_value('anime_id', response.url)
@@ -96,6 +102,7 @@ class AnimeSpider(scrapy.Spider):
             for review in response.xpath('//div[@class="borderDark"]'):
 
                 review_loader = ItemLoader(item=ReviewItem(), selector=review)
+                review_loader.add_value('crawl_date', self.crawl_date)
                 review_loader.add_xpath('url', './/a[@class="lightLink"]/@href')
                 review_loader.add_xpath('uid', './/a[@class="lightLink"]/@href')
                 review_loader.add_value('anime_id', response.url)
@@ -115,7 +122,7 @@ class AnimeSpider(scrapy.Spider):
         for review in response.xpath('//div[@class="borderDark"]'):
             profile_schedule_loader = ItemLoader(item=ProfileSchedulerItem(), selector=review)
             profile_schedule_loader.add_xpath('url', './/a[contains(@href, "profile")]/@href')
-            profile_schedule_loader.add_value('last_inspect_date', datetime.now().strftime("%Y-%m-%dT%H:%M:%S"))
+            profile_schedule_loader.add_value('last_inspect_date', self.crawl_date)
             yield profile_schedule_loader.load_item()
     
     def parse_recommendation_page_for_recommendations(self, response, local_file_response = False):
@@ -125,6 +132,7 @@ class AnimeSpider(scrapy.Spider):
             recommendations = response.xpath('//div[@class="borderClass"]/table/tr/td[2]')
             for recommendation in recommendations:
                 rec_loader = ItemLoader(item=RecommendationItem(), selector=recommendation)
+                rec_loader.add_value('crawl_date', self.crawl_date)
                 rec_loader.add_xpath('url', './/div/span/a[@title="Permalink"]/@href')
                 rec_loader.add_value('src_anime', current_anime)
                 rec_loader.add_xpath('dest_anime', './/div[@style="margin-bottom: 2px;"]/a[contains(@href, "/anime/")]/@href')
@@ -135,6 +143,7 @@ class AnimeSpider(scrapy.Spider):
             recommendations = response.xpath('//div[@class="borderClass"]/table/tbody/tr/td[2]')
             for recommendation in recommendations:
                 rec_loader = ItemLoader(item=RecommendationItem(), selector=recommendation)
+                rec_loader.add_value('crawl_date', self.crawl_date)
                 rec_loader.add_xpath('url', './/div/span/a[@title="Permalink"]/@href')
                 rec_loader.add_value('src_anime', current_anime)
                 rec_loader.add_xpath('dest_anime', './/div[@style="margin-bottom: 2px;"]/a[contains(@href, "/anime/")]/@href')
@@ -147,14 +156,14 @@ class AnimeSpider(scrapy.Spider):
             for recommendation in recommendations:
                 anime_schedule_loader = ItemLoader(item=AnimeSchedulerItem(), selector=recommendation)
                 anime_schedule_loader.add_xpath('url', './/div[@style="margin-bottom: 2px;"]/a[contains(@href, "/anime/")]/@href')
-                anime_schedule_loader.add_value('last_inspect_date', datetime.now().strftime("%Y-%m-%dT%H:%M:%S"))
+                anime_schedule_loader.add_value('last_inspect_date', self.crawl_date)
                 yield anime_schedule_loader.load_item()
         else:
             recommendations = response.xpath('//div[@class="borderClass"]/table/tbody/tr/td[2]')
             for recommendation in recommendations:
                 anime_schedule_loader = ItemLoader(item=AnimeSchedulerItem(), selector=recommendation)
                 anime_schedule_loader.add_xpath('url', './/div[@style="margin-bottom: 2px;"]/a[contains(@href, "/anime/")]/@href')
-                anime_schedule_loader.add_value('last_inspect_date', datetime.now().strftime("%Y-%m-%dT%H:%M:%S"))
+                anime_schedule_loader.add_value('last_inspect_date', self.crawl_date)
                 yield anime_schedule_loader.load_item()
 
 
@@ -313,7 +322,7 @@ class AnimeSpider(scrapy.Spider):
         anime_pics_item = self.parse_pics_page_for_pics(response)
 
         anime_item = AnimeItem({**dict(anime_main_item), **dict(anime_pics_item)})
-        anime_item['crawl_date'] = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+        anime_item['crawl_date'] = self.crawl_date
 
         yield anime_item
 

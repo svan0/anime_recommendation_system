@@ -11,10 +11,14 @@ class RecentProfileSpider(scrapy.Spider):
     start_urls = [
         'https://myanimelist.net/users.php'
     ]
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.crawl_date = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
 
     def parse(self, response):
         self.logger.info('Parse function called on %s', response.url)
         for link in response.xpath('//tr/td/div[1]/a[contains(@href, "/profile/")]/@href').getall():
             profile_schedule_loader = ItemLoader(item=ProfileSchedulerItem())
             profile_schedule_loader.add_value('url', link)
+            profile_schedule_loader.add_value('last_inspect_date', self.crawl_date)
             yield profile_schedule_loader.load_item()

@@ -51,7 +51,7 @@ class AnimeProcessPipeline:
         if item['type'] not in {"TV", "Movie", "Special", "OVA", "ONA", "Special"}:
             raise DropItem(f"AnimeItem {item['url']} dropped because 'type' {item['type']} is not known")
         
-        if item['source_type'] not in {"Manga", "One-shot", "Doujinshi", "Light novel", "Novel", "Manhwa", "Manhua", "Original", "Visual novel", "Game", "Card game"}:
+        if item['source_type'] not in {"Manga", "One-shot", "Doujinshi", "Light novel", "Novel", "Manhwa", "Manhua", "Original", "Visual novel", "Game", "Card game", "Web manga"}:
             raise DropItem(f"AnimeItem {item['url']} dropped because 'source_type' {item['source_type']} is not known")
         
         if item['status'] not in {"Not yet aired", "Currently Airing", "Finished Airing"}:
@@ -98,11 +98,8 @@ class AnimeProcessPipeline:
             if 'start_date' not in item:
                 raise DropItem(f"AnimeItem {item['url']} dropped because it has finished airing but 'start_date' is not known")
             
-            if item['num_episodes'] == 1:
-                item['end_date'] = item['start_date']
-            
             if 'end_date' not in item:
-                raise DropItem(f"AnimeItem {item['url']} dropped because it has finished airing but 'end_date' is not known")
+                item['end_date'] = item['start_date']
 
             if item['type'] == 'TV' and 'season' not in item:
                 raise DropItem(f"AnimeItem {item['url']} dropped because it is a finished airing TV show but 'season' is not known")
