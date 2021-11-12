@@ -36,11 +36,6 @@ resource "google_storage_bucket_object" "scheduler_cloud_functions_artifact" {
   bucket = google_storage_bucket.artifacts_bucket.name
 }
 
-resource "google_storage_bucket_object" "dataflow_ingestion_artifact" {
-  name   = "etl/ingestion.py"
-  source = "/Users/marouenesfargandoura/Desktop/personal_projects/anime_recommendation_system/etl/ingestion.py"
-  bucket = google_storage_bucket.artifacts_bucket.name
-}
 
 resource "google_sql_database_instance" "crawl_scheduler_db_instance" {
   name             = "scheduler-db-instance-dev-small-3"
@@ -130,7 +125,7 @@ resource "google_cloudfunctions_function" "profile_crawl_scheduler" {
 
 resource "google_dataflow_job" "data_ingestion_job" {
     name = "data_ingestion_to_bq"
-    template_gcs_path = "gs://anime-rec-dev-artifacts/etl/ingestion.py"
+    template_gcs_path = "gs://anime-rec-dev-dataflow-temp/templates/ingestion_to_bq"
     temp_gcs_location = "gs://anime-rec-dev-dataflow-temp/"
     enable_streaming_engine = true
     region = "us-central1"
