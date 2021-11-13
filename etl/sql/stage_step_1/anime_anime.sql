@@ -35,8 +35,8 @@ all_anime_genre_club_IOU AS (
             B.anime_id AS animeB,
             array_intersection(A.genres, B.genres) / array_union(A.genres, B.genres) AS genre_IOU,
             array_intersection(A.clubs, B.clubs) / array_union(A.clubs, B.clubs) AS club_IOU
-    FROM staging_area.anime A
-    CROSS JOIN staging_area.anime B
+    FROM `anime-rec-dev.staging_area.anime` A
+    CROSS JOIN `anime-rec-dev.staging_area.anime` B
     WHERE A.anime_id != B.anime_id
 ),
 related_and_recommendation_and_genre_club_IOU AS (

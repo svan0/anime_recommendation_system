@@ -1,16 +1,3 @@
-CREATE TEMPORARY FUNCTION array_intersection(x ANY TYPE, y ANY TYPE) AS (
-  (SELECT COUNT(*) 
-  FROM UNNEST(x) as xe
-  INNER JOIN (SELECT ye FROM UNNEST(y) as ye)
-  ON xe = ye)
-);
-CREATE TEMPORARY FUNCTION array_union(x ANY TYPE, y ANY TYPE) AS (
-  (SELECT COUNT(*) + 1e-6
-  FROM UNNEST(x) as xe
-  FULL OUTER JOIN (SELECT ye FROM UNNEST(y) as ye)
-  ON xe = ye)
-);
-
 CREATE OR REPLACE TABLE `anime-rec-dev.staging_area.user_anime` AS
 WITH 
 favorite AS (
