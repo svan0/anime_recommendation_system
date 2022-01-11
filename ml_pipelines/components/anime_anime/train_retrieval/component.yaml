@@ -1,0 +1,39 @@
+inputs:
+- {name: train_data_path, type: Dataset, description: 'Anime Anime train data path'}
+- {name: val_data_path, type: Dataset, description: 'Anime Anime validation data path'}
+- {name: test_data_path, type: Dataset, description: 'Anime Anime test data path'}
+- {name: all_anime_data_path, type: Dataset, description: 'List of all Anime data path'}
+- {name: anime_embedding_size, type: Integer, description: 'Anime Embedding size', optional: true, default: '0'}
+- {name: learning_rate, type: Float, description: 'learning rate', optional: true, default: '0.0'}
+- {name: optimizer, type: String, description: 'optimizer', optional: true, default: 'None'}
+
+
+outputs:
+- {name: output_model_path, type: Model, description: 'Retrieval Model path'}
+- {name: output_metric_path, type: Metrics, description: 'Retrieval Model metrics'}
+
+implementation:
+  container:
+    image: gcr.io/anime-rec-dev/ml_image@sha256:4c5a77c06c20c94ca8f50fd1a60dc6c4d4b4918d1aff40333a3373bbd4e4cc9c
+    command: [
+      python3,
+      ml_pipelines/components/anime_anime/train_retrieval/src/task.py,
+      --train-data-path,
+      {inputPath: train_data_path},
+      --val-data-path,
+      {inputPath: val_data_path},
+      --test-data-path,
+      {inputPath: test_data_path},
+      --all-anime-data-path,
+      {inputPath: all_anime_data_path},
+      --output-model-path,
+      {outputPath: output_model_path},
+      --output-metrics-path,
+      {outputPath: output_metric_path},
+      --anime-embedding-size,
+      {inputValue: anime_embedding_size},
+      --learning-rate,
+      {inputValue: learning_rate},
+      --optimizer,
+      {inputValue: optimizer},
+    ]

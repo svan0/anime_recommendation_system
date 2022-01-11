@@ -1,0 +1,109 @@
+{
+    "metrics": [
+        {
+            "format": "RAW",
+            "name": "train_loss",
+            "number_value": 25.35100555419922
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "train_Precision@3",
+            "number_value": 0.5285191535949707
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "train_Recall@3",
+            "number_value": 0.4237385392189026
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "train_MAP@3",
+            "number_value": 0.3598286509513855
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "train_MRR@3",
+            "number_value": 0.6758241653442383
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "train_ndcg@3",
+            "number_value": 0.7394255995750427
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "train_root_mean_squared_error",
+            "number_value": 3.2642455101013184
+        },
+        {
+            "format": "RAW",
+            "name": "val_loss",
+            "number_value": 27.60236358642578
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "val_Precision@3",
+            "number_value": 0.38999998569488525
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "val_Recall@3",
+            "number_value": 0.39932143688201904
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "val_MAP@3",
+            "number_value": 0.32024604082107544
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "val_MRR@3",
+            "number_value": 0.5350000262260437
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "val_ndcg@3",
+            "number_value": 0.7152458429336548
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "val_root_mean_squared_error",
+            "number_value": 3.488637924194336
+        },
+        {
+            "format": "RAW",
+            "name": "test_loss",
+            "number_value": 27.86670684814453
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "test_Precision@3",
+            "number_value": 0.4000000059604645
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "test_Recall@3",
+            "number_value": 0.3017738163471222
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "test_MAP@3",
+            "number_value": 0.2520158886909485
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "test_MRR@3",
+            "number_value": 0.5533333420753479
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "test_ndcg@3",
+            "number_value": 0.7125916481018066
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "test_root_mean_squared_error",
+            "number_value": 3.516340732574463
+        }
+    ]
+}
