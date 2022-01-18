@@ -1,0 +1,124 @@
+{
+    "metrics": [
+        {
+            "format": "PERCENTAGE",
+            "name": "train_factorized_top_k/top_1_categorical_accuracy",
+            "number_value": 0.0
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "train_factorized_top_k/top_5_categorical_accuracy",
+            "number_value": 0.04600914940237999
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "train_factorized_top_k/top_10_categorical_accuracy",
+            "number_value": 0.10345704108476639
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "train_factorized_top_k/top_50_categorical_accuracy",
+            "number_value": 0.5604982376098633
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "train_factorized_top_k/top_100_categorical_accuracy",
+            "number_value": 0.9987290501594543
+        },
+        {
+            "format": "RAW",
+            "name": "train_loss",
+            "number_value": 15610.72265625
+        },
+        {
+            "format": "RAW",
+            "name": "train_regularization_loss",
+            "number_value": 0.0
+        },
+        {
+            "format": "RAW",
+            "name": "train_total_loss",
+            "number_value": 15610.72265625
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "val_factorized_top_k/top_1_categorical_accuracy",
+            "number_value": 0.0
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "val_factorized_top_k/top_5_categorical_accuracy",
+            "number_value": 0.004040404222905636
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "val_factorized_top_k/top_10_categorical_accuracy",
+            "number_value": 0.010101010091602802
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "val_factorized_top_k/top_50_categorical_accuracy",
+            "number_value": 0.20404040813446045
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "val_factorized_top_k/top_100_categorical_accuracy",
+            "number_value": 0.9838383793830872
+        },
+        {
+            "format": "RAW",
+            "name": "val_loss",
+            "number_value": 3075.230224609375
+        },
+        {
+            "format": "RAW",
+            "name": "val_regularization_loss",
+            "number_value": 0.0
+        },
+        {
+            "format": "RAW",
+            "name": "val_total_loss",
+            "number_value": 3075.230224609375
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "test_factorized_top_k/top_1_categorical_accuracy",
+            "number_value": 0.0
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "test_factorized_top_k/top_5_categorical_accuracy",
+            "number_value": 0.005758157465606928
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "test_factorized_top_k/top_10_categorical_accuracy",
+            "number_value": 0.01727447286248207
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "test_factorized_top_k/top_50_categorical_accuracy",
+            "number_value": 0.21113243699073792
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "test_factorized_top_k/top_100_categorical_accuracy",
+            "number_value": 0.9942418336868286
+        },
+        {
+            "format": "RAW",
+            "name": "test_loss",
+            "number_value": 3263.0771484375
+        },
+        {
+            "format": "RAW",
+            "name": "test_regularization_loss",
+            "number_value": 0.0
+        },
+        {
+            "format": "RAW",
+            "name": "test_total_loss",
+            "number_value": 3263.0771484375
+        }
+    ]
+}

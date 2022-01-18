@@ -1,0 +1,79 @@
+{
+    "metrics": [
+        {
+            "format": "RAW",
+            "name": "train_loss",
+            "number_value": 0.1763247847557068
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "train_binary_accuracy",
+            "number_value": 0.9593988656997681
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "train_precision",
+            "number_value": 0.9601615071296692
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "train_recall",
+            "number_value": 0.9584686160087585
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "train_auc",
+            "number_value": 0.9853891730308533
+        },
+        {
+            "format": "RAW",
+            "name": "val_loss",
+            "number_value": 0.22290270030498505
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "val_binary_accuracy",
+            "number_value": 0.9523821473121643
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "val_precision",
+            "number_value": 0.9475580453872681
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "val_recall",
+            "number_value": 0.9567904472351074
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "val_auc",
+            "number_value": 0.9806206822395325
+        },
+        {
+            "format": "RAW",
+            "name": "test_loss",
+            "number_value": 0.20342081785202026
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "test_binary_accuracy",
+            "number_value": 0.953507125377655
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "test_precision",
+            "number_value": 0.9524698853492737
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "test_recall",
+            "number_value": 0.9564846754074097
+        },
+        {
+            "format": "PERCENTAGE",
+            "name": "test_auc",
+            "number_value": 0.9824783802032471
+        }
+    ]
+}

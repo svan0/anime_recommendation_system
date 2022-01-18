@@ -1,0 +1,47 @@
+inputs:
+- {name: train_data_path, type: Dataset, description: 'User Anime Retrieval train data path'}
+- {name: val_data_path, type: Dataset, description: 'User Anime Retrieval validation data path'}
+- {name: test_data_path, type: Dataset, description: 'User Anime Retrieval test data path'}
+- {name: all_anime_data_path, type: Dataset, description: 'List of all Anime data path'}
+- {name: all_user_data_path, type: Dataset, description: 'List of all User data path'}
+- {name: user_anime_embedding_size, type: Integer, description: 'User and Anime Embedding size', optional: true, default: '128'}
+- {name: learning_rate, type: Float, description: 'learning rate', optional: true, default: '0.005'}
+- {name: optimizer, type: String, description: 'optimizer', optional: true, default: 'adam'}
+- {name: max_num_epochs, type: Integer, description: 'Maximum number of training epochs', optional: true, default: '50'}
+- {name: early_stop_num_epochs, type: Integer, description: 'Maximum number of non improvemennt training epochs', optional: true, default: '2'}
+
+outputs:
+- {name: output_model_path, type: Model, description: 'Retrieval Model path'}
+- {name: output_metric_path, type: Metrics, description: 'Retrieval Model metrics'}
+
+implementation:
+  container:
+    image: gcr.io/anime-rec-dev/ml_image@sha256:4c5a77c06c20c94ca8f50fd1a60dc6c4d4b4918d1aff40333a3373bbd4e4cc9c
+    command: [
+      python3,
+      ml_pipelines/components/user_anime/train_retrieval/src/task.py,
+      --train-data-path,
+      {inputPath: train_data_path},
+      --val-data-path,
+      {inputPath: val_data_path},
+      --test-data-path,
+      {inputPath: test_data_path},
+      --all-anime-data-path,
+      {inputPath: all_anime_data_path},
+      --all-user-data-path,
+      {inputPath: all_user_data_path},
+      --output-model-path,
+      {outputPath: output_model_path},
+      --output-metrics-path,
+      {outputPath: output_metric_path},
+      --user-anime-embedding-size,
+      {inputValue: user_anime_embedding_size},
+      --learning-rate,
+      {inputValue: learning_rate},
+      --optimizer,
+      {inputValue: optimizer},
+      --max-num-epochs,
+      {inputValue: max_num_epochs},
+      --early-stop-num-epochs,
+      {inputValue: early_stop_num_epochs},
+    ]

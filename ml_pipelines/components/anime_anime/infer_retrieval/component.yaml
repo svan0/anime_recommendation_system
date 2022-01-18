@@ -1,0 +1,20 @@
+inputs:
+- {name: model_path, type: Model, description: 'Anime Anime Retrieval Model'}
+- {name: input_data_path, type: Dataset, description: 'User last Anime data path'}
+
+outputs:
+- {name: output_data_path, type: Dataset, description: 'User retrieved anime'}
+
+implementation:
+  container:
+    image: gcr.io/anime-rec-dev/ml_image@sha256:4c5a77c06c20c94ca8f50fd1a60dc6c4d4b4918d1aff40333a3373bbd4e4cc9c
+    command: [
+      python3,
+      ml_pipelines/components/anime_anime/infer_retrieval/src/task.py,
+      --model-path,
+      {inputPath: model_path},
+      --input-data-path,
+      {inputPath: input_data_path},
+      --output-data-path,
+      {outputPath: output_data_path},
+    ]
