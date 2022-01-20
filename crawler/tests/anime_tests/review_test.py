@@ -19,6 +19,7 @@ class ReviewTest(unittest.TestCase):
         result = []
         response = fake_html_response_from_file(file_path, url)
         for review in self.spider.parse_review_page_for_reviews(response, local_file_response = True):
+            del review['crawl_date']
             result.append(dict(review))
         
         self.assertCountEqual(
@@ -317,6 +318,7 @@ class ReviewTest(unittest.TestCase):
         result = []
         response = fake_html_response_from_file(file_path, url)
         for review in self.spider.parse_review_page_for_reviews(response, local_file_response = True):
+            del review['crawl_date']
             result.append(dict(review))
         
         self.assertCountEqual(

@@ -93,7 +93,7 @@ class ProfileTest(unittest.TestCase):
 
         self.assertAlmostEqual(
             datetime.datetime.strptime(result['last_online_date'], "%Y-%m-%dT%H:%M:%S"),
-            datetime.datetime(2021, 10, 14, 15, 7, 0, 0), 
+            datetime.datetime(2022, 10, 14, 15, 7, 0, 0), 
             delta=datetime.timedelta(seconds=10)
         )
 

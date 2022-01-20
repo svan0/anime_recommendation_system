@@ -44,6 +44,7 @@ class RecommendedAnimeTest(unittest.TestCase):
         result = []
         response = fake_html_response_from_file(file_path, url)
         for recommended_anime in self.spider.parse_recommendation_page_for_recommendations(response, local_file_response = True):
+            del recommended_anime['crawl_date']
             result.append(dict(recommended_anime))
         
         self.assertCountEqual(

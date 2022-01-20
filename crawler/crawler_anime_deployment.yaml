@@ -5,7 +5,7 @@ metadata:
   labels:
     app: crawler-anime
 spec:
-  replicas: 2
+  replicas: 5
   selector:
     matchLabels: 
       app: crawler-anime
@@ -52,7 +52,7 @@ spec:
         - name: cloudsql-proxy
           image: gcr.io/cloudsql-docker/gce-proxy:1.23.0
           command : ["/cloud_sql_proxy",
-                     "-instances=anime-rec-dev:us-central1:scheduler-db-instance-dev-small-3=tcp:5432",
+                     "-instances=anime-rec-dev:us-central1:scheduler-db-instance-dev-small=tcp:5432",
                      "-credential_file=/secrets/scheduler_db_instance_credentials.json"]
           volumeMounts:
             - name: secrets-volume

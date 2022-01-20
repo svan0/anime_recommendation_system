@@ -109,6 +109,7 @@ class ActivityTest(unittest.TestCase):
         response = fake_xml_response_from_file(file_path, url)
         result = []
         for activity in self.spider.parse_activity_page_for_activity(response):
+            del activity['crawl_date']
             result.append(activity)
         
         self.assertCountEqual(

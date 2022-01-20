@@ -28,6 +28,7 @@ class FavoritesTest(unittest.TestCase):
         response = fake_html_response_from_file(file_path, url)
         result = []
         for favorite in self.spider.parse_profile_main_page_for_favorites(response):
+            del favorite['crawl_date']
             result.append(favorite)
 
         self.assertCountEqual(

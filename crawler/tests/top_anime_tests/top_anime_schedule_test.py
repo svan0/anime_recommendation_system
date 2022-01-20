@@ -70,6 +70,7 @@ class TopAnimeScheduleTest(unittest.TestCase):
         result = []
         response = fake_html_response_from_file(file_path, url)
         for top_anime_schedule in self.spider.parse(response):
+            del top_anime_schedule['last_inspect_date']
             result.append(top_anime_schedule)
 
         self.assertCountEqual(

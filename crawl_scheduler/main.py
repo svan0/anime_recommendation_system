@@ -2,6 +2,7 @@ import os
 import logging
 from concurrent import futures
 import threading
+from datetime import datetime
 
 from dotenv import load_dotenv
 
@@ -38,8 +39,8 @@ def get_top_priority_animes(max_num_urls):
             f"""
                 SELECT url 
                 FROM anime_schedule 
-                ORDER BY (last_crawl_date IS NULL) ASC, 
-                        (last_inspect_date - last_crawl_date) DESC,
+                ORDER BY (last_crawl_date IS NULL) DESC, 
+                        last_inspect_date ASC,
                         end_date DESC, 
                         watching_count DESC
                 LIMIT {max_num_urls}
@@ -47,6 +48,79 @@ def get_top_priority_animes(max_num_urls):
         )
         list_urls = cursor.fetchall()
         list_urls = list([x[0] for x in list_urls])
+        
+        for url in list_urls:
+
+            url_string = f"'{url}'"
+            last_inspect_date = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+            last_inspect_date = f"'{last_inspect_date}'"
+            last_crawl_date = last_inspect_date
+            end_date = "NULL"
+            watching_count = "NULL"
+
+            insert_query = f"""
+                INSERT INTO anime_schedule (
+                    url, 
+                    end_date,
+                    watching_count,
+                    last_crawl_date, 
+                    last_inspect_date
+                )
+                VALUES (
+                    {url_string},
+                    {end_date},
+                    {watching_count},
+                    {last_crawl_date},
+                    {last_inspect_date}
+                )
+                ON CONFLICT(url) DO UPDATE
+                    SET end_date = 
+                            CASE WHEN anime_schedule.last_crawl_date IS NULL THEN excluded.end_date
+                            ELSE (
+                                CASE WHEN excluded.last_crawl_date IS NULL THEN anime_schedule.end_date
+                                ELSE (
+                                    CASE WHEN excluded.last_crawl_date > anime_schedule.last_crawl_date THEN excluded.end_date
+                                    ELSE anime_schedule.end_date
+                                    END
+                                )
+                                END
+                            )
+                            END,
+                        watching_count = 
+                            CASE WHEN anime_schedule.last_crawl_date IS NULL THEN excluded.watching_count
+                            ELSE (
+                                CASE WHEN excluded.last_crawl_date IS NULL THEN anime_schedule.watching_count
+                                ELSE (
+                                    CASE WHEN excluded.last_crawl_date > anime_schedule.last_crawl_date THEN excluded.watching_count
+                                    ELSE anime_schedule.watching_count
+                                    END
+                                )
+                                END
+                            )
+                            END,
+                        last_crawl_date  = 
+                            CASE WHEN anime_schedule.last_crawl_date IS NULL THEN excluded.last_crawl_date
+                            ELSE (
+                                CASE WHEN excluded.last_crawl_date IS NULL THEN anime_schedule.last_crawl_date
+                                ELSE (
+                                    CASE WHEN excluded.last_crawl_date > anime_schedule.last_crawl_date THEN excluded.last_crawl_date
+                                    ELSE anime_schedule.last_crawl_date
+                                    END
+                                )
+                                END
+                            )
+                            END,
+                        last_inspect_date = 
+                            CASE WHEN anime_schedule.last_inspect_date > excluded.last_inspect_date THEN anime_schedule.last_inspect_date
+                            ELSE excluded.last_inspect_date
+                            END
+                ;
+            """
+            try:
+                cursor.execute(insert_query)
+            except:
+                db_conn.rollback()
+        db_conn.commit()
     except Exception as e:
         print(e)
         list_urls = []
@@ -73,14 +147,68 @@ def get_top_priority_profiles(max_num_urls):
             f"""
                 SELECT url 
                 FROM profile_schedule 
-                ORDER BY (last_crawl_date IS NULL) ASC,
-                        (last_crawl_date - last_inspect_date) DESC,
-                        (last_inspect_date - last_online_date) DESC 
+                ORDER BY (last_crawl_date IS NULL) DESC,
+                        last_inspect_date ASC,
+                        last_online_date ASC 
                 LIMIT {max_num_urls}
             """
         )
         list_urls = cursor.fetchall()
         list_urls = list([x[0] for x in list_urls])
+
+        for url in list_urls:
+            url_string = f"'{url}'"
+            last_inspect_date = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+            last_inspect_date = f"'{last_inspect_date}'"
+            last_crawl_date = last_inspect_date
+            last_online_date = "NULL"
+            
+            insert_query = f"""
+                INSERT INTO profile_schedule 
+                    (url, last_online_date, last_crawl_date, last_inspect_date)
+                VALUES (
+                    {url_string},
+                    {last_online_date},
+                    {last_crawl_date},
+                    {last_inspect_date}
+                )
+                ON CONFLICT(url) DO UPDATE
+                    SET last_online_date = 
+                            CASE WHEN profile_schedule.last_crawl_date IS NULL THEN excluded.last_online_date
+                            ELSE (
+                                CASE WHEN excluded.last_crawl_date IS NULL THEN profile_schedule.last_online_date
+                                ELSE (
+                                    CASE WHEN excluded.last_crawl_date > profile_schedule.last_crawl_date THEN excluded.last_online_date
+                                    ELSE profile_schedule.last_online_date
+                                    END
+                                )
+                                END
+                            )
+                            END,
+                        last_crawl_date = 
+                            CASE WHEN profile_schedule.last_crawl_date IS NULL THEN excluded.last_crawl_date
+                            ELSE (
+                                CASE WHEN excluded.last_crawl_date IS NULL THEN profile_schedule.last_crawl_date
+                                ELSE (
+                                    CASE WHEN excluded.last_crawl_date > profile_schedule.last_crawl_date THEN excluded.last_crawl_date
+                                    ELSE profile_schedule.last_crawl_date
+                                    END
+                                )
+                                END
+                            )
+                            END,
+                        last_inspect_date = 
+                            CASE WHEN profile_schedule.last_inspect_date > excluded.last_inspect_date THEN profile_schedule.last_inspect_date
+                            ELSE excluded.last_inspect_date
+                            END
+                ;
+            """
+            try:
+                cursor.execute(insert_query)
+            except:
+                db_conn.rollback()
+        db_conn.commit()
+
     except Exception as e:
         print(e)
         list_urls = []
@@ -173,5 +301,5 @@ def schedule_profile(request):
 
 if __name__ == '__main__':
     load_dotenv()
-    #print(get_top_priority_profiles(10))
-    #print(get_top_priority_animes(10))
+    get_top_priority_profiles(500)
+    get_top_priority_animes(500)

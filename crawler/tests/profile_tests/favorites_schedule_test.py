@@ -29,6 +29,7 @@ class FavoriteScheduleTest(unittest.TestCase):
         response = fake_html_response_from_file(file_path, url)
         result = []
         for favorite in self.spider.parse_profile_main_page_for_favorites_scheduler(response):
+            del favorite['last_inspect_date']
             result.append(favorite)
 
         self.assertCountEqual(

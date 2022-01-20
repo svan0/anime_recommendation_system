@@ -228,8 +228,6 @@ class AnimeSpider(scrapy.Spider):
 
     def parse(self, response):
 
-        self.logger.info(requests.get('http://checkip.dyndns.org/').text)
-
         self.logger.info('Parsing anime url:  %s', response.url)
         
         anime_item = self.parse_anime_main_page_for_info(response)

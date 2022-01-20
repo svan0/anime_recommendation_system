@@ -1,4 +1,5 @@
 import unittest
+from datetime import datetime
 
 from crawler.spiders.anime_spider import AnimeSpider
 from crawler.items.data_items.anime_item import AnimeItem
@@ -75,6 +76,8 @@ class AnimeTest(unittest.TestCase):
         response = fake_html_response_from_file(file_path, url)
         result = {**result, **(self.spider.parse_pics_page_for_pics(response, local_file_response = True))}
 
+        result['crawl_date'] = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+        
         result = AnimeItem(**result)
         result = self.process.process_item(result, self.spider)
         result = dict(result)
@@ -149,6 +152,8 @@ class AnimeTest(unittest.TestCase):
         response = fake_html_response_from_file(file_path, url)
         result = {**result, **(self.spider.parse_pics_page_for_pics(response, local_file_response = True))}
         
+        result['crawl_date'] = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+
         result = AnimeItem(**result)
         result = self.process.process_item(result, self.spider)
         result = dict(result)
@@ -216,6 +221,8 @@ class AnimeTest(unittest.TestCase):
         url = 'https://myanimelist.net/anime/44511/Chainsaw_Man/pics'
         response = fake_html_response_from_file(file_path, url)
         result = {**result, **(self.spider.parse_pics_page_for_pics(response, local_file_response = True))}
+
+        result['crawl_date'] = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
 
         result = AnimeItem(**result)
         result = self.process.process_item(result, self.spider)
@@ -290,6 +297,8 @@ class AnimeTest(unittest.TestCase):
         url = 'https://myanimelist.net/anime/28851/Koe_no_Katachi/stats/pics'
         response = fake_html_response_from_file(file_path, url)
         result = {**result, **(self.spider.parse_pics_page_for_pics(response, local_file_response = True))}
+        
+        result['crawl_date'] = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
         
         result = AnimeItem(**result)
         result = self.process.process_item(result, self.spider)

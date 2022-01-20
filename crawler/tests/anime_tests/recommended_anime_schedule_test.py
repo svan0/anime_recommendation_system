@@ -17,6 +17,7 @@ class RecommendedAnimeScheduleTest(unittest.TestCase):
         result = []
         response = fake_html_response_from_file(file_path, url)
         for recommended_anime in self.spider.parse_recommendation_page_for_schedule_anime(response, local_file_response = True):
+            del recommended_anime['last_inspect_date']
             result.append(dict(recommended_anime))
         
         self.assertCountEqual(
@@ -37,6 +38,7 @@ class RecommendedAnimeScheduleTest(unittest.TestCase):
         result = []
         response = fake_html_response_from_file(file_path, url)
         for recommended_anime in self.spider.parse_recommendation_page_for_schedule_anime(response, local_file_response = True):
+            del recommended_anime['last_inspect_date']
             result.append(dict(recommended_anime))
         
         self.assertCountEqual(

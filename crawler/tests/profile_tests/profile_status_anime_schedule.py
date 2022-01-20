@@ -17,6 +17,7 @@ class ProfileStatusAnimeScheduleTest(unittest.TestCase):
         response = fake_html_response_from_file(file_path, url)
         result = []
         for completed_anime in self.spider.parse_status_page_for_anime_schedule(response):
+            del completed_anime['last_inspect_date']
             result.append(completed_anime)
         
         self.assertEqual(
@@ -42,6 +43,7 @@ class ProfileStatusAnimeScheduleTest(unittest.TestCase):
         response = fake_html_response_from_file(file_path, url)
         result = []
         for completed_anime in self.spider.parse_status_page_for_anime_schedule(response):
+            del completed_anime['last_inspect_date']
             result.append(completed_anime)
 
         self.assertEqual(
@@ -66,6 +68,7 @@ class ProfileStatusAnimeScheduleTest(unittest.TestCase):
         response = fake_html_response_from_file(file_path, url)
         result = []
         for completed_anime in self.spider.parse_status_page_for_anime_schedule(response):
+            del completed_anime['last_inspect_date']
             result.append(completed_anime)
         
         self.assertEqual(
@@ -91,6 +94,7 @@ class ProfileStatusAnimeScheduleTest(unittest.TestCase):
         response = fake_html_response_from_file(file_path, url)
         result = []
         for completed_anime in self.spider.parse_status_page_for_anime_schedule(response):
+            del completed_anime['last_inspect_date']
             result.append(completed_anime)
 
         self.assertEqual(

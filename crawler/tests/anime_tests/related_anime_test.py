@@ -24,6 +24,7 @@ class RelatedAnimeTest(unittest.TestCase):
         result = []
         response = fake_html_response_from_file(file_path, url)
         for related_anime in self.spider.parse_anime_main_page_for_related_anime(response, local_file_response = True):
+            del related_anime['crawl_date']
             result.append(dict(related_anime))
         
         self.assertCountEqual(

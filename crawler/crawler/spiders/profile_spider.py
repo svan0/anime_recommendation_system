@@ -173,9 +173,8 @@ class ProfileSpider(scrapy.Spider):
             yield anime_schedule_loader.load_item()
 
     def parse(self, response):
+        
         self.logger.info('Parsing profile url:  %s', response.url)
-
-        self.logger.info(requests.get('http://checkip.dyndns.org/').text)
 
         self.driver.get(response.url)
         time.sleep(1)
