@@ -3,10 +3,12 @@ inputs:
 - {name: val_data_path, type: Dataset, description: 'Anime triplet validation data path'}
 - {name: test_data_path, type: Dataset, description: 'Anime triplet test data path'}
 - {name: all_anime_data_path, type: Dataset, description: 'List of all Anime data path'}
-- {name: anime_embedding_size, type: Integer, description: 'Anime Embedding size', optional: true, default: '0'}
-- {name: scoring_layer_size, type: Integer, description: 'Scoring Layer size', optional: true, default: '0'}
-- {name: learning_rate, type: Float, description: 'learning rate', optional: true, default: '0.0'}
-- {name: optimizer, type: String, description: 'optimizer', optional: true, default: 'None'}
+- {name: anime_embedding_size, type: Integer, description: 'Anime Embedding size', optional: true, default: '128'}
+- {name: scoring_layer_size, type: Integer, description: 'Scoring Layer size', optional: true, default: '128'}
+- {name: learning_rate, type: Float, description: 'learning rate', optional: true, default: '0.05'}
+- {name: optimizer, type: String, description: 'optimizer', optional: true, default: 'adam'}
+- {name: max_num_epochs, type: Integer, description: 'Maximum number of training epochs', optional: true, default: '50'}
+- {name: early_stop_num_epochs, type: Integer, description: 'Maximum number of non improvemennt training epochs', optional: true, default: '2'}
 
 outputs:
 - {name: output_model_path, type: Model, description: 'Ranking Model path'}
@@ -14,7 +16,7 @@ outputs:
 
 implementation:
   container:
-    image: gcr.io/anime-rec-dev/ml_image@sha256:4c5a77c06c20c94ca8f50fd1a60dc6c4d4b4918d1aff40333a3373bbd4e4cc9c
+    image: gcr.io/anime-rec-dev/ml_image:latest
     command: [
       python3,
       ml_pipelines/components/anime_anime/train_ranking/src/task.py,
@@ -38,4 +40,8 @@ implementation:
       {inputValue: learning_rate},
       --optimizer,
       {inputValue: optimizer},
+      --max-num-epochs,
+      {inputValue: max_num_epochs},
+      --early-stop-num-epochs,
+      {inputValue: early_stop_num_epochs},
     ]

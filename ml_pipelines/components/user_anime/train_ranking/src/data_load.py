@@ -26,29 +26,29 @@ def load_user_anime_list_ranking_dataset(data_path, batch_size=2048, shuffle=Fal
     dataset = dataset.map(lambda x : {
         'user_id' : x['user_id'],
         'anime_id' : tf.strings.regex_replace(x['anime_id'], pattern = r"\[|\]|'", rewrite = ""),
-        'overall_score' : tf.strings.regex_replace(x['overall_score'], pattern = r"\[|\]|'", rewrite = "")
+        'score' : tf.strings.regex_replace(x['score'], pattern = r"\[|\]|'", rewrite = "")
     })
     dataset = dataset.map(lambda x : {
         'user_id' : x['user_id'],
         'anime_id' : tf.strings.split(x['anime_id']),
-        'overall_score' : tf.strings.split(x['overall_score'])
+        'score' : tf.strings.split(x['score'])
     })
     dataset = dataset.map(lambda x : {
         'user_id' : x['user_id'],
         'anime_id' : x['anime_id'].to_tensor(),
-        'overall_score' : tf.strings.to_number(x['overall_score']).to_tensor()
+        'score' : tf.strings.to_number(x['score']).to_tensor()
     })
     dataset = dataset.map(lambda x : {
         'user_id' : tf.repeat(tf.expand_dims(x['user_id'], 1), tf.shape(x['anime_id'])[1], axis = 1),
         'anime_id' : x['anime_id'],
-        'overall_score' : x['overall_score']
+        'score' : x['score']
     })
     dataset = dataset.map(lambda x : (
         {
             'user_id' : x['user_id'],
             'anime_id' : x['anime_id']
         },
-        x['overall_score']
+        x['score']
     ))
     if shuffle:
         dataset = dataset.shuffle(100_000, reshuffle_each_iteration=True)

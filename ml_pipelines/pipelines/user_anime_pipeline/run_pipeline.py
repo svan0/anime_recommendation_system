@@ -7,14 +7,13 @@ from kfp.v2.dsl import component
 from kfp.v2.google.client import AIPlatformClient
 
 sys.path.append(os.path.abspath(__file__ + "/../../../"))
-print(os.path.abspath(__file__ + "/../../../"))
 
 from components.bq_components import load_big_query_data, load_big_query_external_data
 
-from utils.bq_queries.user_anime_data_queries import sample_user_anime_retrieval_query as user_anime_retrieval_query
-from utils.bq_queries.user_anime_data_queries import sample_user_anime_list_ranking_query as user_anime_list_ranking_query
-from utils.bq_queries.user_anime_data_queries import sample_all_anime_query as all_anime_query
-from utils.bq_queries.user_anime_data_queries import sample_all_user_query as all_user_query
+from utils.bq_queries.user_anime_data_queries import user_anime_retrieval_query
+from utils.bq_queries.user_anime_data_queries import user_anime_list_ranking_query
+from utils.bq_queries.user_anime_data_queries import all_anime_query
+from utils.bq_queries.user_anime_data_queries import all_user_query
 from utils.bq_queries.user_anime_data_queries import user_retrieved_animes
 
 
@@ -74,7 +73,8 @@ def user_anime_recommendation_pipeline():
         early_stop_num_epochs = 5
     )
     train_retrieval_model.set_display_name("train retrieval model")
-    
+    train_retrieval_model.set_cpu_limit('4').set_memory_limit('32G')
+
     infer_retrieval_model = infer_user_anime_retrieval(
         model_path = train_retrieval_model.outputs['output_model_path'],
         input_data_path = all_user_data.outputs['output_csv']
@@ -110,6 +110,7 @@ def user_anime_recommendation_pipeline():
         early_stop_num_epochs = 5
     )
     train_ranking_model.set_display_name("train ranking model")
+    train_ranking_model.set_cpu_limit('4').set_memory_limit('32G')
     
     infer_ranking_model = infer_user_anime_ranking(
         model_path = train_ranking_model.outputs['output_model_path'],
@@ -132,6 +133,7 @@ if __name__ == '__main__':
     )
     response = api_client.create_run_from_job_spec(
         job_spec_path=package_path,
-        pipeline_root='gs://anime-rec-dev-ml-pipelines/anime-anime-rec-pipeline'
+        pipeline_root='gs://anime-rec-dev-ml-pipelines/user-anime-rec-pipeline',
+        enable_caching=False
     )
     

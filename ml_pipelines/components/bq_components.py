@@ -11,9 +11,9 @@ from kfp.v2.dsl import (
 def load_big_query_data(query:str, output_csv:Output[Dataset]):
     from google.cloud import bigquery
     client = bigquery.Client(project="anime-rec-dev")
-    dataset_ref = client.dataset("prod_area_us")
+    dataset_ref = client.dataset("processed_area")
     job_config = bigquery.QueryJobConfig()
-    query_job = client.query(query, job_config=job_config)
+    query_job = client.query(query, location='us-central1', job_config=job_config)
     data = query_job.to_dataframe()
     data.to_csv(output_csv.path, index = False)
 
@@ -36,6 +36,6 @@ def load_big_query_external_data(external_table_uri:Input[Dataset],
     external_config.options.skip_leading_rows = 1
     
     job_config = bigquery.QueryJobConfig(table_definitions={external_table_id: external_config})
-    query_job = client.query(query, job_config=job_config)
+    query_job = client.query(query, location='us-central1', job_config=job_config)
     data = query_job.to_dataframe()
     data.to_csv(output_csv.path, index = False)

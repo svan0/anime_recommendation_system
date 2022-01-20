@@ -6,7 +6,6 @@ from kfp.v2 import dsl
 from kfp.v2.google.client import AIPlatformClient
 
 sys.path.append(os.path.abspath(__file__ + "/../../../"))
-print(os.path.abspath(__file__ + "/../../../"))
 
 from components.bq_components import load_big_query_data, load_big_query_external_data
 
@@ -31,9 +30,9 @@ infer_anime_anime_ranking = kfp.components.load_component_from_file(
 )
 
 @dsl.pipeline(
-    name="last-anime-recommendation-pipeline"
+    name="anime-anime-recommendation-pipeline"
 )
-def last_anime_recommendation_pipeline():
+def anime_anime_recommendation_pipeline():
     train_retrieval_data = load_big_query_data(query = anime_anime_retrieval_query('TRAIN'))
     train_retrieval_data.set_display_name("train data : anime anime retrieval")
     
@@ -52,10 +51,13 @@ def last_anime_recommendation_pipeline():
                                                         all_anime_data_path = all_anime_data.outputs['output_csv'],
                                                         anime_embedding_size = 112,
                                                         learning_rate = 0.05,
-                                                        optimizer = 'adagrad'
+                                                        optimizer = 'adagrad',
+                                                        max_num_epochs = 30,
+                                                        early_stop_num_epochs = 5
                                                        )
     train_retrieval_model.set_display_name("train retrieval model")
-    
+    train_retrieval_model.set_cpu_limit('4').set_memory_limit('32G')
+
     last_watched_anime = load_big_query_data(query = user_last_anime_watched())
     last_watched_anime.set_display_name("last watched anime data")
     
@@ -89,9 +91,17 @@ def last_anime_recommendation_pipeline():
     train_ranking_model = train_anime_anime_ranking(train_data_path = train_pair_ranking_data.outputs['output_csv'], 
                                                     val_data_path = val_pair_ranking_data.outputs['output_csv'],
                                                     test_data_path = test_pair_ranking_data.outputs['output_csv'],
-                                                    all_anime_data_path = all_anime_data.outputs['output_csv'])
+                                                    all_anime_data_path = all_anime_data.outputs['output_csv'],
+                                                    anime_embedding_size = 256,
+                                                    scoring_layer_size = 256,
+                                                    learning_rate = 0.05,
+                                                    optimizer = 'adam',
+                                                    max_num_epochs = 30,
+                                                    early_stop_num_epochs = 5
+                                                    )
     train_ranking_model.set_display_name("train ranking model")
-    
+    train_ranking_model.set_cpu_limit('4').set_memory_limit('32G')
+
     infer_ranking = infer_anime_anime_ranking(model_path = train_ranking_model.outputs['output_model_path'],
                                               input_data_path = unknown_retrieved.outputs['output_csv']
     )
@@ -99,10 +109,10 @@ def last_anime_recommendation_pipeline():
 
 if __name__ == '__main__':
     
-    package_path = os.path.abspath(__file__ + "/../last_anime_recommendation_pipeline.json")
+    package_path = os.path.abspath(__file__ + "/../anime_anime_recommendation_pipeline.json")
     
     kfp.v2.compiler.Compiler().compile(
-        pipeline_func=last_anime_recommendation_pipeline,
+        pipeline_func=anime_anime_recommendation_pipeline,
         package_path=package_path
     )
     api_client = AIPlatformClient(
@@ -111,5 +121,6 @@ if __name__ == '__main__':
     )
     response = api_client.create_run_from_job_spec(
         job_spec_path=package_path,
-        pipeline_root='gs://anime-rec-dev-ml-pipelines/anime-anime-rec-pipeline'
+        pipeline_root='gs://anime-rec-dev-ml-pipelines/anime-anime-rec-pipeline',
+        enable_caching=False
     )

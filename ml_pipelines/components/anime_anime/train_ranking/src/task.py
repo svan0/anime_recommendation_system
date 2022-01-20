@@ -2,11 +2,11 @@ import argparse
 import sys
 import os
 import json
+import tensorflow as tf
 
-sys.path.append(os.path.abspath(__file__ + "/../../../../"))
+sys.path.append(os.path.abspath(__file__ + "/../../../../../"))
 sys.path.append(os.path.abspath(__file__ + "/../"))
 
-import tensorflow as tf
 
 from utils.data_load_utils import load_list_anime_np
 from data_load import load_anime_anime_pair_classification_dataset

@@ -18,7 +18,6 @@ def get_anime_anime_pair_ranking_classification_model(
         Creates the anime pair ranking classification model
     '''
     anime_model = SimpleAnimeModel(list_anime, anime_embedding_size)
-    anime_model.build(input_shape=())
 
     anime_pair_scoring_model = AnimeAnimeScoringModel(anime_model, scoring_layer_size)
     anime_anime_pair_classification_model = AnimeAnimePairClassificationModel(anime_pair_scoring_model)

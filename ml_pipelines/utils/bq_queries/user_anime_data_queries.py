@@ -7,7 +7,7 @@ def all_anime_query():
         SQL query that returns list of all unique animes
     '''
     query = '''
-        SELECT DISTINCT(anime_id) FROM `anime-rec-dev.prod_area_us.user_anime`
+        SELECT DISTINCT(anime_id) FROM `anime-rec-dev.processed_area.user_anime`
     '''
     return query
 
@@ -19,8 +19,8 @@ def all_user_query():
     query = f"""
     WITH list_users AS (
         SELECT user_id, COUNT(*) AS cnt
-        FROM `anime-rec-dev.prod_area_us.user_anime`
-        WHERE status = 'completed' AND overall_score IS NOT NULL AND overall_score > 0 AND last_interaction_date IS NOT NULL
+        FROM `anime-rec-dev.processed_area.user_anime`
+        WHERE status = 'completed' AND score IS NOT NULL AND score > 0 AND last_interaction_date IS NOT NULL
         GROUP BY user_id
         HAVING cnt >= 50
     )
@@ -41,23 +41,23 @@ def user_anime_retrieval_query(mode='TRAIN'):
     WITH 
     list_users AS (
         SELECT user_id, COUNT(*) AS cnt
-        FROM `anime-rec-dev.prod_area_us.user_anime`
+        FROM `anime-rec-dev.processed_area.user_anime`
         WHERE status = 'completed' 
-              AND overall_score IS NOT NULL 
-              AND overall_score > 0 
+              AND score IS NOT NULL 
+              AND score > 0 
               AND last_interaction_date IS NOT NULL
         GROUP BY user_id
         HAVING cnt >= 50
     ),
     user_anime_data AS (
-        SELECT A.user_id, A.anime_id, A.status, A.overall_score, A.last_interaction_date
-        FROM `anime-rec-dev.prod_area_us.user_anime` A
+        SELECT A.user_id, A.anime_id, A.status, A.score, A.last_interaction_date
+        FROM `anime-rec-dev.processed_area.user_anime` A
         INNER JOIN list_users B
         ON A.user_id = B.user_id
         WHERE A.status = 'completed'
     ),
     user_anime_data_with_completed_order AS (
-        SELECT user_id, anime_id, status, overall_score, last_interaction_date, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY last_interaction_date IS NULL ASC, last_interaction_date DESC) AS completed_order
+        SELECT user_id, anime_id, status, score, last_interaction_date, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY last_interaction_date IS NULL ASC, last_interaction_date DESC) AS completed_order
         FROM user_anime_data
     )
     """
@@ -93,56 +93,56 @@ def user_anime_list_ranking_query(mode='TRAIN'):
     WITH 
     list_users AS (
         SELECT user_id, COUNT(*) AS cnt
-        FROM `anime-rec-dev.prod_area_us.user_anime`
+        FROM `anime-rec-dev.processed_area.user_anime`
         WHERE status = 'completed' 
-              AND overall_score IS NOT NULL 
-              AND overall_score > 0 
+              AND score IS NOT NULL 
+              AND score > 0 
               AND last_interaction_date IS NOT NULL
         GROUP BY user_id
         HAVING cnt >= 50
     ),
     user_anime_data AS (
-        SELECT A.user_id, A.anime_id, A.status, A.overall_score, A.last_interaction_date, ROW_NUMBER() OVER (PARTITION BY A.user_id ORDER BY A.last_interaction_date IS NULL ASC, A.last_interaction_date DESC) AS completed_order
-        FROM `anime-rec-dev.prod_area_us.user_anime` A
+        SELECT A.user_id, A.anime_id, A.status, A.score, A.last_interaction_date, ROW_NUMBER() OVER (PARTITION BY A.user_id ORDER BY A.last_interaction_date IS NULL ASC, A.last_interaction_date DESC) AS completed_order
+        FROM `anime-rec-dev.processed_area.user_anime` A
         INNER JOIN list_users B
         ON A.user_id = B.user_id
-        WHERE A.status = 'completed' AND A.overall_score IS NOT NULL AND A.overall_score > 0
+        WHERE A.status = 'completed' AND A.score IS NOT NULL AND A.score > 0
     ),
     train_data AS (
-        SELECT user_id, anime_id, overall_score
+        SELECT user_id, anime_id, score
         FROM user_anime_data
         WHERE completed_order >= 21
     ),
     train_data_random_order AS (
         SELECT user_id, 
                anime_id, 
-               overall_score, 
+               score, 
                ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY RAND()) - 1 AS random_order_anime_per_user
         FROM train_data
     ),
     train_data_list AS (
-        SELECT user_id, ARRAY_AGG(anime_id) AS anime_id, ARRAY_AGG(overall_score) AS overall_score 
+        SELECT user_id, ARRAY_AGG(anime_id) AS anime_id, ARRAY_AGG(score) AS score 
         FROM train_data_random_order
         GROUP BY user_id, DIV(random_order_anime_per_user, 10)
         HAVING ARRAY_LENGTH(anime_id) = 10
     ),
     val_data AS (
-        SELECT user_id, anime_id, overall_score
+        SELECT user_id, anime_id, score
         FROM user_anime_data
         WHERE completed_order BETWEEN 11 AND 20
     ),
     val_data_list AS (
-        SELECT user_id, ARRAY_AGG(anime_id) AS anime_id, ARRAY_AGG(overall_score) AS overall_score 
+        SELECT user_id, ARRAY_AGG(anime_id) AS anime_id, ARRAY_AGG(score) AS score 
         FROM val_data 
         GROUP BY user_id
     ),
     test_data AS (
-        SELECT user_id, anime_id, overall_score
+        SELECT user_id, anime_id, score
         FROM user_anime_data
         WHERE completed_order BETWEEN 1 AND 10
     ),
     test_data_list AS (
-        SELECT user_id, ARRAY_AGG(anime_id) AS anime_id, ARRAY_AGG(overall_score) AS overall_score 
+        SELECT user_id, ARRAY_AGG(anime_id) AS anime_id, ARRAY_AGG(score) AS score 
         FROM test_data 
         GROUP BY user_id
     )
@@ -173,7 +173,7 @@ def user_retrieved_animes(retrieved_data_name):
     retrieved_anime_query = f"""
         SELECT A.user_id, A.retrieved_anime_id
         FROM {retrieved_data_name} A
-        LEFT JOIN `anime-rec-dev.prod_area_us.user_anime` B
+        LEFT JOIN `anime-rec-dev.processed_area.user_anime` B
         ON A.user_id = B.user_id AND A.retrieved_anime_id = B.anime_id
         WHERE B.status IS NULL
     """
@@ -188,7 +188,7 @@ def sample_all_anime_query():
     WITH
     list_anime AS (
         SELECT anime_id, COUNT(*) AS cnt
-        FROM `anime-rec-dev.prod_area_us.user_anime`
+        FROM `anime-rec-dev.processed_area.user_anime`
         WHERE status = 'completed'
         GROUP BY anime_id
         ORDER BY cnt DESC, anime_id
@@ -202,10 +202,10 @@ def sample_all_user_query():
     query = """
     WITH list_users AS (
         SELECT user_id, COUNT(*) AS cnt
-        FROM `anime-rec-dev.prod_area_us.user_anime`
+        FROM `anime-rec-dev.processed_area.user_anime`
         WHERE status = 'completed' 
-              AND overall_score IS NOT NULL 
-              AND overall_score > 0 
+              AND score IS NOT NULL 
+              AND score > 0 
               AND last_interaction_date IS NOT NULL
         GROUP BY user_id
         ORDER BY cnt DESC, user_id
@@ -220,10 +220,10 @@ def sample_user_anime_retrieval_query(mode='TRAIN'):
     WITH 
     list_users AS (
         SELECT user_id, COUNT(*) AS cnt
-        FROM `anime-rec-dev.prod_area_us.user_anime`
+        FROM `anime-rec-dev.processed_area.user_anime`
         WHERE status = 'completed' 
-              AND overall_score IS NOT NULL 
-              AND overall_score > 0 
+              AND score IS NOT NULL 
+              AND score > 0 
               AND last_interaction_date IS NOT NULL
         GROUP BY user_id
         ORDER BY cnt DESC, user_id
@@ -231,15 +231,15 @@ def sample_user_anime_retrieval_query(mode='TRAIN'):
     ),
     list_anime AS (
         SELECT anime_id, COUNT(*) AS cnt
-        FROM `anime-rec-dev.prod_area_us.user_anime`
+        FROM `anime-rec-dev.processed_area.user_anime`
         WHERE status = 'completed'
         GROUP BY anime_id
         ORDER BY cnt DESC, anime_id
         LIMIT 100
     ),
     user_anime_data AS (
-        SELECT A.user_id, A.anime_id, A.status, A.overall_score, A.last_interaction_date
-        FROM `anime-rec-dev.prod_area_us.user_anime` A
+        SELECT A.user_id, A.anime_id, A.status, A.score, A.last_interaction_date
+        FROM `anime-rec-dev.processed_area.user_anime` A
         INNER JOIN list_users B
         ON A.user_id = B.user_id
         INNER JOIN list_anime C
@@ -247,7 +247,7 @@ def sample_user_anime_retrieval_query(mode='TRAIN'):
         WHERE A.status = 'completed'
     ),
     user_anime_data_with_completed_order AS (
-        SELECT user_id, anime_id, status, overall_score, last_interaction_date, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY last_interaction_date IS NULL ASC, last_interaction_date DESC) AS completed_order
+        SELECT user_id, anime_id, status, score, last_interaction_date, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY last_interaction_date IS NULL ASC, last_interaction_date DESC) AS completed_order
         FROM user_anime_data
     )
     """
@@ -276,10 +276,10 @@ def sample_user_anime_list_ranking_query(mode='TRAIN'):
     WITH 
     list_users AS (
         SELECT user_id, COUNT(*) AS cnt
-        FROM `anime-rec-dev.prod_area_us.user_anime`
+        FROM `anime-rec-dev.processed_area.user_anime`
         WHERE status = 'completed' 
-              AND overall_score IS NOT NULL 
-              AND overall_score > 0 
+              AND score IS NOT NULL 
+              AND score > 0 
               AND last_interaction_date IS NOT NULL
         GROUP BY user_id
         ORDER BY cnt DESC, user_id
@@ -287,56 +287,56 @@ def sample_user_anime_list_ranking_query(mode='TRAIN'):
     ),
     list_anime AS (
         SELECT anime_id, COUNT(*) AS cnt
-        FROM `anime-rec-dev.prod_area_us.user_anime`
+        FROM `anime-rec-dev.processed_area.user_anime`
         WHERE status = 'completed'
         GROUP BY anime_id
         ORDER BY cnt DESC, anime_id
         LIMIT 100
     ),
     user_anime_data AS (
-        SELECT A.user_id, A.anime_id, A.status, A.overall_score, A.last_interaction_date, ROW_NUMBER() OVER (PARTITION BY A.user_id ORDER BY A.last_interaction_date IS NULL ASC, A.last_interaction_date DESC) AS completed_order
-        FROM `anime-rec-dev.prod_area_us.user_anime` A
+        SELECT A.user_id, A.anime_id, A.status, A.score, A.last_interaction_date, ROW_NUMBER() OVER (PARTITION BY A.user_id ORDER BY A.last_interaction_date IS NULL ASC, A.last_interaction_date DESC) AS completed_order
+        FROM `anime-rec-dev.processed_area.user_anime` A
         INNER JOIN list_users B
         ON A.user_id = B.user_id
         INNER JOIN list_anime C
         ON A.anime_id = C.anime_id
-        WHERE A.status = 'completed' AND A.overall_score IS NOT NULL AND A.overall_score > 0
+        WHERE A.status = 'completed' AND A.score IS NOT NULL AND A.score > 0
     ),
     train_data AS (
-        SELECT user_id, anime_id, overall_score
+        SELECT user_id, anime_id, score
         FROM user_anime_data
         WHERE completed_order >= 21
     ),
     train_data_random_order AS (
         SELECT user_id, 
                anime_id, 
-               overall_score, 
+               score, 
                ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY RAND()) - 1 AS random_order_anime_per_user
         FROM train_data
     ),
     train_data_list AS (
-        SELECT user_id, ARRAY_AGG(anime_id) AS anime_id, ARRAY_AGG(overall_score) AS overall_score 
+        SELECT user_id, ARRAY_AGG(anime_id) AS anime_id, ARRAY_AGG(score) AS score 
         FROM train_data_random_order
         GROUP BY user_id, DIV(random_order_anime_per_user, 10)
         HAVING ARRAY_LENGTH(anime_id) = 10
     ),
     val_data AS (
-        SELECT user_id, anime_id, overall_score
+        SELECT user_id, anime_id, score
         FROM user_anime_data
         WHERE completed_order BETWEEN 11 AND 20
     ),
     val_data_list AS (
-        SELECT user_id, ARRAY_AGG(anime_id) AS anime_id, ARRAY_AGG(overall_score) AS overall_score 
+        SELECT user_id, ARRAY_AGG(anime_id) AS anime_id, ARRAY_AGG(score) AS score 
         FROM val_data 
         GROUP BY user_id
     ),
     test_data AS (
-        SELECT user_id, anime_id, overall_score
+        SELECT user_id, anime_id, score
         FROM user_anime_data
         WHERE completed_order BETWEEN 1 AND 10
     ),
     test_data_list AS (
-        SELECT user_id, ARRAY_AGG(anime_id) AS anime_id, ARRAY_AGG(overall_score) AS overall_score 
+        SELECT user_id, ARRAY_AGG(anime_id) AS anime_id, ARRAY_AGG(score) AS score 
         FROM test_data 
         GROUP BY user_id
     )

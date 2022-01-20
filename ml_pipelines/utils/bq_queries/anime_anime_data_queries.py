@@ -7,7 +7,7 @@ def all_anime_query():
         SQL query that returns list of all unique animes
     '''
     query = '''
-        SELECT DISTINCT(anime_id) FROM `anime-rec-dev.prod_area_us.user_anime`
+        SELECT DISTINCT(anime_id) FROM `anime-rec-dev.processed_area.user_anime`
     '''
     return query
 
@@ -30,7 +30,7 @@ def anime_anime_retrieval_query(
     WITH 
     user_anime AS (
         SELECT user_id, anime_id, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY last_interaction_date ASC) AS user_anime_order
-        FROM `anime-rec-dev.prod_area_us.user_anime`
+        FROM `anime-rec-dev.processed_area.user_anime`
         WHERE status = 'completed' AND last_interaction_date IS NOT NULL
     ),
     anime_co_watch_anime AS (
@@ -44,12 +44,12 @@ def anime_anime_retrieval_query(
     ),
     anime_related_anime AS (
         SELECT animeA, animeB, related
-        FROM `anime-rec-dev.prod_area_us.anime_anime` 
+        FROM `anime-rec-dev.processed_area.anime_anime` 
         WHERE related = 1
     ),
     anime_recommended_anime AS (
         SELECT animeA, animeB, num_recommenders
-        FROM `anime-rec-dev.prod_area_us.anime_anime` 
+        FROM `anime-rec-dev.processed_area.anime_anime` 
         WHERE recommendation = 1 AND num_recommenders >= {min_num_recommenders}
     ),
     anime_anime AS (
@@ -117,7 +117,7 @@ def anime_anime_pair_ranking_query(
     WITH 
     user_anime AS (
         SELECT user_id, anime_id, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY last_interaction_date ASC) AS user_anime_order
-        FROM `anime-rec-dev.prod_area_us.user_anime`
+        FROM `anime-rec-dev.processed_area.user_anime`
         WHERE status = 'completed' AND last_interaction_date IS NOT NULL
     ),
     anime_co_watch_anime AS (
@@ -131,12 +131,12 @@ def anime_anime_pair_ranking_query(
     ),
     anime_related_anime AS (
         SELECT animeA, animeB, related
-        FROM `anime-rec-dev.prod_area_us.anime_anime` 
+        FROM `anime-rec-dev.processed_area.anime_anime` 
         WHERE related = 1
     ),
     anime_recommended_anime AS (
         SELECT animeA, animeB, num_recommenders
-        FROM `anime-rec-dev.prod_area_us.anime_anime` 
+        FROM `anime-rec-dev.processed_area.anime_anime` 
         WHERE recommendation = 1 AND num_recommenders >= {min_num_recommenders}
     ),
     anime_anime AS (
@@ -203,10 +203,10 @@ def user_last_anime_watched():
     last_watched_query = """
         WITH user_anime_watch AS (
             SELECT user_id, anime_id, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY last_interaction_date DESC) AS user_anime_order
-            FROM `anime-rec-dev.prod_area_us.user_anime`
+            FROM `anime-rec-dev.processed_area.user_anime`
             WHERE status = 'completed' 
             AND last_interaction_date IS NOT NULL
-            AND (overall_score IS NULL OR overall_score > 5)
+            AND (score IS NULL OR score > 5)
         )
         SELECT user_id, anime_id FROM user_anime_watch WHERE user_anime_order = 1
     """
@@ -221,7 +221,7 @@ def user_last_anime_retrieved_animes(retrieved_data_name):
     retrieved_anime_query = f"""
         SELECT A.user_id, A.anime_id, A.retrieved_anime_id
         FROM {retrieved_data_name} A
-        LEFT JOIN `anime-rec-dev.prod_area_us.user_anime` B
+        LEFT JOIN `anime-rec-dev.processed_area.user_anime` B
         ON A.user_id = B.user_id AND A.retrieved_anime_id = B.anime_id
         WHERE B.status IS NULL
     """
@@ -235,7 +235,7 @@ def sample_all_anime_query():
     WITH
     list_anime AS (
         SELECT anime_id, COUNT(*) AS cnt
-        FROM `anime-rec-dev.prod_area_us.user_anime`
+        FROM `anime-rec-dev.processed_area.user_anime`
         WHERE status = 'completed'
         GROUP BY anime_id
         ORDER BY cnt DESC, anime_id
@@ -250,7 +250,7 @@ def sample_anime_anime_retrieval_query(mode='TRAIN'):
     WITH 
     list_anime AS (
         SELECT anime_id, COUNT(*) AS cnt
-        FROM `anime-rec-dev.prod_area_us.user_anime`
+        FROM `anime-rec-dev.processed_area.user_anime`
         WHERE status = 'completed'
         GROUP BY anime_id
         ORDER BY cnt DESC
@@ -258,7 +258,7 @@ def sample_anime_anime_retrieval_query(mode='TRAIN'):
     ),
     user_anime AS (
         SELECT A.user_id, A.anime_id, ROW_NUMBER() OVER (PARTITION BY A.user_id ORDER BY A.last_interaction_date ASC) AS user_anime_order
-        FROM `anime-rec-dev.prod_area_us.user_anime` A
+        FROM `anime-rec-dev.processed_area.user_anime` A
         INNER JOIN list_anime B
         ON A.anime_id = B.anime_id
         WHERE A.status = 'completed' AND A.last_interaction_date IS NOT NULL
@@ -274,7 +274,7 @@ def sample_anime_anime_retrieval_query(mode='TRAIN'):
     ),
     anime_related_anime AS (
         SELECT animeA, animeB, related
-        FROM `anime-rec-dev.prod_area_us.anime_anime` A
+        FROM `anime-rec-dev.processed_area.anime_anime` A
         INNER JOIN list_anime B
         ON A.animeA = B.anime_id
         INNER JOIN list_anime C
@@ -283,7 +283,7 @@ def sample_anime_anime_retrieval_query(mode='TRAIN'):
     ),
     anime_recommended_anime AS (
         SELECT animeA, animeB, num_recommenders
-        FROM `anime-rec-dev.prod_area_us.anime_anime` A
+        FROM `anime-rec-dev.processed_area.anime_anime` A
         INNER JOIN list_anime B
         ON A.animeA = B.anime_id
         INNER JOIN list_anime C
@@ -306,21 +306,21 @@ def sample_anime_anime_retrieval_query(mode='TRAIN'):
     if mode == 'TRAIN':
         anime_anime_query += f"""
         SELECT animeA, animeB 
-        FROM anime_anime_ordered 
+        FROM anime_anime 
         WHERE animeA < animeB AND 
         ABS(MOD(FARM_FINGERPRINT(CONCAT(animeA, animeB)), 10)) BETWEEN 0 AND 7
         """
     elif mode == 'VAL':
         anime_anime_query += f"""
         SELECT animeA, animeB 
-        FROM anime_anime_ordered 
+        FROM anime_anime 
         WHERE animeA < animeB 
         AND ABS(MOD(FARM_FINGERPRINT(CONCAT(animeA, animeB)), 10)) = 8
         """
     else:
         anime_anime_query += f"""
         SELECT animeA, animeB 
-        FROM anime_anime_ordered 
+        FROM anime_anime 
         WHERE animeA < animeB 
         AND ABS(MOD(FARM_FINGERPRINT(CONCAT(animeA, animeB)), 10)) = 9
         """
@@ -331,7 +331,7 @@ def sample_anime_anime_pair_ranking_query(mode='TRAIN'):
     WITH 
     list_anime AS (
         SELECT anime_id, COUNT(*) AS cnt
-        FROM `anime-rec-dev.prod_area_us.user_anime`
+        FROM `anime-rec-dev.processed_area.user_anime`
         WHERE status = 'completed'
         GROUP BY anime_id
         ORDER BY cnt DESC
@@ -339,7 +339,7 @@ def sample_anime_anime_pair_ranking_query(mode='TRAIN'):
     ),
     user_anime AS (
         SELECT A.user_id, A.anime_id, ROW_NUMBER() OVER (PARTITION BY A.user_id ORDER BY A.last_interaction_date ASC) AS user_anime_order
-        FROM `anime-rec-dev.prod_area_us.user_anime` A
+        FROM `anime-rec-dev.processed_area.user_anime` A
         INNER JOIN list_anime B
         ON A.anime_id = B.anime_id
         WHERE A.status = 'completed' AND A.last_interaction_date IS NOT NULL
@@ -355,7 +355,7 @@ def sample_anime_anime_pair_ranking_query(mode='TRAIN'):
     ),
     anime_related_anime AS (
         SELECT animeA, animeB, related
-        FROM `anime-rec-dev.prod_area_us.anime_anime` A
+        FROM `anime-rec-dev.processed_area.anime_anime` A
         INNER JOIN list_anime B
         ON A.animeA = B.anime_id
         INNER JOIN list_anime C
@@ -364,7 +364,7 @@ def sample_anime_anime_pair_ranking_query(mode='TRAIN'):
     ),
     anime_recommended_anime AS (
         SELECT animeA, animeB, num_recommenders
-        FROM `anime-rec-dev.prod_area_us.anime_anime` A
+        FROM `anime-rec-dev.processed_area.anime_anime` A
         INNER JOIN list_anime B
         ON A.animeA = B.anime_id
         INNER JOIN list_anime C
@@ -436,7 +436,7 @@ def sample_user_last_anime_watched():
         WITH 
         list_anime AS (
             SELECT anime_id, COUNT(*) AS cnt
-            FROM `anime-rec-dev.prod_area_us.user_anime`
+            FROM `anime-rec-dev.processed_area.user_anime`
             WHERE status = 'completed'
             GROUP BY anime_id
             ORDER BY cnt DESC
@@ -444,12 +444,12 @@ def sample_user_last_anime_watched():
         ),
         user_anime_watch AS (
             SELECT A.user_id, A.anime_id, ROW_NUMBER() OVER (PARTITION BY A.user_id ORDER BY A.last_interaction_date DESC) AS user_anime_order
-            FROM `anime-rec-dev.prod_area_us.user_anime` A
+            FROM `anime-rec-dev.processed_area.user_anime` A
             INNER JOIN list_anime B
             ON A.anime_id = B.anime_id
             WHERE A.status = 'completed' 
             AND A.last_interaction_date IS NOT NULL
-            AND (A.overall_score IS NULL OR A.overall_score > 5)
+            AND (A.score IS NULL OR A.score > 5)
         )
         SELECT user_id, anime_id FROM user_anime_watch WHERE user_anime_order = 1
     """

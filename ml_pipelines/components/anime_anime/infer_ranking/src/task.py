@@ -24,8 +24,8 @@ def run_task(
     anime_inference_ds = tf.data.Dataset.from_tensor_slices(
         (
             {
-                'anchor_anime' : tf.expand_dims(tf.cast(inference_data['anime_id'], tf.string), -1),
-                'rel_anime' : tf.expand_dims(tf.cast(inference_data['retrieved_anime_id'], tf.string), -1),
+                'anchor_anime' : tf.cast(inference_data['anime_id'], tf.string),
+                'rel_anime' : tf.cast(inference_data['retrieved_anime_id'], tf.string),
             }
         )
     )
@@ -33,11 +33,11 @@ def run_task(
 
     results = []
     for x in anime_inference_ds:
-        results.append(model(x)[:, :, 0])
+        results.append(model(x)[:, 0])
     
     results = np.concatenate(results)
 
-    inference_data['ranking_score'] = list(results[:, 0])
+    inference_data['ranking_score'] = list(results)
 
     if output_data_path.startswith('/gcs/'):
         gcs_create_empty_folder(output_data_path)
