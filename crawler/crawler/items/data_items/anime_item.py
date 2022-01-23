@@ -4,6 +4,9 @@ from itemloaders.processors import Join, MapCompose, TakeFirst, Compose
 from crawler.items.data_items.utils.utils import *
 
 class AnimeItem(scrapy.Item):
+    """
+        Anime item that specifies anime information
+    """
     crawl_date = scrapy.Field(
         output_processor = TakeFirst()
     )
@@ -21,7 +24,7 @@ class AnimeItem(scrapy.Item):
         output_processor = Join(separator = ' ')
     )
     synopsis = scrapy.Field(
-        input_processor = MapCompose(clean_text),
+        input_processor = MapCompose(no_synopsis, clean_text),
         output_processor = Join(separator = ' ')
     )
     main_pic = scrapy.Field(

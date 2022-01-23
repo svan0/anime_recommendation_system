@@ -64,6 +64,11 @@ def get_url(url):
         return f"https://myanimelist.net{url}"
     return url
 
+def no_synopsis(text):
+    if "No synopsis information has been added to this title." in text:
+        return None
+    return text
+
 def clean_text(text):
     text = re.sub("\s{2,}", "", text)
     text = re.sub("\[Written by MAL Rewrite\]","",text)
@@ -112,19 +117,23 @@ def parse_date(text):
         return None
 
 def transform_to_int(text):
-    text = re.sub("[^0-9]", "", text)
-    try:
-        return int(text)
-    except:
-        return None
+    if type(text) == str:
+        text = re.sub("[^0-9]", "", text)
+        try:
+            return int(text)
+        except:
+            return None
+    return text
 
 def transform_to_float(text):
-    text = re.sub("[,]", ".", text)
-    text = re.sub("[^0-9.]", "", text)
-    try:
-        return float(text)
-    except:
-        return None
+    if type(text) == str:
+        text = re.sub("[,]", ".", text)
+        text = re.sub("[^0-9.]", "", text)
+        try:
+            return float(text)
+        except:
+            return None
+    return text
 
 def extract_start_date(text):
     try:

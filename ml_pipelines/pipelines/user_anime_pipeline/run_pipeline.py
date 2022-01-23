@@ -73,7 +73,7 @@ def user_anime_recommendation_pipeline():
         early_stop_num_epochs = 5
     )
     train_retrieval_model.set_display_name("train retrieval model")
-    train_retrieval_model.set_cpu_limit('4').set_memory_limit('32G')
+    train_retrieval_model.set_cpu_limit('16').set_memory_limit('32G')
 
     infer_retrieval_model = infer_user_anime_retrieval(
         model_path = train_retrieval_model.outputs['output_model_path'],
@@ -110,7 +110,7 @@ def user_anime_recommendation_pipeline():
         early_stop_num_epochs = 5
     )
     train_ranking_model.set_display_name("train ranking model")
-    train_ranking_model.set_cpu_limit('4').set_memory_limit('32G')
+    train_ranking_model.set_cpu_limit('16').set_memory_limit('32G')
     
     infer_ranking_model = infer_user_anime_ranking(
         model_path = train_ranking_model.outputs['output_model_path'],

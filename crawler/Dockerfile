@@ -18,5 +18,11 @@ COPY requirements.txt ./
 
 RUN pip install -r requirements.txt
 
-COPY . ./
+COPY crawler ./crawler
+COPY app.py ./
+COPY crawl_worker.py ./
+COPY crawl_utils.py ./
+COPY scrapy.cfg ./
+COPY proxy_list.txt ./
+COPY __init__.py ./
 

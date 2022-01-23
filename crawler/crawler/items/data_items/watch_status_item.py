@@ -4,6 +4,9 @@ from itemloaders.processors import Join, MapCompose, TakeFirst
 from crawler.items.data_items.utils.utils import *
 
 class WatchStatusItem(scrapy.Item):
+    """
+        User/Anime status item
+    """
     crawl_date = scrapy.Field(
         output_processor = TakeFirst()
     )

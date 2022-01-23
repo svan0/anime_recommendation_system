@@ -5,6 +5,15 @@ from scrapy.exceptions import DropItem
 from crawler.items.data_items.recommendation_item import RecommendationItem
 
 class RecommendationProcessPipeline:
+    """
+        Drop recommendation items that do not statisy integrity constraints
+    """
+    def __init__(self, stats):
+        self.stats = stats
+    
+    @classmethod
+    def from_crawler(cls, crawler):
+        return cls(crawler.stats)
 
     def process_item(self, item, spider):
 
@@ -23,7 +32,9 @@ class RecommendationProcessPipeline:
             if field not in item:
                 raise DropItem(f"RecommendationItem {item['url']} dropped because '{field}' is null")
         
-        logging.info("RecommendationItem processed")
+        logging.debug("RecommendationItem processed")
+        self.stats.inc_value(f'{self.__class__.__name__}_processed_{item.__class__.__name__}', count = 1)
         return item
+
         
         

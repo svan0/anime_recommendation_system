@@ -49,7 +49,7 @@ def anime_anime_recommendation_pipeline():
                                                         val_data_path = val_retrieval_data.outputs['output_csv'],
                                                         test_data_path = test_retrieval_data.outputs['output_csv'],
                                                         all_anime_data_path = all_anime_data.outputs['output_csv'],
-                                                        anime_embedding_size = 112,
+                                                        anime_embedding_size = 256,
                                                         learning_rate = 0.05,
                                                         optimizer = 'adagrad',
                                                         max_num_epochs = 30,

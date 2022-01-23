@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: crawler-web
+  labels:
+    app: crawler-web
+spec:
+  replicas: 5
+  selector:
+    matchLabels: 
+      app: crawler-web
+  template:
+    metadata:
+      labels:
+        app: crawler-web
+    spec:
+      containers:
+        - name: crawler-web
+          image: gcr.io/anime-rec-dev/crawler_image:TAG
+          env:
+            - name: SCHEDULER_DB
+              valueFrom:
+                secretKeyRef:
+                  name: scheduler-db-credentials
+                  key: dbname
+            - name: SCHEDULER_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: scheduler-db-credentials
+                  key: user
+            - name: SCHEDULER_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: scheduler-db-credentials
+                  key: password
+            - name: PROJECT_ID
+              value: anime-rec-dev
+            - name: SCHEDULE_ANIME_PUBSUB_SUBSCRIPTION
+              value: anime_crawl_subscription
+            - name: SCHEDULE_PROFILE_PUBSUB_SUBSCRIPTION
+              value: profile_crawl_subscription
+            - name: DATA_INGESTION_PUBSUB_TOPIC
+              value: data_ingestion_queue
+            - name: GOOGLE_APPLICATION_CREDENTIALS 
+              value: /secrets/gcp_credentials.json
+          command: ["gunicorn"] 
+          args: ["--bind", ":8080" , "--workers", "1", "--threads", "8", "--timeout", "0", "app:app"]
+          volumeMounts:
+            - name: secrets-volume
+              mountPath: /secrets
+              readOnly: true
+        - name: cloudsql-proxy
+          image: gcr.io/cloudsql-docker/gce-proxy:1.23.0
+          env:
+            - name: SCHEDULER_DB_INSTANCE
+              valueFrom:
+                secretKeyRef:
+                  name: scheduler-db-credentials
+                  key: dbinstance
+          command : ["/cloud_sql_proxy",
+                     "-instances=$(SCHEDULER_DB_INSTANCE)=tcp:5432",
+                     "-credential_file=/secrets/gcp_credentials.json"]
+          volumeMounts:
+            - name: secrets-volume
+              mountPath: /secrets
+              readOnly: true
+      volumes:
+        - name: secrets-volume
+          secret:
+            secretName: gcp-credentials

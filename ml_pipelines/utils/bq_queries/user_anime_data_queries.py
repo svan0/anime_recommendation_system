@@ -20,7 +20,7 @@ def all_user_query():
     WITH list_users AS (
         SELECT user_id, COUNT(*) AS cnt
         FROM `anime-rec-dev.processed_area.user_anime`
-        WHERE status = 'completed' AND score IS NOT NULL AND score > 0 AND last_interaction_date IS NOT NULL
+        WHERE status = 'completed' AND score IS NOT NULL AND last_interaction_date IS NOT NULL
         GROUP BY user_id
         HAVING cnt >= 50
     )
@@ -44,7 +44,6 @@ def user_anime_retrieval_query(mode='TRAIN'):
         FROM `anime-rec-dev.processed_area.user_anime`
         WHERE status = 'completed' 
               AND score IS NOT NULL 
-              AND score > 0 
               AND last_interaction_date IS NOT NULL
         GROUP BY user_id
         HAVING cnt >= 50
@@ -96,7 +95,6 @@ def user_anime_list_ranking_query(mode='TRAIN'):
         FROM `anime-rec-dev.processed_area.user_anime`
         WHERE status = 'completed' 
               AND score IS NOT NULL 
-              AND score > 0 
               AND last_interaction_date IS NOT NULL
         GROUP BY user_id
         HAVING cnt >= 50
@@ -106,7 +104,7 @@ def user_anime_list_ranking_query(mode='TRAIN'):
         FROM `anime-rec-dev.processed_area.user_anime` A
         INNER JOIN list_users B
         ON A.user_id = B.user_id
-        WHERE A.status = 'completed' AND A.score IS NOT NULL AND A.score > 0
+        WHERE A.status = 'completed' AND A.score IS NOT NULL
     ),
     train_data AS (
         SELECT user_id, anime_id, score
@@ -205,7 +203,6 @@ def sample_all_user_query():
         FROM `anime-rec-dev.processed_area.user_anime`
         WHERE status = 'completed' 
               AND score IS NOT NULL 
-              AND score > 0 
               AND last_interaction_date IS NOT NULL
         GROUP BY user_id
         ORDER BY cnt DESC, user_id
@@ -223,7 +220,6 @@ def sample_user_anime_retrieval_query(mode='TRAIN'):
         FROM `anime-rec-dev.processed_area.user_anime`
         WHERE status = 'completed' 
               AND score IS NOT NULL 
-              AND score > 0 
               AND last_interaction_date IS NOT NULL
         GROUP BY user_id
         ORDER BY cnt DESC, user_id
@@ -279,7 +275,6 @@ def sample_user_anime_list_ranking_query(mode='TRAIN'):
         FROM `anime-rec-dev.processed_area.user_anime`
         WHERE status = 'completed' 
               AND score IS NOT NULL 
-              AND score > 0 
               AND last_interaction_date IS NOT NULL
         GROUP BY user_id
         ORDER BY cnt DESC, user_id
@@ -300,7 +295,7 @@ def sample_user_anime_list_ranking_query(mode='TRAIN'):
         ON A.user_id = B.user_id
         INNER JOIN list_anime C
         ON A.anime_id = C.anime_id
-        WHERE A.status = 'completed' AND A.score IS NOT NULL AND A.score > 0
+        WHERE A.status = 'completed' AND A.score IS NOT NULL
     ),
     train_data AS (
         SELECT user_id, anime_id, score

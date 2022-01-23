@@ -24,15 +24,15 @@ NEWSPIDER_MODULE = 'crawler.spiders'
 ROBOTSTXT_OBEY = True
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-#CONCURRENT_REQUESTS = 32
+CONCURRENT_REQUESTS = 3200
 
 # Configure a delay for requests for the same website (default: 0)
 # See https://docs.scrapy.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-DOWNLOAD_DELAY = 2
+DOWNLOAD_DELAY = 1
 # The download delay setting will honor only one of:
 #CONCURRENT_REQUESTS_PER_DOMAIN = 16
-CONCURRENT_REQUESTS_PER_IP = 16
+CONCURRENT_REQUESTS_PER_IP = 32
 
 # Disable cookies (enabled by default)
 COOKIES_ENABLED = False
@@ -80,9 +80,7 @@ ITEM_PIPELINES = {
     'crawler.pipelines.data_process_pipelines.watch_status_process_pipeline.WatchStatusProcessPipeline': 10,
     'crawler.pipelines.scheduler_process_pipelines.anime_process_pipeline.AnimeSchedulerProcessPipeline': 10,
     'crawler.pipelines.scheduler_process_pipelines.profile_process_pipeline.ProfileSchedulerProcessPipeline': 10,
-    'crawler.pipelines.local_json_pipeline.LocalJSONSavePipeline': 100,
-#    'crawler.pipelines.pub_sub_pipeline.PubSubPipeline' : 300,
-#    'crawler.pipelines.cloud_sql_pipeline.CloudSQLPipeline' : 500
+    'crawler.pipelines.local_json_pipeline.BatchedLocalJSONSavePipeline': 100
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -107,4 +105,4 @@ ITEM_PIPELINES = {
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 LOG_LEVEL = 'INFO'
 
-ROTATING_PROXY_LIST_PATH = os.path.join(CURRENT_DIR, 'proxy_list.txt')
+ROTATING_PROXY_LIST_PATH = os.path.join(CURRENT_DIR, '..', 'proxy_list.txt')

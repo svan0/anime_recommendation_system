@@ -16,7 +16,7 @@ outputs:
 
 implementation:
   container:
-    image: gcr.io/anime-rec-dev/ml_image:latest
+    image: gcr.io/anime-rec-dev/ml_image@sha256:2d0be844b8cfc7d6b7504b1c6ef22b9dc997c8042ce6baec577d1ec3ee52ddfc
     command: [
       python3,
       ml_pipelines/components/user_anime/train_retrieval/src/task.py,

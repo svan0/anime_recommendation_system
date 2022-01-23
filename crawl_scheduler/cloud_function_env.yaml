@@ -1,0 +1,7 @@
+PROJECT_ID: anime-rec-dev
+SCHEDULER_DB_INSTANCE: anime-rec-dev:us-central1:scheduler-db-instance-dev
+SCHEDULER_DB: scheduler_db
+SCHEDULER_DB_USER: postgres
+SCHEDULER_DB_PASSWORD: '1123581321'
+SCHEDULE_ANIME_PUBSUB_TOPIC: anime_crawl_queue
+SCHEDULE_PROFILE_PUBSUB_TOPIC: profile_crawl_queue

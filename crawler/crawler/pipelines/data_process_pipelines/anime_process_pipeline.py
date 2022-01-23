@@ -7,6 +7,15 @@ from scrapy.exceptions import DropItem
 from crawler.items.data_items.anime_item import AnimeItem
 
 class AnimeProcessPipeline:
+    """
+        Drop anime items that do not statisy integrity constraints
+    """
+    def __init__(self, stats):
+        self.stats = stats
+    
+    @classmethod
+    def from_crawler(cls, crawler):
+        return cls(crawler.stats)
 
     def process_item(self, item, spider):
         if not isinstance(item, AnimeItem):
@@ -16,9 +25,8 @@ class AnimeProcessPipeline:
             raise DropItem("AnimeItem dropped because 'url' is null")
         
         not_null_fields = [
-            'crawl_date', 'uid', 'title', 'synopsis',
-            'main_pic', 'type', 'source_type', 'status',
-            'studios', 'genres', 'popularity_rank', 'members_count',
+            'crawl_date', 'uid', 'title', 'synopsis', 'main_pic', 'type',
+            'source_type', 'status', 'genres', 'popularity_rank', 'members_count',
             'favorites_count', 'watching_count', 'completed_count',
             'on_hold_count', 'dropped_count', 'plan_to_watch_count',
             'total_count'
@@ -36,7 +44,7 @@ class AnimeProcessPipeline:
             if not isinstance(item[field], int):
                 raise DropItem(f"AnimeItem {item['url']} dropped because '{field}' is not an integer")
         
-        if not isinstance(item['studios'], list):
+        if 'studios' in item and not isinstance(item['studios'], list):
             raise DropItem(f"AnimeItem {item['url']} dropped because 'studios' is not a list")
         
         if not isinstance(item['genres'], list):
@@ -51,7 +59,7 @@ class AnimeProcessPipeline:
         if item['type'] not in {"TV", "Movie", "Special", "OVA", "ONA", "Special"}:
             raise DropItem(f"AnimeItem {item['url']} dropped because 'type' {item['type']} is not known")
         
-        if item['source_type'] not in {"Manga", "One-shot", "Doujinshi", "Light novel", "Novel", "Manhwa", "Manhua", "Original", "Visual novel", "Game", "Card game", "Web manga"}:
+        if item['source_type'] not in {"Manga", "Book", "4-koma manga", "Music", "Other", "One-shot", "Doujinshi", "Light novel", "Novel", "Manhwa", "Manhua", "Original", "Visual novel", "Game", "Card game", "Web manga"}:
             raise DropItem(f"AnimeItem {item['url']} dropped because 'source_type' {item['source_type']} is not known")
         
         if item['status'] not in {"Not yet aired", "Currently Airing", "Finished Airing"}:
@@ -110,17 +118,19 @@ class AnimeProcessPipeline:
         sum_score_voters = sum([item['score_{:02d}_count'.format(score)] for score in range(1, 11)])
         if ('score_count' in item) and (item['score_count'] != sum_score_voters):
             item['score_count'] = sum_score_voters
-            logging.info(f"{item['url']} 'score_xx_count' do not sum up to 'score_count' count. Changing 'score_count' to the sum")
+            logging.debug(f"{item['url']} 'score_xx_count' do not sum up to 'score_count' count. Changing 'score_count' to the sum")
 
         if ('score' in item):
             average_score = sum([score * item['score_{:02d}_count'.format(score)] for score in range(1, 11)]) / sum_score_voters
             average_score = int(100 * average_score) / 100
             if not isclose(item['score'] , average_score):
                 item['score'] = average_score
-                logging.info(f"{item['url']} xx * 'score_xx_count' do not average up to 'score' count. Changing 'score' to the average")
+                logging.debug(f"{item['url']} xx * 'score_xx_count' do not average up to 'score' count. Changing 'score' to the average")
 
-        logging.info(f"AnimeItem {item['url']} processed")
+        logging.debug(f"AnimeItem {item['url']} processed")
+        self.stats.inc_value(f'{self.__class__.__name__}_processed_{item.__class__.__name__}', count = 1)
         return item
+
         
         
         

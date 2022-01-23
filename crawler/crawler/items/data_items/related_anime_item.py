@@ -4,6 +4,9 @@ from itemloaders.processors import Join, MapCompose, TakeFirst, Compose
 from crawler.items.data_items.utils.utils import *
 
 class RelatedAnimeItem(scrapy.Item):
+    """
+        Anime/Anime related item
+    """
     crawl_date = scrapy.Field(
         output_processor = TakeFirst()
     )

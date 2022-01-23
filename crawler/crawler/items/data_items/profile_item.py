@@ -4,6 +4,9 @@ from itemloaders.processors import Join, MapCompose, TakeFirst, Compose
 from crawler.items.data_items.utils.utils import *
 
 class ProfileItem(scrapy.Item):
+    """
+        User profile item that specifies profile information
+    """
     crawl_date = scrapy.Field(
         output_processor = TakeFirst()
     )
@@ -20,19 +23,23 @@ class ProfileItem(scrapy.Item):
         input_processor = MapCompose(get_last_online_date),
         output_processor = TakeFirst()
     )
-    num_forum_posts = scrapy.Field(
+    num_watching = scrapy.Field(
         input_processor = MapCompose(transform_to_int),
         output_processor = TakeFirst()
     )
-    num_reviews = scrapy.Field(
+    num_completed = scrapy.Field(
         input_processor = MapCompose(transform_to_int),
         output_processor = TakeFirst()
     )
-    num_recommendations = scrapy.Field(
+    num_on_hold = scrapy.Field(
         input_processor = MapCompose(transform_to_int),
         output_processor = TakeFirst()
     )
-    num_blog_posts = scrapy.Field(
+    num_dropped = scrapy.Field(
+        input_processor = MapCompose(transform_to_int),
+        output_processor = TakeFirst()
+    )
+    num_plan_to_watch = scrapy.Field(
         input_processor = MapCompose(transform_to_int),
         output_processor = TakeFirst()
     )

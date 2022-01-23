@@ -1,6 +1,5 @@
 import time
 from datetime import datetime
-import requests
 
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
@@ -21,6 +20,9 @@ from crawler.items.scheduler_items.anime_item import AnimeSchedulerItem
 from crawler.items.scheduler_items.profile_item import ProfileSchedulerItem
 
 class ProfileSpider(scrapy.Spider):
+    """
+        Spider that crawls profile data from myanimelist.net
+    """
     name = 'profile'
     allowed_domains = ['myanimelist.net']
 
@@ -38,12 +40,23 @@ class ProfileSpider(scrapy.Spider):
             ChromeDriverManager().install(), 
             options = chrome_options
         )
-    
+
+    @classmethod
+    def from_crawler(cls, crawler, *args, **kwargs):
+        spider = cls(*args, **kwargs)
+        spider._set_crawler(crawler)
+        spider.start_urls = spider.crawler.settings.get('start_urls')
+        spider.stats = spider.crawler.stats
+        return spider
+
     def closed(self, reason):
         self.driver.quit()
 
     def parse_profile_main_page(self, response, local_file_response = False):
-        
+        """
+            Extract profile information from Selenium response of https://myanimelist.net/profile/{user_id}
+            TODO: UPDATE THIS. PROFILE ITEM HAS BEEN CHANGED
+        """
         profile_loader = ItemLoader(item=ProfileItem(), response = response)
         
         profile_loader.add_value('url', response.url)
@@ -61,7 +74,9 @@ class ProfileSpider(scrapy.Spider):
         return profile_loader.load_item()
 
     def parse_profile_main_page_for_favorites(self, response, local_file_response = False):
-        
+        """
+            Extract profile favorite animes information from Selenium response of https://myanimelist.net/profile/{user_id}
+        """
         favorites = response.xpath('//ul[@class="favorites-list anime"]/li/div[2]/a/@href').getall()
         for favorite in favorites:
             favorite_loader = ItemLoader(item=FavoriteItem())
@@ -69,18 +84,24 @@ class ProfileSpider(scrapy.Spider):
             favorite_loader.add_value('user_id', response.url)
             favorite_loader.add_value('anime_id', favorite)
             yield favorite_loader.load_item()
+            self.stats.inc_value(f'{self.__class__.__name__}_processed_{favorite_loader.load_item().__class__.__name__}', count = 1)
     
     def parse_profile_main_page_for_favorites_scheduler(self, response, local_file_response = False):
-        
+        """
+            Extract profile favorite animes anime schedule from Selenium response of https://myanimelist.net/profile/{user_id}
+        """        
         favorites = response.xpath('//ul[@class="favorites-list anime"]/li/div[2]/a/@href').getall()
         for favorite in favorites:
             anime_schedule_loader = ItemLoader(item=AnimeSchedulerItem())
             anime_schedule_loader.add_value('url', favorite)
             anime_schedule_loader.add_value('last_inspect_date', self.crawl_date)
             yield anime_schedule_loader.load_item()
+            self.stats.inc_value(f'{self.__class__.__name__}_processed_{anime_schedule_loader.load_item().__class__.__name__}', count = 1)
     
     def parse_friend_page_for_friends(self, response, local_file_response = False):
-
+        """
+            Extract profile friends from https://myanimelist.net/profile/{user_id}/friends?offset={offset}
+        """
         src_profile = response.url.split('/friends?offset')[0].split("/profile/")[1]
         friends = response.xpath('//div[@class = "friendBlock"]')
         for friend in friends:
@@ -90,17 +111,24 @@ class ProfileSpider(scrapy.Spider):
             friend_loader.add_xpath('dest_profile', './div[2]/a/@href')
             friend_loader.add_xpath('friendship_date', './div[4]/text()')
             yield friend_loader.load_item()
+            self.stats.inc_value(f'{self.__class__.__name__}_processed_{friend_loader.load_item().__class__.__name__}', count = 1)
     
     def parse_friend_page_for_schedule_profiles(self, response, local_file_response = False):
+        """
+            Extract profile friends profile schedule from https://myanimelist.net/profile/{user_id}/friends?offset={offset}
+        """
         friends = response.xpath('//div[@class = "friendBlock"]')
         for friend in friends:
             profile_schedule_loader = ItemLoader(item=ProfileSchedulerItem(), selector=friend)
             profile_schedule_loader.add_value('last_inspect_date', self.crawl_date)
             profile_schedule_loader.add_xpath('url', './div[2]/a/@href')
             yield profile_schedule_loader.load_item()
+            self.stats.inc_value(f'{self.__class__.__name__}_processed_{profile_schedule_loader.load_item().__class__.__name__}', count = 1)
     
     def parse_clubs_page_for_clubs(self, response, local_file_response = False):
-        
+        """
+            Extract profile clubs from https://myanimelist.net/profile/{user_id}/clubs
+        """
         if local_file_response == False:
             profile_loader = ItemLoader(item=ProfileItem(), response=response)
             profile_loader.add_xpath('clubs', '//table/tr/td/ol/li/a/@href')
@@ -111,7 +139,9 @@ class ProfileSpider(scrapy.Spider):
             return profile_loader.load_item()
     
     def parse_activity_page_for_activity(self, response, local_file_response = False):
-        
+        """
+            Extract profile activity from https://myanimelist.net/rss.php?type=rw&u={user_id}
+        """
         activities = response.xpath('//item')
         for activity in activities:
             activity_loader = ItemLoader(item=ActivityItem(), selector=activity)
@@ -121,18 +151,24 @@ class ProfileSpider(scrapy.Spider):
             activity_loader.add_xpath('activity_type', './description/text()')
             activity_loader.add_xpath('date', './pubDate/text()')
             yield activity_loader.load_item()
+            self.stats.inc_value(f'{self.__class__.__name__}_processed_{activity_loader.load_item().__class__.__name__}', count = 1)
 
     def parse_activity_page_for_scheduler(self, response, local_file_response = False):
-        
+        """
+            Extract profile activity anime schedule from https://myanimelist.net/rss.php?type=rw&u={user_id}
+        """
         activities = response.xpath('//item')
         for activity in activities:
             anime_schedule_loader = ItemLoader(item=AnimeSchedulerItem(), selector=activity)
             anime_schedule_loader.add_xpath('url', './/link/text()')
             anime_schedule_loader.add_value('last_inspect_date', self.crawl_date)
             yield anime_schedule_loader.load_item()
+            self.stats.inc_value(f'{self.__class__.__name__}_processed_{anime_schedule_loader.load_item().__class__.__name__}', count = 1)
     
     def parse_status_page_for_anime_status(self, response, local_file_response = False):
-        
+        """
+            Extract watch status items from Selenium response of https://myanimelist.net/animelist/{user_id}?status={status_ids}
+        """
         status_mapping = {
             "1" : "watching",
             "2" : "completed",
@@ -161,20 +197,31 @@ class ProfileSpider(scrapy.Spider):
                 watch_status_loader.add_xpath('progress', './td[contains(@class, "progress")]/div//span/a/text()')
             
             yield watch_status_loader.load_item()
-        self.logger.info(f"{response.url} scrapped {len(animes)} from")
+            self.stats.inc_value(f'{self.__class__.__name__}_processed_{watch_status_loader.load_item().__class__.__name__}', count = 1)
+
+        self.logger.debug(f"{response.url} scrapped {len(animes)} from")
     
     def parse_status_page_for_anime_schedule(self, response, local_file_response = False):
-        
+        """
+            Extract watch status items anime schedule from Selenium response of https://myanimelist.net/animelist/{user_id}?status={status_ids}
+        """
         animes = response.xpath('//table[./tbody/tr/td/a[contains(@href, "/anime/")]]/tbody/tr[1][not(contains(@class, "header"))]')
         for anime in animes:
             anime_schedule_loader = ItemLoader(item=AnimeSchedulerItem(), selector=anime)
             anime_schedule_loader.add_xpath('url', './td/a[contains(@href, "/anime/")]/@href')
             anime_schedule_loader.add_value('last_inspect_date', self.crawl_date)
             yield anime_schedule_loader.load_item()
+            self.stats.inc_value(f'{self.__class__.__name__}_processed_{anime_schedule_loader.load_item().__class__.__name__}', count = 1)
 
     def parse(self, response):
-        
-        self.logger.info('Parsing profile url:  %s', response.url)
+        """
+            Entry point of crawler.
+            Starts with https://myanimelist.net/profile/{user_id}
+            Use selenium driver to get HtmlResponse of https://myanimelist.net/profile/{user_id}
+            Extract profile info from selenium response of https://myanimelist.net/profile/{user_id}
+            Forwards to friends, status and activity pages
+        """
+        self.logger.debug('Parsing profile url:  %s', response.url)
 
         self.driver.get(response.url)
         time.sleep(1)
@@ -216,7 +263,10 @@ class ProfileSpider(scrapy.Spider):
         )
     
     def parse_friends(self, response):
-        self.logger.info('Parsing friends url:  %s', response.url)
+        """
+            Iterate over friends pages and extract friends items and profile schedule items
+        """
+        self.logger.debug('Parsing friends url:  %s', response.url)
         base_url = response.url.split("?offset=")[0]
         offset = response.url.split("?offset=")[1]
         offset = int(offset)
@@ -237,12 +287,16 @@ class ProfileSpider(scrapy.Spider):
             )
 
     def parse_clubs(self, response):
-        self.logger.info('Parsing profile clubs url:  %s', response.url)
+        """
+            Parse clubs page and add club info to profile item
+        """
+        self.logger.debug('Parsing profile clubs url:  %s', response.url)
 
         profile_item = response.meta['profile_item']
         profile_item = ProfileItem({**profile_item, **self.parse_clubs_page_for_clubs(response)})
         profile_item['crawl_date'] = self.crawl_date
         yield profile_item
+        self.stats.inc_value(f'{self.__class__.__name__}_processed_{profile_item.__class__.__name__}', count = 1)
 
         profile_schedule_loader = ItemLoader(item=ProfileSchedulerItem())
         profile_schedule_loader.add_value('url', profile_item['url'])
@@ -250,9 +304,13 @@ class ProfileSpider(scrapy.Spider):
         profile_schedule_loader.add_value('last_crawl_date', profile_item['crawl_date'])
         profile_schedule_loader.add_value('last_inspect_date', profile_item['crawl_date'])
         yield profile_schedule_loader.load_item()
+        self.stats.inc_value(f'{self.__class__.__name__}_processed_{profile_schedule_loader.load_item().__class__.__name__}', count = 1)
     
     def parse_user_activity(self, response):
-        self.logger.info('Parsing user activity RSS url:  %s', response.url)
+        """
+            Parse actvity page and extract activity items and anime schedule items
+        """
+        self.logger.debug('Parsing user activity RSS url:  %s', response.url)
 
         for activity in self.parse_activity_page_for_activity(response):
             yield activity
@@ -261,7 +319,11 @@ class ProfileSpider(scrapy.Spider):
             yield activity_anime_schedule
         
     def parse_anime_status(self, response):
-        self.logger.info('Parsing anime status url:  %s', response.url)
+        """
+            Generate html response of animelist page using selenium driver
+            Extract watch status items and anime schedule items
+        """
+        self.logger.debug('Parsing anime status url:  %s', response.url)
 
         pause_time = 10
 

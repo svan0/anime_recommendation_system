@@ -25,7 +25,7 @@ def run_task(
         }
     )
 
-    inference_data = pd.read_csv(input_data_path)
+    inference_data = pd.read_csv(input_data_path, keep_default_na=False)
     inference_data['user_id'] = inference_data['user_id'].apply(str)
     inference_data['retrieved_anime_id'] = inference_data['retrieved_anime_id'].apply(str)
 
