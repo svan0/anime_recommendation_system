@@ -1,0 +1,45 @@
+inputs:
+- {name: train_data_path, type: Dataset, description: 'Anime Anime train data path'}
+- {name: val_data_path, type: Dataset, description: 'Anime Anime validation data path'}
+- {name: test_data_path, type: Dataset, description: 'Anime Anime test data path'}
+- {name: all_anime_data_path, type: Dataset, description: 'List of all Anime data path'}
+- {name: anime_embedding_size, type: Integer, description: 'Anime Embedding size', optional: true, default: '0'}
+- {name: learning_rate, type: Float, description: 'learning rate', optional: true, default: '0.0'}
+- {name: optimizer, type: String, description: 'optimizer', optional: true, default: 'None'}
+- {name: max_num_epochs, type: Integer, description: 'Maximum number of training epochs', optional: true, default: '50'}
+- {name: early_stop_num_epochs, type: Integer, description: 'Maximum number of non improvemennt training epochs', optional: true, default: '2'}
+
+
+outputs:
+- {name: output_model_path, type: Model, description: 'Retrieval Model path'}
+- {name: output_metric_path, type: Metrics, description: 'Retrieval Model metrics'}
+
+implementation:
+  container:
+    image: gcr.io/anime-rec-dev/ml_image@sha256:2d0be844b8cfc7d6b7504b1c6ef22b9dc997c8042ce6baec577d1ec3ee52ddfc
+    command: [
+      python3,
+      ml_pipelines/components/anime_anime/train_retrieval/src/task.py,
+      --train-data-path,
+      {inputPath: train_data_path},
+      --val-data-path,
+      {inputPath: val_data_path},
+      --test-data-path,
+      {inputPath: test_data_path},
+      --all-anime-data-path,
+      {inputPath: all_anime_data_path},
+      --output-model-path,
+      {outputPath: output_model_path},
+      --output-metrics-path,
+      {outputPath: output_metric_path},
+      --anime-embedding-size,
+      {inputValue: anime_embedding_size},
+      --learning-rate,
+      {inputValue: learning_rate},
+      --optimizer,
+      {inputValue: optimizer},
+      --max-num-epochs,
+      {inputValue: max_num_epochs},
+      --early-stop-num-epochs,
+      {inputValue: early_stop_num_epochs},
+    ]

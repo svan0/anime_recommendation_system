@@ -1,0 +1,3447 @@
+{
+  "pipelineSpec": {
+    "components": {
+      "comp-component": {
+        "executorLabel": "exec-component",
+        "inputDefinitions": {
+          "artifacts": {
+            "all_anime_data_path": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "all_user_data_path": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "test_data_path": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "train_data_path": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "val_data_path": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          },
+          "parameters": {
+            "early_stop_num_epochs": {
+              "type": "INT"
+            },
+            "learning_rate": {
+              "type": "DOUBLE"
+            },
+            "max_num_epochs": {
+              "type": "INT"
+            },
+            "optimizer": {
+              "type": "STRING"
+            },
+            "user_anime_embedding_size": {
+              "type": "INT"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "output_metric_path": {
+              "artifactType": {
+                "schemaTitle": "system.Metrics",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "output_model_path": {
+              "artifactType": {
+                "schemaTitle": "system.Model",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-component-10": {
+        "executorLabel": "exec-component-10",
+        "inputDefinitions": {
+          "artifacts": {
+            "input_data_path": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "model_path": {
+              "artifactType": {
+                "schemaTitle": "system.Model",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          },
+          "parameters": {
+            "model_type": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "output_data_path": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-component-2": {
+        "executorLabel": "exec-component-2",
+        "inputDefinitions": {
+          "artifacts": {
+            "input_data_path": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "model_path": {
+              "artifactType": {
+                "schemaTitle": "system.Model",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "output_data_path": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-component-3": {
+        "executorLabel": "exec-component-3",
+        "inputDefinitions": {
+          "artifacts": {
+            "all_anime_data_path": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "all_user_data_path": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "test_data_path": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "train_data_path": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "val_data_path": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          },
+          "parameters": {
+            "anime_embedding_size": {
+              "type": "INT"
+            },
+            "early_stop_num_epochs": {
+              "type": "INT"
+            },
+            "learning_rate": {
+              "type": "DOUBLE"
+            },
+            "max_num_epochs": {
+              "type": "INT"
+            },
+            "model_type": {
+              "type": "STRING"
+            },
+            "optimizer": {
+              "type": "STRING"
+            },
+            "scoring_layer_size": {
+              "type": "INT"
+            },
+            "user_embedding_size": {
+              "type": "INT"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "output_metric_path": {
+              "artifactType": {
+                "schemaTitle": "system.Metrics",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "output_model_path": {
+              "artifactType": {
+                "schemaTitle": "system.Model",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-component-4": {
+        "executorLabel": "exec-component-4",
+        "inputDefinitions": {
+          "artifacts": {
+            "input_data_path": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "model_path": {
+              "artifactType": {
+                "schemaTitle": "system.Model",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          },
+          "parameters": {
+            "model_type": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "output_data_path": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-component-5": {
+        "executorLabel": "exec-component-5",
+        "inputDefinitions": {
+          "artifacts": {
+            "all_anime_data_path": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "all_user_data_path": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "test_data_path": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "train_data_path": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "val_data_path": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          },
+          "parameters": {
+            "anime_embedding_size": {
+              "type": "INT"
+            },
+            "early_stop_num_epochs": {
+              "type": "INT"
+            },
+            "learning_rate": {
+              "type": "DOUBLE"
+            },
+            "max_num_epochs": {
+              "type": "INT"
+            },
+            "model_type": {
+              "type": "STRING"
+            },
+            "optimizer": {
+              "type": "STRING"
+            },
+            "scoring_layer_size": {
+              "type": "INT"
+            },
+            "user_embedding_size": {
+              "type": "INT"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "output_metric_path": {
+              "artifactType": {
+                "schemaTitle": "system.Metrics",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "output_model_path": {
+              "artifactType": {
+                "schemaTitle": "system.Model",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-component-6": {
+        "executorLabel": "exec-component-6",
+        "inputDefinitions": {
+          "artifacts": {
+            "input_data_path": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "model_path": {
+              "artifactType": {
+                "schemaTitle": "system.Model",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          },
+          "parameters": {
+            "model_type": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "output_data_path": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-component-7": {
+        "executorLabel": "exec-component-7",
+        "inputDefinitions": {
+          "artifacts": {
+            "all_anime_data_path": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "all_user_data_path": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "test_data_path": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "train_data_path": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "val_data_path": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          },
+          "parameters": {
+            "anime_embedding_size": {
+              "type": "INT"
+            },
+            "early_stop_num_epochs": {
+              "type": "INT"
+            },
+            "learning_rate": {
+              "type": "DOUBLE"
+            },
+            "max_num_epochs": {
+              "type": "INT"
+            },
+            "model_type": {
+              "type": "STRING"
+            },
+            "optimizer": {
+              "type": "STRING"
+            },
+            "scoring_layer_size": {
+              "type": "INT"
+            },
+            "user_embedding_size": {
+              "type": "INT"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "output_metric_path": {
+              "artifactType": {
+                "schemaTitle": "system.Metrics",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "output_model_path": {
+              "artifactType": {
+                "schemaTitle": "system.Model",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-component-8": {
+        "executorLabel": "exec-component-8",
+        "inputDefinitions": {
+          "artifacts": {
+            "input_data_path": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "model_path": {
+              "artifactType": {
+                "schemaTitle": "system.Model",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          },
+          "parameters": {
+            "model_type": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "output_data_path": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-component-9": {
+        "executorLabel": "exec-component-9",
+        "inputDefinitions": {
+          "artifacts": {
+            "all_anime_data_path": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "all_user_data_path": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "test_data_path": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "train_data_path": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "val_data_path": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          },
+          "parameters": {
+            "anime_embedding_size": {
+              "type": "INT"
+            },
+            "early_stop_num_epochs": {
+              "type": "INT"
+            },
+            "learning_rate": {
+              "type": "DOUBLE"
+            },
+            "max_num_epochs": {
+              "type": "INT"
+            },
+            "model_type": {
+              "type": "STRING"
+            },
+            "optimizer": {
+              "type": "STRING"
+            },
+            "scoring_layer_size": {
+              "type": "INT"
+            },
+            "user_embedding_size": {
+              "type": "INT"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "output_metric_path": {
+              "artifactType": {
+                "schemaTitle": "system.Metrics",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "output_model_path": {
+              "artifactType": {
+                "schemaTitle": "system.Model",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-condition-1": {
+        "dag": {
+          "outputs": {
+            "artifacts": {
+              "component-3-output_metric_path": {
+                "artifactSelectors": [
+                  {
+                    "outputArtifactKey": "component-3-output_metric_path",
+                    "producerSubtask": "condition-2"
+                  }
+                ]
+              },
+              "component-5-output_metric_path": {
+                "artifactSelectors": [
+                  {
+                    "outputArtifactKey": "component-5-output_metric_path",
+                    "producerSubtask": "condition-3"
+                  }
+                ]
+              },
+              "component-output_metric_path": {
+                "artifactSelectors": [
+                  {
+                    "outputArtifactKey": "output_metric_path",
+                    "producerSubtask": "component"
+                  }
+                ]
+              }
+            }
+          },
+          "tasks": {
+            "component": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-component"
+              },
+              "dependentTasks": [
+                "load-big-query-data-3",
+                "load-big-query-data-4",
+                "load-big-query-data-5"
+              ],
+              "inputs": {
+                "artifacts": {
+                  "all_anime_data_path": {
+                    "componentInputArtifact": "pipelineparam--load-big-query-data-output_csv"
+                  },
+                  "all_user_data_path": {
+                    "componentInputArtifact": "pipelineparam--load-big-query-data-2-output_csv"
+                  },
+                  "test_data_path": {
+                    "taskOutputArtifact": {
+                      "outputArtifactKey": "output_csv",
+                      "producerTask": "load-big-query-data-5"
+                    }
+                  },
+                  "train_data_path": {
+                    "taskOutputArtifact": {
+                      "outputArtifactKey": "output_csv",
+                      "producerTask": "load-big-query-data-3"
+                    }
+                  },
+                  "val_data_path": {
+                    "taskOutputArtifact": {
+                      "outputArtifactKey": "output_csv",
+                      "producerTask": "load-big-query-data-4"
+                    }
+                  }
+                },
+                "parameters": {
+                  "early_stop_num_epochs": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "intValue": "5"
+                      }
+                    }
+                  },
+                  "learning_rate": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "doubleValue": 0.005
+                      }
+                    }
+                  },
+                  "max_num_epochs": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "intValue": "30"
+                      }
+                    }
+                  },
+                  "optimizer": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "adam"
+                      }
+                    }
+                  },
+                  "user_anime_embedding_size": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "intValue": "128"
+                      }
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "train retrieval model"
+              }
+            },
+            "component-2": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-component-2"
+              },
+              "dependentTasks": [
+                "component"
+              ],
+              "inputs": {
+                "artifacts": {
+                  "input_data_path": {
+                    "componentInputArtifact": "pipelineparam--load-big-query-data-2-output_csv"
+                  },
+                  "model_path": {
+                    "taskOutputArtifact": {
+                      "outputArtifactKey": "output_model_path",
+                      "producerTask": "component"
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "infer retrieval model"
+              }
+            },
+            "condition-2": {
+              "componentRef": {
+                "name": "comp-condition-2"
+              },
+              "dependentTasks": [
+                "load-big-query-external-data"
+              ],
+              "inputs": {
+                "artifacts": {
+                  "pipelineparam--load-big-query-data-2-output_csv": {
+                    "componentInputArtifact": "pipelineparam--load-big-query-data-2-output_csv"
+                  },
+                  "pipelineparam--load-big-query-data-output_csv": {
+                    "componentInputArtifact": "pipelineparam--load-big-query-data-output_csv"
+                  },
+                  "pipelineparam--load-big-query-external-data-output_csv": {
+                    "taskOutputArtifact": {
+                      "outputArtifactKey": "output_csv",
+                      "producerTask": "load-big-query-external-data"
+                    }
+                  }
+                },
+                "parameters": {
+                  "pipelineparam--list_ranking": {
+                    "componentInputParameter": "pipelineparam--list_ranking"
+                  },
+                  "pipelineparam--run_retrieval": {
+                    "componentInputParameter": "pipelineparam--run_retrieval"
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "condition-2"
+              },
+              "triggerPolicy": {
+                "condition": "inputs.parameters['pipelineparam--list_ranking'].string_value == 'true'"
+              }
+            },
+            "condition-3": {
+              "componentRef": {
+                "name": "comp-condition-3"
+              },
+              "dependentTasks": [
+                "load-big-query-external-data"
+              ],
+              "inputs": {
+                "artifacts": {
+                  "pipelineparam--load-big-query-data-2-output_csv": {
+                    "componentInputArtifact": "pipelineparam--load-big-query-data-2-output_csv"
+                  },
+                  "pipelineparam--load-big-query-data-output_csv": {
+                    "componentInputArtifact": "pipelineparam--load-big-query-data-output_csv"
+                  },
+                  "pipelineparam--load-big-query-external-data-output_csv": {
+                    "taskOutputArtifact": {
+                      "outputArtifactKey": "output_csv",
+                      "producerTask": "load-big-query-external-data"
+                    }
+                  }
+                },
+                "parameters": {
+                  "pipelineparam--list_ranking": {
+                    "componentInputParameter": "pipelineparam--list_ranking"
+                  },
+                  "pipelineparam--run_retrieval": {
+                    "componentInputParameter": "pipelineparam--run_retrieval"
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "condition-3"
+              },
+              "triggerPolicy": {
+                "condition": "inputs.parameters['pipelineparam--list_ranking'].string_value == 'false'"
+              }
+            },
+            "load-big-query-data-3": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-load-big-query-data-3"
+              },
+              "inputs": {
+                "parameters": {
+                  "query": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed'\n    \n    )\n    \n        SELECT user_id, anime_id \n        FROM filtered_ordered_user_anime \n        WHERE user_anime_order >= 21\n        "
+                      }
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "train data : user anime retrieval"
+              }
+            },
+            "load-big-query-data-4": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-load-big-query-data-4"
+              },
+              "inputs": {
+                "parameters": {
+                  "query": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed'\n    \n    )\n    \n        SELECT user_id, anime_id \n        FROM filtered_ordered_user_anime \n        WHERE user_anime_order BETWEEN 11 AND 20\n        "
+                      }
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "val data : user anime retrieval"
+              }
+            },
+            "load-big-query-data-5": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-load-big-query-data-5"
+              },
+              "inputs": {
+                "parameters": {
+                  "query": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed'\n    \n    )\n    \n        SELECT user_id, anime_id \n        FROM filtered_ordered_user_anime \n        WHERE user_anime_order BETWEEN 1 AND 10\n        "
+                      }
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "test data : user anime retrieval"
+              }
+            },
+            "load-big-query-external-data": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-load-big-query-external-data"
+              },
+              "dependentTasks": [
+                "component-2"
+              ],
+              "inputs": {
+                "artifacts": {
+                  "external_table_uri": {
+                    "taskOutputArtifact": {
+                      "outputArtifactKey": "output_data_path",
+                      "producerTask": "component-2"
+                    }
+                  }
+                },
+                "parameters": {
+                  "external_table_id": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "unknown_retrieved"
+                      }
+                    }
+                  },
+                  "external_table_schema": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "[[\"user_id\", \"STRING\"], [\"retrieved_anime_id\", \"STRING\"]]"
+                      }
+                    }
+                  },
+                  "query": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "\n        WITH \n        list_anime AS (\n            \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n        ),\n        list_users AS (\n            \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n        ),\n        filtered_user_anime AS (\n            \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_user C\n        ON A.user_id = C.user_id\n    \n        )\n        SELECT A.user_id, A.retrieved_anime_id\n        FROM unknown_retrieved A\n        LEFT JOIN filtered_user_anime B\n        ON A.user_id = B.user_id AND A.retrieved_anime_id = B.anime_id\n        WHERE B.status IS NULL\n    "
+                      }
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "remove known retrieved animes"
+              }
+            }
+          }
+        },
+        "inputDefinitions": {
+          "artifacts": {
+            "pipelineparam--load-big-query-data-2-output_csv": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "pipelineparam--load-big-query-data-output_csv": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          },
+          "parameters": {
+            "pipelineparam--list_ranking": {
+              "type": "STRING"
+            },
+            "pipelineparam--run_retrieval": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "component-3-output_metric_path": {
+              "artifactType": {
+                "schemaTitle": "system.Metrics",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "component-5-output_metric_path": {
+              "artifactType": {
+                "schemaTitle": "system.Metrics",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "component-output_metric_path": {
+              "artifactType": {
+                "schemaTitle": "system.Metrics",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-condition-2": {
+        "dag": {
+          "outputs": {
+            "artifacts": {
+              "component-3-output_metric_path": {
+                "artifactSelectors": [
+                  {
+                    "outputArtifactKey": "output_metric_path",
+                    "producerSubtask": "component-3"
+                  }
+                ]
+              }
+            }
+          },
+          "tasks": {
+            "component-3": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-component-3"
+              },
+              "dependentTasks": [
+                "load-big-query-data-6",
+                "load-big-query-data-7",
+                "load-big-query-data-8"
+              ],
+              "inputs": {
+                "artifacts": {
+                  "all_anime_data_path": {
+                    "componentInputArtifact": "pipelineparam--load-big-query-data-output_csv"
+                  },
+                  "all_user_data_path": {
+                    "componentInputArtifact": "pipelineparam--load-big-query-data-2-output_csv"
+                  },
+                  "test_data_path": {
+                    "taskOutputArtifact": {
+                      "outputArtifactKey": "output_csv",
+                      "producerTask": "load-big-query-data-8"
+                    }
+                  },
+                  "train_data_path": {
+                    "taskOutputArtifact": {
+                      "outputArtifactKey": "output_csv",
+                      "producerTask": "load-big-query-data-6"
+                    }
+                  },
+                  "val_data_path": {
+                    "taskOutputArtifact": {
+                      "outputArtifactKey": "output_csv",
+                      "producerTask": "load-big-query-data-7"
+                    }
+                  }
+                },
+                "parameters": {
+                  "anime_embedding_size": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "intValue": "128"
+                      }
+                    }
+                  },
+                  "early_stop_num_epochs": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "intValue": "5"
+                      }
+                    }
+                  },
+                  "learning_rate": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "doubleValue": 0.005
+                      }
+                    }
+                  },
+                  "max_num_epochs": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "intValue": "30"
+                      }
+                    }
+                  },
+                  "model_type": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "list_ranking"
+                      }
+                    }
+                  },
+                  "optimizer": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "adam"
+                      }
+                    }
+                  },
+                  "scoring_layer_size": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "intValue": "128"
+                      }
+                    }
+                  },
+                  "user_embedding_size": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "intValue": "256"
+                      }
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "train list ranking model"
+              }
+            },
+            "component-4": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-component-4"
+              },
+              "dependentTasks": [
+                "component-3"
+              ],
+              "inputs": {
+                "artifacts": {
+                  "input_data_path": {
+                    "componentInputArtifact": "pipelineparam--load-big-query-external-data-output_csv"
+                  },
+                  "model_path": {
+                    "taskOutputArtifact": {
+                      "outputArtifactKey": "output_model_path",
+                      "producerTask": "component-3"
+                    }
+                  }
+                },
+                "parameters": {
+                  "model_type": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "list_ranking"
+                      }
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "infer list ranking model"
+              }
+            },
+            "load-big-query-data-6": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-load-big-query-data-6"
+              },
+              "inputs": {
+                "parameters": {
+                  "query": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    ),\n    train_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order >= 21\n    ),\n    train_data_random_order AS (\n        SELECT user_id, \n               anime_id, \n               score, \n               ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY RAND()) - 1 AS random_order_anime_per_user\n        FROM train_data\n    ),\n    train_data_list AS (\n        SELECT user_id, ARRAY_AGG(anime_id) AS anime_id, ARRAY_AGG(score) AS score \n        FROM train_data_random_order\n        GROUP BY user_id, DIV(random_order_anime_per_user, 10)\n        HAVING ARRAY_LENGTH(anime_id) = 10\n    ),\n    val_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 11 AND 20\n    ),\n    val_data_list AS (\n        SELECT user_id, ARRAY_AGG(anime_id) AS anime_id, ARRAY_AGG(score) AS score \n        FROM val_data \n        GROUP BY user_id\n    ),\n    test_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 1 AND 10\n    ),\n    test_data_list AS (\n        SELECT user_id, ARRAY_AGG(anime_id) AS anime_id, ARRAY_AGG(score) AS score \n        FROM test_data \n        GROUP BY user_id\n    )\n    \n        SELECT *\n        FROM train_data_list\n        "
+                      }
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "train data : user anime list ranking"
+              }
+            },
+            "load-big-query-data-7": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-load-big-query-data-7"
+              },
+              "inputs": {
+                "parameters": {
+                  "query": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    ),\n    train_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order >= 21\n    ),\n    train_data_random_order AS (\n        SELECT user_id, \n               anime_id, \n               score, \n               ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY RAND()) - 1 AS random_order_anime_per_user\n        FROM train_data\n    ),\n    train_data_list AS (\n        SELECT user_id, ARRAY_AGG(anime_id) AS anime_id, ARRAY_AGG(score) AS score \n        FROM train_data_random_order\n        GROUP BY user_id, DIV(random_order_anime_per_user, 10)\n        HAVING ARRAY_LENGTH(anime_id) = 10\n    ),\n    val_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 11 AND 20\n    ),\n    val_data_list AS (\n        SELECT user_id, ARRAY_AGG(anime_id) AS anime_id, ARRAY_AGG(score) AS score \n        FROM val_data \n        GROUP BY user_id\n    ),\n    test_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 1 AND 10\n    ),\n    test_data_list AS (\n        SELECT user_id, ARRAY_AGG(anime_id) AS anime_id, ARRAY_AGG(score) AS score \n        FROM test_data \n        GROUP BY user_id\n    )\n    \n        SELECT *\n        FROM val_data_list\n        "
+                      }
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "validation data : user anime list ranking"
+              }
+            },
+            "load-big-query-data-8": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-load-big-query-data-8"
+              },
+              "inputs": {
+                "parameters": {
+                  "query": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    ),\n    train_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order >= 21\n    ),\n    train_data_random_order AS (\n        SELECT user_id, \n               anime_id, \n               score, \n               ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY RAND()) - 1 AS random_order_anime_per_user\n        FROM train_data\n    ),\n    train_data_list AS (\n        SELECT user_id, ARRAY_AGG(anime_id) AS anime_id, ARRAY_AGG(score) AS score \n        FROM train_data_random_order\n        GROUP BY user_id, DIV(random_order_anime_per_user, 10)\n        HAVING ARRAY_LENGTH(anime_id) = 10\n    ),\n    val_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 11 AND 20\n    ),\n    val_data_list AS (\n        SELECT user_id, ARRAY_AGG(anime_id) AS anime_id, ARRAY_AGG(score) AS score \n        FROM val_data \n        GROUP BY user_id\n    ),\n    test_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 1 AND 10\n    ),\n    test_data_list AS (\n        SELECT user_id, ARRAY_AGG(anime_id) AS anime_id, ARRAY_AGG(score) AS score \n        FROM test_data \n        GROUP BY user_id\n    )\n    \n        SELECT *\n        FROM test_data_list\n        "
+                      }
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "test data : user anime list ranking"
+              }
+            }
+          }
+        },
+        "inputDefinitions": {
+          "artifacts": {
+            "pipelineparam--load-big-query-data-2-output_csv": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "pipelineparam--load-big-query-data-output_csv": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "pipelineparam--load-big-query-external-data-output_csv": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          },
+          "parameters": {
+            "pipelineparam--list_ranking": {
+              "type": "STRING"
+            },
+            "pipelineparam--run_retrieval": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "component-3-output_metric_path": {
+              "artifactType": {
+                "schemaTitle": "system.Metrics",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-condition-3": {
+        "dag": {
+          "outputs": {
+            "artifacts": {
+              "component-5-output_metric_path": {
+                "artifactSelectors": [
+                  {
+                    "outputArtifactKey": "output_metric_path",
+                    "producerSubtask": "component-5"
+                  }
+                ]
+              }
+            }
+          },
+          "tasks": {
+            "component-5": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-component-5"
+              },
+              "dependentTasks": [
+                "load-big-query-data-10",
+                "load-big-query-data-11",
+                "load-big-query-data-9"
+              ],
+              "inputs": {
+                "artifacts": {
+                  "all_anime_data_path": {
+                    "componentInputArtifact": "pipelineparam--load-big-query-data-output_csv"
+                  },
+                  "all_user_data_path": {
+                    "componentInputArtifact": "pipelineparam--load-big-query-data-2-output_csv"
+                  },
+                  "test_data_path": {
+                    "taskOutputArtifact": {
+                      "outputArtifactKey": "output_csv",
+                      "producerTask": "load-big-query-data-11"
+                    }
+                  },
+                  "train_data_path": {
+                    "taskOutputArtifact": {
+                      "outputArtifactKey": "output_csv",
+                      "producerTask": "load-big-query-data-9"
+                    }
+                  },
+                  "val_data_path": {
+                    "taskOutputArtifact": {
+                      "outputArtifactKey": "output_csv",
+                      "producerTask": "load-big-query-data-10"
+                    }
+                  }
+                },
+                "parameters": {
+                  "anime_embedding_size": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "intValue": "128"
+                      }
+                    }
+                  },
+                  "early_stop_num_epochs": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "intValue": "5"
+                      }
+                    }
+                  },
+                  "learning_rate": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "doubleValue": 0.005
+                      }
+                    }
+                  },
+                  "max_num_epochs": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "intValue": "30"
+                      }
+                    }
+                  },
+                  "model_type": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "ranking"
+                      }
+                    }
+                  },
+                  "optimizer": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "adam"
+                      }
+                    }
+                  },
+                  "scoring_layer_size": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "intValue": "128"
+                      }
+                    }
+                  },
+                  "user_embedding_size": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "intValue": "256"
+                      }
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "train ranking model"
+              }
+            },
+            "component-6": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-component-6"
+              },
+              "dependentTasks": [
+                "component-5"
+              ],
+              "inputs": {
+                "artifacts": {
+                  "input_data_path": {
+                    "componentInputArtifact": "pipelineparam--load-big-query-external-data-output_csv"
+                  },
+                  "model_path": {
+                    "taskOutputArtifact": {
+                      "outputArtifactKey": "output_model_path",
+                      "producerTask": "component-5"
+                    }
+                  }
+                },
+                "parameters": {
+                  "model_type": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "ranking"
+                      }
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "infer ranking model"
+              }
+            },
+            "load-big-query-data-10": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-load-big-query-data-10"
+              },
+              "inputs": {
+                "parameters": {
+                  "query": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    )\n    \n        SELECT user_id, anime_id, score\n        FROM user_anime_data\n        WHERE user_anime_order BETWEEN 11 AND 20\n        "
+                      }
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "validation data : user anime ranking"
+              }
+            },
+            "load-big-query-data-11": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-load-big-query-data-11"
+              },
+              "inputs": {
+                "parameters": {
+                  "query": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    )\n    \n        SELECT user_id, anime_id, score\n        FROM user_anime_data\n        WHERE user_anime_order BETWEEN 1 AND 10\n        "
+                      }
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "test data : user anime ranking"
+              }
+            },
+            "load-big-query-data-9": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-load-big-query-data-9"
+              },
+              "inputs": {
+                "parameters": {
+                  "query": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    )\n    \n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order >= 21\n        "
+                      }
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "train data : user anime ranking"
+              }
+            }
+          }
+        },
+        "inputDefinitions": {
+          "artifacts": {
+            "pipelineparam--load-big-query-data-2-output_csv": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "pipelineparam--load-big-query-data-output_csv": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "pipelineparam--load-big-query-external-data-output_csv": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          },
+          "parameters": {
+            "pipelineparam--list_ranking": {
+              "type": "STRING"
+            },
+            "pipelineparam--run_retrieval": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "component-5-output_metric_path": {
+              "artifactType": {
+                "schemaTitle": "system.Metrics",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-condition-4": {
+        "dag": {
+          "outputs": {
+            "artifacts": {
+              "component-7-output_metric_path": {
+                "artifactSelectors": [
+                  {
+                    "outputArtifactKey": "component-7-output_metric_path",
+                    "producerSubtask": "condition-5"
+                  }
+                ]
+              },
+              "component-9-output_metric_path": {
+                "artifactSelectors": [
+                  {
+                    "outputArtifactKey": "component-9-output_metric_path",
+                    "producerSubtask": "condition-6"
+                  }
+                ]
+              }
+            }
+          },
+          "tasks": {
+            "condition-5": {
+              "componentRef": {
+                "name": "comp-condition-5"
+              },
+              "dependentTasks": [
+                "load-big-query-data-12"
+              ],
+              "inputs": {
+                "artifacts": {
+                  "pipelineparam--load-big-query-data-12-output_csv": {
+                    "taskOutputArtifact": {
+                      "outputArtifactKey": "output_csv",
+                      "producerTask": "load-big-query-data-12"
+                    }
+                  },
+                  "pipelineparam--load-big-query-data-2-output_csv": {
+                    "componentInputArtifact": "pipelineparam--load-big-query-data-2-output_csv"
+                  },
+                  "pipelineparam--load-big-query-data-output_csv": {
+                    "componentInputArtifact": "pipelineparam--load-big-query-data-output_csv"
+                  }
+                },
+                "parameters": {
+                  "pipelineparam--list_ranking": {
+                    "componentInputParameter": "pipelineparam--list_ranking"
+                  },
+                  "pipelineparam--run_retrieval": {
+                    "componentInputParameter": "pipelineparam--run_retrieval"
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "condition-5"
+              },
+              "triggerPolicy": {
+                "condition": "inputs.parameters['pipelineparam--list_ranking'].string_value == 'true'"
+              }
+            },
+            "condition-6": {
+              "componentRef": {
+                "name": "comp-condition-6"
+              },
+              "dependentTasks": [
+                "load-big-query-data-12"
+              ],
+              "inputs": {
+                "artifacts": {
+                  "pipelineparam--load-big-query-data-12-output_csv": {
+                    "taskOutputArtifact": {
+                      "outputArtifactKey": "output_csv",
+                      "producerTask": "load-big-query-data-12"
+                    }
+                  },
+                  "pipelineparam--load-big-query-data-2-output_csv": {
+                    "componentInputArtifact": "pipelineparam--load-big-query-data-2-output_csv"
+                  },
+                  "pipelineparam--load-big-query-data-output_csv": {
+                    "componentInputArtifact": "pipelineparam--load-big-query-data-output_csv"
+                  }
+                },
+                "parameters": {
+                  "pipelineparam--list_ranking": {
+                    "componentInputParameter": "pipelineparam--list_ranking"
+                  },
+                  "pipelineparam--run_retrieval": {
+                    "componentInputParameter": "pipelineparam--run_retrieval"
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "condition-6"
+              },
+              "triggerPolicy": {
+                "condition": "inputs.parameters['pipelineparam--list_ranking'].string_value == 'false'"
+              }
+            },
+            "load-big-query-data-12": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-load-big-query-data-12"
+              },
+              "inputs": {
+                "parameters": {
+                  "query": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "\n        WITH \n        list_anime AS (\n            \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n        ),\n        list_users AS (\n            \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n        ),\n        filtered_user_anime AS (\n            \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_user C\n        ON A.user_id = C.user_id\n    \n        ),\n        user_anime_cross AS (\n            SELECT A.user_id, B.anime_id AS retrieved_anime_id\n            FROM list_users A\n            CROSS JOIN list_anime B\n        )\n        SELECT A.user_id, A.retrieved_anime_id\n        FROM user_anime_cross A\n        LEFT JOIN filtered_user_anime B\n        ON A.user_id = B.user_id AND A.retrieved_anime_id = B.anime_id\n        WHERE B.status IS NULL\n    "
+                      }
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "all anime not interacted with data"
+              }
+            }
+          }
+        },
+        "inputDefinitions": {
+          "artifacts": {
+            "pipelineparam--load-big-query-data-2-output_csv": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "pipelineparam--load-big-query-data-output_csv": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          },
+          "parameters": {
+            "pipelineparam--list_ranking": {
+              "type": "STRING"
+            },
+            "pipelineparam--run_retrieval": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "component-7-output_metric_path": {
+              "artifactType": {
+                "schemaTitle": "system.Metrics",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "component-9-output_metric_path": {
+              "artifactType": {
+                "schemaTitle": "system.Metrics",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-condition-5": {
+        "dag": {
+          "outputs": {
+            "artifacts": {
+              "component-7-output_metric_path": {
+                "artifactSelectors": [
+                  {
+                    "outputArtifactKey": "output_metric_path",
+                    "producerSubtask": "component-7"
+                  }
+                ]
+              }
+            }
+          },
+          "tasks": {
+            "component-7": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-component-7"
+              },
+              "dependentTasks": [
+                "load-big-query-data-13",
+                "load-big-query-data-14",
+                "load-big-query-data-15"
+              ],
+              "inputs": {
+                "artifacts": {
+                  "all_anime_data_path": {
+                    "componentInputArtifact": "pipelineparam--load-big-query-data-output_csv"
+                  },
+                  "all_user_data_path": {
+                    "componentInputArtifact": "pipelineparam--load-big-query-data-2-output_csv"
+                  },
+                  "test_data_path": {
+                    "taskOutputArtifact": {
+                      "outputArtifactKey": "output_csv",
+                      "producerTask": "load-big-query-data-15"
+                    }
+                  },
+                  "train_data_path": {
+                    "taskOutputArtifact": {
+                      "outputArtifactKey": "output_csv",
+                      "producerTask": "load-big-query-data-13"
+                    }
+                  },
+                  "val_data_path": {
+                    "taskOutputArtifact": {
+                      "outputArtifactKey": "output_csv",
+                      "producerTask": "load-big-query-data-14"
+                    }
+                  }
+                },
+                "parameters": {
+                  "anime_embedding_size": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "intValue": "128"
+                      }
+                    }
+                  },
+                  "early_stop_num_epochs": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "intValue": "5"
+                      }
+                    }
+                  },
+                  "learning_rate": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "doubleValue": 0.005
+                      }
+                    }
+                  },
+                  "max_num_epochs": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "intValue": "30"
+                      }
+                    }
+                  },
+                  "model_type": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "list_ranking"
+                      }
+                    }
+                  },
+                  "optimizer": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "adam"
+                      }
+                    }
+                  },
+                  "scoring_layer_size": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "intValue": "128"
+                      }
+                    }
+                  },
+                  "user_embedding_size": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "intValue": "256"
+                      }
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "train list ranking model"
+              }
+            },
+            "component-8": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-component-8"
+              },
+              "dependentTasks": [
+                "component-7"
+              ],
+              "inputs": {
+                "artifacts": {
+                  "input_data_path": {
+                    "componentInputArtifact": "pipelineparam--load-big-query-data-12-output_csv"
+                  },
+                  "model_path": {
+                    "taskOutputArtifact": {
+                      "outputArtifactKey": "output_model_path",
+                      "producerTask": "component-7"
+                    }
+                  }
+                },
+                "parameters": {
+                  "model_type": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "list_ranking"
+                      }
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "infer list ranking model"
+              }
+            },
+            "load-big-query-data-13": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-load-big-query-data-13"
+              },
+              "inputs": {
+                "parameters": {
+                  "query": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    ),\n    train_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order >= 21\n    ),\n    train_data_random_order AS (\n        SELECT user_id, \n               anime_id, \n               score, \n               ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY RAND()) - 1 AS random_order_anime_per_user\n        FROM train_data\n    ),\n    train_data_list AS (\n        SELECT user_id, ARRAY_AGG(anime_id) AS anime_id, ARRAY_AGG(score) AS score \n        FROM train_data_random_order\n        GROUP BY user_id, DIV(random_order_anime_per_user, 10)\n        HAVING ARRAY_LENGTH(anime_id) = 10\n    ),\n    val_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 11 AND 20\n    ),\n    val_data_list AS (\n        SELECT user_id, ARRAY_AGG(anime_id) AS anime_id, ARRAY_AGG(score) AS score \n        FROM val_data \n        GROUP BY user_id\n    ),\n    test_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 1 AND 10\n    ),\n    test_data_list AS (\n        SELECT user_id, ARRAY_AGG(anime_id) AS anime_id, ARRAY_AGG(score) AS score \n        FROM test_data \n        GROUP BY user_id\n    )\n    \n        SELECT *\n        FROM train_data_list\n        "
+                      }
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "train data : user anime list ranking"
+              }
+            },
+            "load-big-query-data-14": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-load-big-query-data-14"
+              },
+              "inputs": {
+                "parameters": {
+                  "query": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    ),\n    train_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order >= 21\n    ),\n    train_data_random_order AS (\n        SELECT user_id, \n               anime_id, \n               score, \n               ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY RAND()) - 1 AS random_order_anime_per_user\n        FROM train_data\n    ),\n    train_data_list AS (\n        SELECT user_id, ARRAY_AGG(anime_id) AS anime_id, ARRAY_AGG(score) AS score \n        FROM train_data_random_order\n        GROUP BY user_id, DIV(random_order_anime_per_user, 10)\n        HAVING ARRAY_LENGTH(anime_id) = 10\n    ),\n    val_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 11 AND 20\n    ),\n    val_data_list AS (\n        SELECT user_id, ARRAY_AGG(anime_id) AS anime_id, ARRAY_AGG(score) AS score \n        FROM val_data \n        GROUP BY user_id\n    ),\n    test_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 1 AND 10\n    ),\n    test_data_list AS (\n        SELECT user_id, ARRAY_AGG(anime_id) AS anime_id, ARRAY_AGG(score) AS score \n        FROM test_data \n        GROUP BY user_id\n    )\n    \n        SELECT *\n        FROM val_data_list\n        "
+                      }
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "validation data : user anime list ranking"
+              }
+            },
+            "load-big-query-data-15": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-load-big-query-data-15"
+              },
+              "inputs": {
+                "parameters": {
+                  "query": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    ),\n    train_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order >= 21\n    ),\n    train_data_random_order AS (\n        SELECT user_id, \n               anime_id, \n               score, \n               ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY RAND()) - 1 AS random_order_anime_per_user\n        FROM train_data\n    ),\n    train_data_list AS (\n        SELECT user_id, ARRAY_AGG(anime_id) AS anime_id, ARRAY_AGG(score) AS score \n        FROM train_data_random_order\n        GROUP BY user_id, DIV(random_order_anime_per_user, 10)\n        HAVING ARRAY_LENGTH(anime_id) = 10\n    ),\n    val_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 11 AND 20\n    ),\n    val_data_list AS (\n        SELECT user_id, ARRAY_AGG(anime_id) AS anime_id, ARRAY_AGG(score) AS score \n        FROM val_data \n        GROUP BY user_id\n    ),\n    test_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 1 AND 10\n    ),\n    test_data_list AS (\n        SELECT user_id, ARRAY_AGG(anime_id) AS anime_id, ARRAY_AGG(score) AS score \n        FROM test_data \n        GROUP BY user_id\n    )\n    \n        SELECT *\n        FROM test_data_list\n        "
+                      }
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "test data : user anime list ranking"
+              }
+            }
+          }
+        },
+        "inputDefinitions": {
+          "artifacts": {
+            "pipelineparam--load-big-query-data-12-output_csv": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "pipelineparam--load-big-query-data-2-output_csv": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "pipelineparam--load-big-query-data-output_csv": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          },
+          "parameters": {
+            "pipelineparam--list_ranking": {
+              "type": "STRING"
+            },
+            "pipelineparam--run_retrieval": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "component-7-output_metric_path": {
+              "artifactType": {
+                "schemaTitle": "system.Metrics",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-condition-6": {
+        "dag": {
+          "outputs": {
+            "artifacts": {
+              "component-9-output_metric_path": {
+                "artifactSelectors": [
+                  {
+                    "outputArtifactKey": "output_metric_path",
+                    "producerSubtask": "component-9"
+                  }
+                ]
+              }
+            }
+          },
+          "tasks": {
+            "component-10": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-component-10"
+              },
+              "dependentTasks": [
+                "component-9"
+              ],
+              "inputs": {
+                "artifacts": {
+                  "input_data_path": {
+                    "componentInputArtifact": "pipelineparam--load-big-query-data-12-output_csv"
+                  },
+                  "model_path": {
+                    "taskOutputArtifact": {
+                      "outputArtifactKey": "output_model_path",
+                      "producerTask": "component-9"
+                    }
+                  }
+                },
+                "parameters": {
+                  "model_type": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "ranking"
+                      }
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "infer ranking model"
+              }
+            },
+            "component-9": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-component-9"
+              },
+              "dependentTasks": [
+                "load-big-query-data-16",
+                "load-big-query-data-17",
+                "load-big-query-data-18"
+              ],
+              "inputs": {
+                "artifacts": {
+                  "all_anime_data_path": {
+                    "componentInputArtifact": "pipelineparam--load-big-query-data-output_csv"
+                  },
+                  "all_user_data_path": {
+                    "componentInputArtifact": "pipelineparam--load-big-query-data-2-output_csv"
+                  },
+                  "test_data_path": {
+                    "taskOutputArtifact": {
+                      "outputArtifactKey": "output_csv",
+                      "producerTask": "load-big-query-data-18"
+                    }
+                  },
+                  "train_data_path": {
+                    "taskOutputArtifact": {
+                      "outputArtifactKey": "output_csv",
+                      "producerTask": "load-big-query-data-16"
+                    }
+                  },
+                  "val_data_path": {
+                    "taskOutputArtifact": {
+                      "outputArtifactKey": "output_csv",
+                      "producerTask": "load-big-query-data-17"
+                    }
+                  }
+                },
+                "parameters": {
+                  "anime_embedding_size": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "intValue": "128"
+                      }
+                    }
+                  },
+                  "early_stop_num_epochs": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "intValue": "5"
+                      }
+                    }
+                  },
+                  "learning_rate": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "doubleValue": 0.005
+                      }
+                    }
+                  },
+                  "max_num_epochs": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "intValue": "30"
+                      }
+                    }
+                  },
+                  "model_type": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "ranking"
+                      }
+                    }
+                  },
+                  "optimizer": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "adam"
+                      }
+                    }
+                  },
+                  "scoring_layer_size": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "intValue": "128"
+                      }
+                    }
+                  },
+                  "user_embedding_size": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "intValue": "256"
+                      }
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "train ranking model"
+              }
+            },
+            "load-big-query-data-16": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-load-big-query-data-16"
+              },
+              "inputs": {
+                "parameters": {
+                  "query": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    )\n    \n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order >= 21\n        "
+                      }
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "train data : user anime ranking"
+              }
+            },
+            "load-big-query-data-17": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-load-big-query-data-17"
+              },
+              "inputs": {
+                "parameters": {
+                  "query": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    )\n    \n        SELECT user_id, anime_id, score\n        FROM user_anime_data\n        WHERE user_anime_order BETWEEN 11 AND 20\n        "
+                      }
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "validation data : user anime ranking"
+              }
+            },
+            "load-big-query-data-18": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-load-big-query-data-18"
+              },
+              "inputs": {
+                "parameters": {
+                  "query": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    )\n    \n        SELECT user_id, anime_id, score\n        FROM user_anime_data\n        WHERE user_anime_order BETWEEN 1 AND 10\n        "
+                      }
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "test data : user anime ranking"
+              }
+            }
+          }
+        },
+        "inputDefinitions": {
+          "artifacts": {
+            "pipelineparam--load-big-query-data-12-output_csv": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "pipelineparam--load-big-query-data-2-output_csv": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "pipelineparam--load-big-query-data-output_csv": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          },
+          "parameters": {
+            "pipelineparam--list_ranking": {
+              "type": "STRING"
+            },
+            "pipelineparam--run_retrieval": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "component-9-output_metric_path": {
+              "artifactType": {
+                "schemaTitle": "system.Metrics",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-load-big-query-data": {
+        "executorLabel": "exec-load-big-query-data",
+        "inputDefinitions": {
+          "parameters": {
+            "query": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "output_csv": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-load-big-query-data-10": {
+        "executorLabel": "exec-load-big-query-data-10",
+        "inputDefinitions": {
+          "parameters": {
+            "query": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "output_csv": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-load-big-query-data-11": {
+        "executorLabel": "exec-load-big-query-data-11",
+        "inputDefinitions": {
+          "parameters": {
+            "query": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "output_csv": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-load-big-query-data-12": {
+        "executorLabel": "exec-load-big-query-data-12",
+        "inputDefinitions": {
+          "parameters": {
+            "query": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "output_csv": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-load-big-query-data-13": {
+        "executorLabel": "exec-load-big-query-data-13",
+        "inputDefinitions": {
+          "parameters": {
+            "query": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "output_csv": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-load-big-query-data-14": {
+        "executorLabel": "exec-load-big-query-data-14",
+        "inputDefinitions": {
+          "parameters": {
+            "query": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "output_csv": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-load-big-query-data-15": {
+        "executorLabel": "exec-load-big-query-data-15",
+        "inputDefinitions": {
+          "parameters": {
+            "query": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "output_csv": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-load-big-query-data-16": {
+        "executorLabel": "exec-load-big-query-data-16",
+        "inputDefinitions": {
+          "parameters": {
+            "query": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "output_csv": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-load-big-query-data-17": {
+        "executorLabel": "exec-load-big-query-data-17",
+        "inputDefinitions": {
+          "parameters": {
+            "query": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "output_csv": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-load-big-query-data-18": {
+        "executorLabel": "exec-load-big-query-data-18",
+        "inputDefinitions": {
+          "parameters": {
+            "query": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "output_csv": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-load-big-query-data-2": {
+        "executorLabel": "exec-load-big-query-data-2",
+        "inputDefinitions": {
+          "parameters": {
+            "query": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "output_csv": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-load-big-query-data-3": {
+        "executorLabel": "exec-load-big-query-data-3",
+        "inputDefinitions": {
+          "parameters": {
+            "query": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "output_csv": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-load-big-query-data-4": {
+        "executorLabel": "exec-load-big-query-data-4",
+        "inputDefinitions": {
+          "parameters": {
+            "query": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "output_csv": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-load-big-query-data-5": {
+        "executorLabel": "exec-load-big-query-data-5",
+        "inputDefinitions": {
+          "parameters": {
+            "query": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "output_csv": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-load-big-query-data-6": {
+        "executorLabel": "exec-load-big-query-data-6",
+        "inputDefinitions": {
+          "parameters": {
+            "query": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "output_csv": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-load-big-query-data-7": {
+        "executorLabel": "exec-load-big-query-data-7",
+        "inputDefinitions": {
+          "parameters": {
+            "query": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "output_csv": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-load-big-query-data-8": {
+        "executorLabel": "exec-load-big-query-data-8",
+        "inputDefinitions": {
+          "parameters": {
+            "query": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "output_csv": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-load-big-query-data-9": {
+        "executorLabel": "exec-load-big-query-data-9",
+        "inputDefinitions": {
+          "parameters": {
+            "query": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "output_csv": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-load-big-query-external-data": {
+        "executorLabel": "exec-load-big-query-external-data",
+        "inputDefinitions": {
+          "artifacts": {
+            "external_table_uri": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          },
+          "parameters": {
+            "external_table_id": {
+              "type": "STRING"
+            },
+            "external_table_schema": {
+              "type": "STRING"
+            },
+            "query": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "output_csv": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      }
+    },
+    "deploymentSpec": {
+      "executors": {
+        "exec-component": {
+          "container": {
+            "command": [
+              "python3",
+              "ml_pipelines/components/user_anime/train_retrieval/src/task.py",
+              "--train-data-path",
+              "{{$.inputs.artifacts['train_data_path'].path}}",
+              "--val-data-path",
+              "{{$.inputs.artifacts['val_data_path'].path}}",
+              "--test-data-path",
+              "{{$.inputs.artifacts['test_data_path'].path}}",
+              "--all-anime-data-path",
+              "{{$.inputs.artifacts['all_anime_data_path'].path}}",
+              "--all-user-data-path",
+              "{{$.inputs.artifacts['all_user_data_path'].path}}",
+              "--output-model-path",
+              "{{$.outputs.artifacts['output_model_path'].path}}",
+              "--output-metrics-path",
+              "{{$.outputs.artifacts['output_metric_path'].path}}",
+              "--user-anime-embedding-size",
+              "{{$.inputs.parameters['user_anime_embedding_size']}}",
+              "--learning-rate",
+              "{{$.inputs.parameters['learning_rate']}}",
+              "--optimizer",
+              "{{$.inputs.parameters['optimizer']}}",
+              "--max-num-epochs",
+              "{{$.inputs.parameters['max_num_epochs']}}",
+              "--early-stop-num-epochs",
+              "{{$.inputs.parameters['early_stop_num_epochs']}}"
+            ],
+            "image": "gcr.io/anime-rec-dev/ml_image@sha256:2d0be844b8cfc7d6b7504b1c6ef22b9dc997c8042ce6baec577d1ec3ee52ddfc",
+            "resources": {
+              "cpuLimit": 16.0,
+              "memoryLimit": 32.0
+            }
+          }
+        },
+        "exec-component-10": {
+          "container": {
+            "command": [
+              "python3",
+              "ml_pipelines/components/user_anime/infer_ranking/src/task.py",
+              "--model-type",
+              "{{$.inputs.parameters['model_type']}}",
+              "--model-path",
+              "{{$.inputs.artifacts['model_path'].path}}",
+              "--input-data-path",
+              "{{$.inputs.artifacts['input_data_path'].path}}",
+              "--output-data-path",
+              "{{$.outputs.artifacts['output_data_path'].path}}"
+            ],
+            "image": "gcr.io/anime-rec-dev/ml_image@sha256:2d0be844b8cfc7d6b7504b1c6ef22b9dc997c8042ce6baec577d1ec3ee52ddfc"
+          }
+        },
+        "exec-component-2": {
+          "container": {
+            "command": [
+              "python3",
+              "ml_pipelines/components/user_anime/infer_retrieval/src/task.py",
+              "--model-path",
+              "{{$.inputs.artifacts['model_path'].path}}",
+              "--input-data-path",
+              "{{$.inputs.artifacts['input_data_path'].path}}",
+              "--output-data-path",
+              "{{$.outputs.artifacts['output_data_path'].path}}"
+            ],
+            "image": "gcr.io/anime-rec-dev/ml_image@sha256:2d0be844b8cfc7d6b7504b1c6ef22b9dc997c8042ce6baec577d1ec3ee52ddfc"
+          }
+        },
+        "exec-component-3": {
+          "container": {
+            "command": [
+              "python3",
+              "ml_pipelines/components/user_anime/train_ranking/src/task.py",
+              "--model-type",
+              "{{$.inputs.parameters['model_type']}}",
+              "--train-data-path",
+              "{{$.inputs.artifacts['train_data_path'].path}}",
+              "--val-data-path",
+              "{{$.inputs.artifacts['val_data_path'].path}}",
+              "--test-data-path",
+              "{{$.inputs.artifacts['test_data_path'].path}}",
+              "--all-anime-data-path",
+              "{{$.inputs.artifacts['all_anime_data_path'].path}}",
+              "--all-user-data-path",
+              "{{$.inputs.artifacts['all_user_data_path'].path}}",
+              "--output-model-path",
+              "{{$.outputs.artifacts['output_model_path'].path}}",
+              "--output-metrics-path",
+              "{{$.outputs.artifacts['output_metric_path'].path}}",
+              "--anime-embedding-size",
+              "{{$.inputs.parameters['anime_embedding_size']}}",
+              "--user-embedding-size",
+              "{{$.inputs.parameters['user_embedding_size']}}",
+              "--scoring-layer-size",
+              "{{$.inputs.parameters['scoring_layer_size']}}",
+              "--learning-rate",
+              "{{$.inputs.parameters['learning_rate']}}",
+              "--optimizer",
+              "{{$.inputs.parameters['optimizer']}}",
+              "--max-num-epochs",
+              "{{$.inputs.parameters['max_num_epochs']}}",
+              "--early-stop-num-epochs",
+              "{{$.inputs.parameters['early_stop_num_epochs']}}"
+            ],
+            "image": "gcr.io/anime-rec-dev/ml_image@sha256:2d0be844b8cfc7d6b7504b1c6ef22b9dc997c8042ce6baec577d1ec3ee52ddfc",
+            "resources": {
+              "cpuLimit": 16.0,
+              "memoryLimit": 32.0
+            }
+          }
+        },
+        "exec-component-4": {
+          "container": {
+            "command": [
+              "python3",
+              "ml_pipelines/components/user_anime/infer_ranking/src/task.py",
+              "--model-type",
+              "{{$.inputs.parameters['model_type']}}",
+              "--model-path",
+              "{{$.inputs.artifacts['model_path'].path}}",
+              "--input-data-path",
+              "{{$.inputs.artifacts['input_data_path'].path}}",
+              "--output-data-path",
+              "{{$.outputs.artifacts['output_data_path'].path}}"
+            ],
+            "image": "gcr.io/anime-rec-dev/ml_image@sha256:2d0be844b8cfc7d6b7504b1c6ef22b9dc997c8042ce6baec577d1ec3ee52ddfc"
+          }
+        },
+        "exec-component-5": {
+          "container": {
+            "command": [
+              "python3",
+              "ml_pipelines/components/user_anime/train_ranking/src/task.py",
+              "--model-type",
+              "{{$.inputs.parameters['model_type']}}",
+              "--train-data-path",
+              "{{$.inputs.artifacts['train_data_path'].path}}",
+              "--val-data-path",
+              "{{$.inputs.artifacts['val_data_path'].path}}",
+              "--test-data-path",
+              "{{$.inputs.artifacts['test_data_path'].path}}",
+              "--all-anime-data-path",
+              "{{$.inputs.artifacts['all_anime_data_path'].path}}",
+              "--all-user-data-path",
+              "{{$.inputs.artifacts['all_user_data_path'].path}}",
+              "--output-model-path",
+              "{{$.outputs.artifacts['output_model_path'].path}}",
+              "--output-metrics-path",
+              "{{$.outputs.artifacts['output_metric_path'].path}}",
+              "--anime-embedding-size",
+              "{{$.inputs.parameters['anime_embedding_size']}}",
+              "--user-embedding-size",
+              "{{$.inputs.parameters['user_embedding_size']}}",
+              "--scoring-layer-size",
+              "{{$.inputs.parameters['scoring_layer_size']}}",
+              "--learning-rate",
+              "{{$.inputs.parameters['learning_rate']}}",
+              "--optimizer",
+              "{{$.inputs.parameters['optimizer']}}",
+              "--max-num-epochs",
+              "{{$.inputs.parameters['max_num_epochs']}}",
+              "--early-stop-num-epochs",
+              "{{$.inputs.parameters['early_stop_num_epochs']}}"
+            ],
+            "image": "gcr.io/anime-rec-dev/ml_image@sha256:2d0be844b8cfc7d6b7504b1c6ef22b9dc997c8042ce6baec577d1ec3ee52ddfc",
+            "resources": {
+              "cpuLimit": 16.0,
+              "memoryLimit": 32.0
+            }
+          }
+        },
+        "exec-component-6": {
+          "container": {
+            "command": [
+              "python3",
+              "ml_pipelines/components/user_anime/infer_ranking/src/task.py",
+              "--model-type",
+              "{{$.inputs.parameters['model_type']}}",
+              "--model-path",
+              "{{$.inputs.artifacts['model_path'].path}}",
+              "--input-data-path",
+              "{{$.inputs.artifacts['input_data_path'].path}}",
+              "--output-data-path",
+              "{{$.outputs.artifacts['output_data_path'].path}}"
+            ],
+            "image": "gcr.io/anime-rec-dev/ml_image@sha256:2d0be844b8cfc7d6b7504b1c6ef22b9dc997c8042ce6baec577d1ec3ee52ddfc"
+          }
+        },
+        "exec-component-7": {
+          "container": {
+            "command": [
+              "python3",
+              "ml_pipelines/components/user_anime/train_ranking/src/task.py",
+              "--model-type",
+              "{{$.inputs.parameters['model_type']}}",
+              "--train-data-path",
+              "{{$.inputs.artifacts['train_data_path'].path}}",
+              "--val-data-path",
+              "{{$.inputs.artifacts['val_data_path'].path}}",
+              "--test-data-path",
+              "{{$.inputs.artifacts['test_data_path'].path}}",
+              "--all-anime-data-path",
+              "{{$.inputs.artifacts['all_anime_data_path'].path}}",
+              "--all-user-data-path",
+              "{{$.inputs.artifacts['all_user_data_path'].path}}",
+              "--output-model-path",
+              "{{$.outputs.artifacts['output_model_path'].path}}",
+              "--output-metrics-path",
+              "{{$.outputs.artifacts['output_metric_path'].path}}",
+              "--anime-embedding-size",
+              "{{$.inputs.parameters['anime_embedding_size']}}",
+              "--user-embedding-size",
+              "{{$.inputs.parameters['user_embedding_size']}}",
+              "--scoring-layer-size",
+              "{{$.inputs.parameters['scoring_layer_size']}}",
+              "--learning-rate",
+              "{{$.inputs.parameters['learning_rate']}}",
+              "--optimizer",
+              "{{$.inputs.parameters['optimizer']}}",
+              "--max-num-epochs",
+              "{{$.inputs.parameters['max_num_epochs']}}",
+              "--early-stop-num-epochs",
+              "{{$.inputs.parameters['early_stop_num_epochs']}}"
+            ],
+            "image": "gcr.io/anime-rec-dev/ml_image@sha256:2d0be844b8cfc7d6b7504b1c6ef22b9dc997c8042ce6baec577d1ec3ee52ddfc",
+            "resources": {
+              "cpuLimit": 16.0,
+              "memoryLimit": 32.0
+            }
+          }
+        },
+        "exec-component-8": {
+          "container": {
+            "command": [
+              "python3",
+              "ml_pipelines/components/user_anime/infer_ranking/src/task.py",
+              "--model-type",
+              "{{$.inputs.parameters['model_type']}}",
+              "--model-path",
+              "{{$.inputs.artifacts['model_path'].path}}",
+              "--input-data-path",
+              "{{$.inputs.artifacts['input_data_path'].path}}",
+              "--output-data-path",
+              "{{$.outputs.artifacts['output_data_path'].path}}"
+            ],
+            "image": "gcr.io/anime-rec-dev/ml_image@sha256:2d0be844b8cfc7d6b7504b1c6ef22b9dc997c8042ce6baec577d1ec3ee52ddfc"
+          }
+        },
+        "exec-component-9": {
+          "container": {
+            "command": [
+              "python3",
+              "ml_pipelines/components/user_anime/train_ranking/src/task.py",
+              "--model-type",
+              "{{$.inputs.parameters['model_type']}}",
+              "--train-data-path",
+              "{{$.inputs.artifacts['train_data_path'].path}}",
+              "--val-data-path",
+              "{{$.inputs.artifacts['val_data_path'].path}}",
+              "--test-data-path",
+              "{{$.inputs.artifacts['test_data_path'].path}}",
+              "--all-anime-data-path",
+              "{{$.inputs.artifacts['all_anime_data_path'].path}}",
+              "--all-user-data-path",
+              "{{$.inputs.artifacts['all_user_data_path'].path}}",
+              "--output-model-path",
+              "{{$.outputs.artifacts['output_model_path'].path}}",
+              "--output-metrics-path",
+              "{{$.outputs.artifacts['output_metric_path'].path}}",
+              "--anime-embedding-size",
+              "{{$.inputs.parameters['anime_embedding_size']}}",
+              "--user-embedding-size",
+              "{{$.inputs.parameters['user_embedding_size']}}",
+              "--scoring-layer-size",
+              "{{$.inputs.parameters['scoring_layer_size']}}",
+              "--learning-rate",
+              "{{$.inputs.parameters['learning_rate']}}",
+              "--optimizer",
+              "{{$.inputs.parameters['optimizer']}}",
+              "--max-num-epochs",
+              "{{$.inputs.parameters['max_num_epochs']}}",
+              "--early-stop-num-epochs",
+              "{{$.inputs.parameters['early_stop_num_epochs']}}"
+            ],
+            "image": "gcr.io/anime-rec-dev/ml_image@sha256:2d0be844b8cfc7d6b7504b1c6ef22b9dc997c8042ce6baec577d1ec3ee52ddfc",
+            "resources": {
+              "cpuLimit": 16.0,
+              "memoryLimit": 32.0
+            }
+          }
+        },
+        "exec-load-big-query-data": {
+          "container": {
+            "args": [
+              "--executor_input",
+              "{{$}}",
+              "--function_to_execute",
+              "load_big_query_data"
+            ],
+            "command": [
+              "sh",
+              "-c",
+              "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet     --no-warn-script-location 'google-cloud-bigquery==2.31.0' 'pyarrow==6.0.1' 'pandas==1.3.4' 'kfp==1.8.10' && \"$0\" \"$@\"\n",
+              "sh",
+              "-ec",
+              "program_path=$(mktemp -d)\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\npython3 -m kfp.v2.components.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
+              "\nimport kfp\nfrom kfp.v2 import dsl\nfrom kfp.v2.dsl import *\nfrom typing import *\n\ndef load_big_query_data(query:str, output_csv:Output[Dataset]):\n    from google.cloud import bigquery\n    client = bigquery.Client(project=\"anime-rec-dev\")\n    dataset_ref = client.dataset(\"processed_area\")\n    job_config = bigquery.QueryJobConfig()\n    query_job = client.query(query, location='us-central1', job_config=job_config)\n    data = query_job.to_dataframe()\n    data.to_csv(output_csv.path, index = False)\n\n"
+            ],
+            "image": "python:3.7"
+          }
+        },
+        "exec-load-big-query-data-10": {
+          "container": {
+            "args": [
+              "--executor_input",
+              "{{$}}",
+              "--function_to_execute",
+              "load_big_query_data"
+            ],
+            "command": [
+              "sh",
+              "-c",
+              "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet     --no-warn-script-location 'google-cloud-bigquery==2.31.0' 'pyarrow==6.0.1' 'pandas==1.3.4' 'kfp==1.8.10' && \"$0\" \"$@\"\n",
+              "sh",
+              "-ec",
+              "program_path=$(mktemp -d)\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\npython3 -m kfp.v2.components.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
+              "\nimport kfp\nfrom kfp.v2 import dsl\nfrom kfp.v2.dsl import *\nfrom typing import *\n\ndef load_big_query_data(query:str, output_csv:Output[Dataset]):\n    from google.cloud import bigquery\n    client = bigquery.Client(project=\"anime-rec-dev\")\n    dataset_ref = client.dataset(\"processed_area\")\n    job_config = bigquery.QueryJobConfig()\n    query_job = client.query(query, location='us-central1', job_config=job_config)\n    data = query_job.to_dataframe()\n    data.to_csv(output_csv.path, index = False)\n\n"
+            ],
+            "image": "python:3.7"
+          }
+        },
+        "exec-load-big-query-data-11": {
+          "container": {
+            "args": [
+              "--executor_input",
+              "{{$}}",
+              "--function_to_execute",
+              "load_big_query_data"
+            ],
+            "command": [
+              "sh",
+              "-c",
+              "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet     --no-warn-script-location 'google-cloud-bigquery==2.31.0' 'pyarrow==6.0.1' 'pandas==1.3.4' 'kfp==1.8.10' && \"$0\" \"$@\"\n",
+              "sh",
+              "-ec",
+              "program_path=$(mktemp -d)\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\npython3 -m kfp.v2.components.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
+              "\nimport kfp\nfrom kfp.v2 import dsl\nfrom kfp.v2.dsl import *\nfrom typing import *\n\ndef load_big_query_data(query:str, output_csv:Output[Dataset]):\n    from google.cloud import bigquery\n    client = bigquery.Client(project=\"anime-rec-dev\")\n    dataset_ref = client.dataset(\"processed_area\")\n    job_config = bigquery.QueryJobConfig()\n    query_job = client.query(query, location='us-central1', job_config=job_config)\n    data = query_job.to_dataframe()\n    data.to_csv(output_csv.path, index = False)\n\n"
+            ],
+            "image": "python:3.7"
+          }
+        },
+        "exec-load-big-query-data-12": {
+          "container": {
+            "args": [
+              "--executor_input",
+              "{{$}}",
+              "--function_to_execute",
+              "load_big_query_data"
+            ],
+            "command": [
+              "sh",
+              "-c",
+              "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet     --no-warn-script-location 'google-cloud-bigquery==2.31.0' 'pyarrow==6.0.1' 'pandas==1.3.4' 'kfp==1.8.10' && \"$0\" \"$@\"\n",
+              "sh",
+              "-ec",
+              "program_path=$(mktemp -d)\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\npython3 -m kfp.v2.components.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
+              "\nimport kfp\nfrom kfp.v2 import dsl\nfrom kfp.v2.dsl import *\nfrom typing import *\n\ndef load_big_query_data(query:str, output_csv:Output[Dataset]):\n    from google.cloud import bigquery\n    client = bigquery.Client(project=\"anime-rec-dev\")\n    dataset_ref = client.dataset(\"processed_area\")\n    job_config = bigquery.QueryJobConfig()\n    query_job = client.query(query, location='us-central1', job_config=job_config)\n    data = query_job.to_dataframe()\n    data.to_csv(output_csv.path, index = False)\n\n"
+            ],
+            "image": "python:3.7"
+          }
+        },
+        "exec-load-big-query-data-13": {
+          "container": {
+            "args": [
+              "--executor_input",
+              "{{$}}",
+              "--function_to_execute",
+              "load_big_query_data"
+            ],
+            "command": [
+              "sh",
+              "-c",
+              "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet     --no-warn-script-location 'google-cloud-bigquery==2.31.0' 'pyarrow==6.0.1' 'pandas==1.3.4' 'kfp==1.8.10' && \"$0\" \"$@\"\n",
+              "sh",
+              "-ec",
+              "program_path=$(mktemp -d)\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\npython3 -m kfp.v2.components.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
+              "\nimport kfp\nfrom kfp.v2 import dsl\nfrom kfp.v2.dsl import *\nfrom typing import *\n\ndef load_big_query_data(query:str, output_csv:Output[Dataset]):\n    from google.cloud import bigquery\n    client = bigquery.Client(project=\"anime-rec-dev\")\n    dataset_ref = client.dataset(\"processed_area\")\n    job_config = bigquery.QueryJobConfig()\n    query_job = client.query(query, location='us-central1', job_config=job_config)\n    data = query_job.to_dataframe()\n    data.to_csv(output_csv.path, index = False)\n\n"
+            ],
+            "image": "python:3.7"
+          }
+        },
+        "exec-load-big-query-data-14": {
+          "container": {
+            "args": [
+              "--executor_input",
+              "{{$}}",
+              "--function_to_execute",
+              "load_big_query_data"
+            ],
+            "command": [
+              "sh",
+              "-c",
+              "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet     --no-warn-script-location 'google-cloud-bigquery==2.31.0' 'pyarrow==6.0.1' 'pandas==1.3.4' 'kfp==1.8.10' && \"$0\" \"$@\"\n",
+              "sh",
+              "-ec",
+              "program_path=$(mktemp -d)\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\npython3 -m kfp.v2.components.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
+              "\nimport kfp\nfrom kfp.v2 import dsl\nfrom kfp.v2.dsl import *\nfrom typing import *\n\ndef load_big_query_data(query:str, output_csv:Output[Dataset]):\n    from google.cloud import bigquery\n    client = bigquery.Client(project=\"anime-rec-dev\")\n    dataset_ref = client.dataset(\"processed_area\")\n    job_config = bigquery.QueryJobConfig()\n    query_job = client.query(query, location='us-central1', job_config=job_config)\n    data = query_job.to_dataframe()\n    data.to_csv(output_csv.path, index = False)\n\n"
+            ],
+            "image": "python:3.7"
+          }
+        },
+        "exec-load-big-query-data-15": {
+          "container": {
+            "args": [
+              "--executor_input",
+              "{{$}}",
+              "--function_to_execute",
+              "load_big_query_data"
+            ],
+            "command": [
+              "sh",
+              "-c",
+              "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet     --no-warn-script-location 'google-cloud-bigquery==2.31.0' 'pyarrow==6.0.1' 'pandas==1.3.4' 'kfp==1.8.10' && \"$0\" \"$@\"\n",
+              "sh",
+              "-ec",
+              "program_path=$(mktemp -d)\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\npython3 -m kfp.v2.components.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
+              "\nimport kfp\nfrom kfp.v2 import dsl\nfrom kfp.v2.dsl import *\nfrom typing import *\n\ndef load_big_query_data(query:str, output_csv:Output[Dataset]):\n    from google.cloud import bigquery\n    client = bigquery.Client(project=\"anime-rec-dev\")\n    dataset_ref = client.dataset(\"processed_area\")\n    job_config = bigquery.QueryJobConfig()\n    query_job = client.query(query, location='us-central1', job_config=job_config)\n    data = query_job.to_dataframe()\n    data.to_csv(output_csv.path, index = False)\n\n"
+            ],
+            "image": "python:3.7"
+          }
+        },
+        "exec-load-big-query-data-16": {
+          "container": {
+            "args": [
+              "--executor_input",
+              "{{$}}",
+              "--function_to_execute",
+              "load_big_query_data"
+            ],
+            "command": [
+              "sh",
+              "-c",
+              "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet     --no-warn-script-location 'google-cloud-bigquery==2.31.0' 'pyarrow==6.0.1' 'pandas==1.3.4' 'kfp==1.8.10' && \"$0\" \"$@\"\n",
+              "sh",
+              "-ec",
+              "program_path=$(mktemp -d)\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\npython3 -m kfp.v2.components.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
+              "\nimport kfp\nfrom kfp.v2 import dsl\nfrom kfp.v2.dsl import *\nfrom typing import *\n\ndef load_big_query_data(query:str, output_csv:Output[Dataset]):\n    from google.cloud import bigquery\n    client = bigquery.Client(project=\"anime-rec-dev\")\n    dataset_ref = client.dataset(\"processed_area\")\n    job_config = bigquery.QueryJobConfig()\n    query_job = client.query(query, location='us-central1', job_config=job_config)\n    data = query_job.to_dataframe()\n    data.to_csv(output_csv.path, index = False)\n\n"
+            ],
+            "image": "python:3.7"
+          }
+        },
+        "exec-load-big-query-data-17": {
+          "container": {
+            "args": [
+              "--executor_input",
+              "{{$}}",
+              "--function_to_execute",
+              "load_big_query_data"
+            ],
+            "command": [
+              "sh",
+              "-c",
+              "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet     --no-warn-script-location 'google-cloud-bigquery==2.31.0' 'pyarrow==6.0.1' 'pandas==1.3.4' 'kfp==1.8.10' && \"$0\" \"$@\"\n",
+              "sh",
+              "-ec",
+              "program_path=$(mktemp -d)\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\npython3 -m kfp.v2.components.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
+              "\nimport kfp\nfrom kfp.v2 import dsl\nfrom kfp.v2.dsl import *\nfrom typing import *\n\ndef load_big_query_data(query:str, output_csv:Output[Dataset]):\n    from google.cloud import bigquery\n    client = bigquery.Client(project=\"anime-rec-dev\")\n    dataset_ref = client.dataset(\"processed_area\")\n    job_config = bigquery.QueryJobConfig()\n    query_job = client.query(query, location='us-central1', job_config=job_config)\n    data = query_job.to_dataframe()\n    data.to_csv(output_csv.path, index = False)\n\n"
+            ],
+            "image": "python:3.7"
+          }
+        },
+        "exec-load-big-query-data-18": {
+          "container": {
+            "args": [
+              "--executor_input",
+              "{{$}}",
+              "--function_to_execute",
+              "load_big_query_data"
+            ],
+            "command": [
+              "sh",
+              "-c",
+              "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet     --no-warn-script-location 'google-cloud-bigquery==2.31.0' 'pyarrow==6.0.1' 'pandas==1.3.4' 'kfp==1.8.10' && \"$0\" \"$@\"\n",
+              "sh",
+              "-ec",
+              "program_path=$(mktemp -d)\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\npython3 -m kfp.v2.components.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
+              "\nimport kfp\nfrom kfp.v2 import dsl\nfrom kfp.v2.dsl import *\nfrom typing import *\n\ndef load_big_query_data(query:str, output_csv:Output[Dataset]):\n    from google.cloud import bigquery\n    client = bigquery.Client(project=\"anime-rec-dev\")\n    dataset_ref = client.dataset(\"processed_area\")\n    job_config = bigquery.QueryJobConfig()\n    query_job = client.query(query, location='us-central1', job_config=job_config)\n    data = query_job.to_dataframe()\n    data.to_csv(output_csv.path, index = False)\n\n"
+            ],
+            "image": "python:3.7"
+          }
+        },
+        "exec-load-big-query-data-2": {
+          "container": {
+            "args": [
+              "--executor_input",
+              "{{$}}",
+              "--function_to_execute",
+              "load_big_query_data"
+            ],
+            "command": [
+              "sh",
+              "-c",
+              "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet     --no-warn-script-location 'google-cloud-bigquery==2.31.0' 'pyarrow==6.0.1' 'pandas==1.3.4' 'kfp==1.8.10' && \"$0\" \"$@\"\n",
+              "sh",
+              "-ec",
+              "program_path=$(mktemp -d)\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\npython3 -m kfp.v2.components.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
+              "\nimport kfp\nfrom kfp.v2 import dsl\nfrom kfp.v2.dsl import *\nfrom typing import *\n\ndef load_big_query_data(query:str, output_csv:Output[Dataset]):\n    from google.cloud import bigquery\n    client = bigquery.Client(project=\"anime-rec-dev\")\n    dataset_ref = client.dataset(\"processed_area\")\n    job_config = bigquery.QueryJobConfig()\n    query_job = client.query(query, location='us-central1', job_config=job_config)\n    data = query_job.to_dataframe()\n    data.to_csv(output_csv.path, index = False)\n\n"
+            ],
+            "image": "python:3.7"
+          }
+        },
+        "exec-load-big-query-data-3": {
+          "container": {
+            "args": [
+              "--executor_input",
+              "{{$}}",
+              "--function_to_execute",
+              "load_big_query_data"
+            ],
+            "command": [
+              "sh",
+              "-c",
+              "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet     --no-warn-script-location 'google-cloud-bigquery==2.31.0' 'pyarrow==6.0.1' 'pandas==1.3.4' 'kfp==1.8.10' && \"$0\" \"$@\"\n",
+              "sh",
+              "-ec",
+              "program_path=$(mktemp -d)\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\npython3 -m kfp.v2.components.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
+              "\nimport kfp\nfrom kfp.v2 import dsl\nfrom kfp.v2.dsl import *\nfrom typing import *\n\ndef load_big_query_data(query:str, output_csv:Output[Dataset]):\n    from google.cloud import bigquery\n    client = bigquery.Client(project=\"anime-rec-dev\")\n    dataset_ref = client.dataset(\"processed_area\")\n    job_config = bigquery.QueryJobConfig()\n    query_job = client.query(query, location='us-central1', job_config=job_config)\n    data = query_job.to_dataframe()\n    data.to_csv(output_csv.path, index = False)\n\n"
+            ],
+            "image": "python:3.7"
+          }
+        },
+        "exec-load-big-query-data-4": {
+          "container": {
+            "args": [
+              "--executor_input",
+              "{{$}}",
+              "--function_to_execute",
+              "load_big_query_data"
+            ],
+            "command": [
+              "sh",
+              "-c",
+              "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet     --no-warn-script-location 'google-cloud-bigquery==2.31.0' 'pyarrow==6.0.1' 'pandas==1.3.4' 'kfp==1.8.10' && \"$0\" \"$@\"\n",
+              "sh",
+              "-ec",
+              "program_path=$(mktemp -d)\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\npython3 -m kfp.v2.components.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
+              "\nimport kfp\nfrom kfp.v2 import dsl\nfrom kfp.v2.dsl import *\nfrom typing import *\n\ndef load_big_query_data(query:str, output_csv:Output[Dataset]):\n    from google.cloud import bigquery\n    client = bigquery.Client(project=\"anime-rec-dev\")\n    dataset_ref = client.dataset(\"processed_area\")\n    job_config = bigquery.QueryJobConfig()\n    query_job = client.query(query, location='us-central1', job_config=job_config)\n    data = query_job.to_dataframe()\n    data.to_csv(output_csv.path, index = False)\n\n"
+            ],
+            "image": "python:3.7"
+          }
+        },
+        "exec-load-big-query-data-5": {
+          "container": {
+            "args": [
+              "--executor_input",
+              "{{$}}",
+              "--function_to_execute",
+              "load_big_query_data"
+            ],
+            "command": [
+              "sh",
+              "-c",
+              "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet     --no-warn-script-location 'google-cloud-bigquery==2.31.0' 'pyarrow==6.0.1' 'pandas==1.3.4' 'kfp==1.8.10' && \"$0\" \"$@\"\n",
+              "sh",
+              "-ec",
+              "program_path=$(mktemp -d)\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\npython3 -m kfp.v2.components.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
+              "\nimport kfp\nfrom kfp.v2 import dsl\nfrom kfp.v2.dsl import *\nfrom typing import *\n\ndef load_big_query_data(query:str, output_csv:Output[Dataset]):\n    from google.cloud import bigquery\n    client = bigquery.Client(project=\"anime-rec-dev\")\n    dataset_ref = client.dataset(\"processed_area\")\n    job_config = bigquery.QueryJobConfig()\n    query_job = client.query(query, location='us-central1', job_config=job_config)\n    data = query_job.to_dataframe()\n    data.to_csv(output_csv.path, index = False)\n\n"
+            ],
+            "image": "python:3.7"
+          }
+        },
+        "exec-load-big-query-data-6": {
+          "container": {
+            "args": [
+              "--executor_input",
+              "{{$}}",
+              "--function_to_execute",
+              "load_big_query_data"
+            ],
+            "command": [
+              "sh",
+              "-c",
+              "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet     --no-warn-script-location 'google-cloud-bigquery==2.31.0' 'pyarrow==6.0.1' 'pandas==1.3.4' 'kfp==1.8.10' && \"$0\" \"$@\"\n",
+              "sh",
+              "-ec",
+              "program_path=$(mktemp -d)\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\npython3 -m kfp.v2.components.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
+              "\nimport kfp\nfrom kfp.v2 import dsl\nfrom kfp.v2.dsl import *\nfrom typing import *\n\ndef load_big_query_data(query:str, output_csv:Output[Dataset]):\n    from google.cloud import bigquery\n    client = bigquery.Client(project=\"anime-rec-dev\")\n    dataset_ref = client.dataset(\"processed_area\")\n    job_config = bigquery.QueryJobConfig()\n    query_job = client.query(query, location='us-central1', job_config=job_config)\n    data = query_job.to_dataframe()\n    data.to_csv(output_csv.path, index = False)\n\n"
+            ],
+            "image": "python:3.7"
+          }
+        },
+        "exec-load-big-query-data-7": {
+          "container": {
+            "args": [
+              "--executor_input",
+              "{{$}}",
+              "--function_to_execute",
+              "load_big_query_data"
+            ],
+            "command": [
+              "sh",
+              "-c",
+              "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet     --no-warn-script-location 'google-cloud-bigquery==2.31.0' 'pyarrow==6.0.1' 'pandas==1.3.4' 'kfp==1.8.10' && \"$0\" \"$@\"\n",
+              "sh",
+              "-ec",
+              "program_path=$(mktemp -d)\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\npython3 -m kfp.v2.components.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
+              "\nimport kfp\nfrom kfp.v2 import dsl\nfrom kfp.v2.dsl import *\nfrom typing import *\n\ndef load_big_query_data(query:str, output_csv:Output[Dataset]):\n    from google.cloud import bigquery\n    client = bigquery.Client(project=\"anime-rec-dev\")\n    dataset_ref = client.dataset(\"processed_area\")\n    job_config = bigquery.QueryJobConfig()\n    query_job = client.query(query, location='us-central1', job_config=job_config)\n    data = query_job.to_dataframe()\n    data.to_csv(output_csv.path, index = False)\n\n"
+            ],
+            "image": "python:3.7"
+          }
+        },
+        "exec-load-big-query-data-8": {
+          "container": {
+            "args": [
+              "--executor_input",
+              "{{$}}",
+              "--function_to_execute",
+              "load_big_query_data"
+            ],
+            "command": [
+              "sh",
+              "-c",
+              "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet     --no-warn-script-location 'google-cloud-bigquery==2.31.0' 'pyarrow==6.0.1' 'pandas==1.3.4' 'kfp==1.8.10' && \"$0\" \"$@\"\n",
+              "sh",
+              "-ec",
+              "program_path=$(mktemp -d)\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\npython3 -m kfp.v2.components.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
+              "\nimport kfp\nfrom kfp.v2 import dsl\nfrom kfp.v2.dsl import *\nfrom typing import *\n\ndef load_big_query_data(query:str, output_csv:Output[Dataset]):\n    from google.cloud import bigquery\n    client = bigquery.Client(project=\"anime-rec-dev\")\n    dataset_ref = client.dataset(\"processed_area\")\n    job_config = bigquery.QueryJobConfig()\n    query_job = client.query(query, location='us-central1', job_config=job_config)\n    data = query_job.to_dataframe()\n    data.to_csv(output_csv.path, index = False)\n\n"
+            ],
+            "image": "python:3.7"
+          }
+        },
+        "exec-load-big-query-data-9": {
+          "container": {
+            "args": [
+              "--executor_input",
+              "{{$}}",
+              "--function_to_execute",
+              "load_big_query_data"
+            ],
+            "command": [
+              "sh",
+              "-c",
+              "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet     --no-warn-script-location 'google-cloud-bigquery==2.31.0' 'pyarrow==6.0.1' 'pandas==1.3.4' 'kfp==1.8.10' && \"$0\" \"$@\"\n",
+              "sh",
+              "-ec",
+              "program_path=$(mktemp -d)\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\npython3 -m kfp.v2.components.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
+              "\nimport kfp\nfrom kfp.v2 import dsl\nfrom kfp.v2.dsl import *\nfrom typing import *\n\ndef load_big_query_data(query:str, output_csv:Output[Dataset]):\n    from google.cloud import bigquery\n    client = bigquery.Client(project=\"anime-rec-dev\")\n    dataset_ref = client.dataset(\"processed_area\")\n    job_config = bigquery.QueryJobConfig()\n    query_job = client.query(query, location='us-central1', job_config=job_config)\n    data = query_job.to_dataframe()\n    data.to_csv(output_csv.path, index = False)\n\n"
+            ],
+            "image": "python:3.7"
+          }
+        },
+        "exec-load-big-query-external-data": {
+          "container": {
+            "args": [
+              "--executor_input",
+              "{{$}}",
+              "--function_to_execute",
+              "load_big_query_external_data"
+            ],
+            "command": [
+              "sh",
+              "-c",
+              "\nif ! [ -x \"$(command -v pip)\" ]; then\n    python3 -m ensurepip || python3 -m ensurepip --user || apt-get install python3-pip\nfi\n\nPIP_DISABLE_PIP_VERSION_CHECK=1 python3 -m pip install --quiet     --no-warn-script-location 'google-cloud-bigquery==2.31.0' 'pyarrow==6.0.1' 'pandas==1.3.4' 'kfp==1.8.10' && \"$0\" \"$@\"\n",
+              "sh",
+              "-ec",
+              "program_path=$(mktemp -d)\nprintf \"%s\" \"$0\" > \"$program_path/ephemeral_component.py\"\npython3 -m kfp.v2.components.executor_main                         --component_module_path                         \"$program_path/ephemeral_component.py\"                         \"$@\"\n",
+              "\nimport kfp\nfrom kfp.v2 import dsl\nfrom kfp.v2.dsl import *\nfrom typing import *\n\ndef load_big_query_external_data(external_table_uri:Input[Dataset],\n                                 external_table_schema:list,\n                                 external_table_id:str,\n                                 query:str, \n                                 output_csv:Output[Dataset]):\n    from google.cloud import bigquery\n    client = bigquery.Client(project=\"anime-rec-dev\")\n\n    external_config = bigquery.ExternalConfig(\"CSV\")\n    external_config.source_uris = [\n        external_table_uri.path.replace('/gcs/', 'gs://')\n    ]\n    external_config.schema = [bigquery.SchemaField(x[0], x[1]) for x in external_table_schema]\n    external_config.options.skip_leading_rows = 1\n\n    job_config = bigquery.QueryJobConfig(table_definitions={external_table_id: external_config})\n    query_job = client.query(query, location='us-central1', job_config=job_config)\n    data = query_job.to_dataframe()\n    data.to_csv(output_csv.path, index = False)\n\n"
+            ],
+            "image": "python:3.7"
+          }
+        }
+      }
+    },
+    "pipelineInfo": {
+      "name": "user-anime-recommendation-pipeline"
+    },
+    "root": {
+      "dag": {
+        "outputs": {
+          "artifacts": {
+            "component-3-output_metric_path": {
+              "artifactSelectors": [
+                {
+                  "outputArtifactKey": "component-3-output_metric_path",
+                  "producerSubtask": "condition-1"
+                }
+              ]
+            },
+            "component-5-output_metric_path": {
+              "artifactSelectors": [
+                {
+                  "outputArtifactKey": "component-5-output_metric_path",
+                  "producerSubtask": "condition-1"
+                }
+              ]
+            },
+            "component-7-output_metric_path": {
+              "artifactSelectors": [
+                {
+                  "outputArtifactKey": "component-7-output_metric_path",
+                  "producerSubtask": "condition-4"
+                }
+              ]
+            },
+            "component-9-output_metric_path": {
+              "artifactSelectors": [
+                {
+                  "outputArtifactKey": "component-9-output_metric_path",
+                  "producerSubtask": "condition-4"
+                }
+              ]
+            },
+            "component-output_metric_path": {
+              "artifactSelectors": [
+                {
+                  "outputArtifactKey": "component-output_metric_path",
+                  "producerSubtask": "condition-1"
+                }
+              ]
+            }
+          }
+        },
+        "tasks": {
+          "condition-1": {
+            "componentRef": {
+              "name": "comp-condition-1"
+            },
+            "dependentTasks": [
+              "load-big-query-data",
+              "load-big-query-data-2"
+            ],
+            "inputs": {
+              "artifacts": {
+                "pipelineparam--load-big-query-data-2-output_csv": {
+                  "taskOutputArtifact": {
+                    "outputArtifactKey": "output_csv",
+                    "producerTask": "load-big-query-data-2"
+                  }
+                },
+                "pipelineparam--load-big-query-data-output_csv": {
+                  "taskOutputArtifact": {
+                    "outputArtifactKey": "output_csv",
+                    "producerTask": "load-big-query-data"
+                  }
+                }
+              },
+              "parameters": {
+                "pipelineparam--list_ranking": {
+                  "componentInputParameter": "list_ranking"
+                },
+                "pipelineparam--run_retrieval": {
+                  "componentInputParameter": "run_retrieval"
+                }
+              }
+            },
+            "taskInfo": {
+              "name": "condition-1"
+            },
+            "triggerPolicy": {
+              "condition": "inputs.parameters['pipelineparam--run_retrieval'].string_value == 'true'"
+            }
+          },
+          "condition-4": {
+            "componentRef": {
+              "name": "comp-condition-4"
+            },
+            "dependentTasks": [
+              "load-big-query-data",
+              "load-big-query-data-2"
+            ],
+            "inputs": {
+              "artifacts": {
+                "pipelineparam--load-big-query-data-2-output_csv": {
+                  "taskOutputArtifact": {
+                    "outputArtifactKey": "output_csv",
+                    "producerTask": "load-big-query-data-2"
+                  }
+                },
+                "pipelineparam--load-big-query-data-output_csv": {
+                  "taskOutputArtifact": {
+                    "outputArtifactKey": "output_csv",
+                    "producerTask": "load-big-query-data"
+                  }
+                }
+              },
+              "parameters": {
+                "pipelineparam--list_ranking": {
+                  "componentInputParameter": "list_ranking"
+                },
+                "pipelineparam--run_retrieval": {
+                  "componentInputParameter": "run_retrieval"
+                }
+              }
+            },
+            "taskInfo": {
+              "name": "condition-4"
+            },
+            "triggerPolicy": {
+              "condition": "inputs.parameters['pipelineparam--run_retrieval'].string_value == 'false'"
+            }
+          },
+          "load-big-query-data": {
+            "cachingOptions": {
+              "enableCache": true
+            },
+            "componentRef": {
+              "name": "comp-load-big-query-data"
+            },
+            "inputs": {
+              "parameters": {
+                "query": {
+                  "runtimeValue": {
+                    "constantValue": {
+                      "stringValue": "\n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 0\n    "
+                    }
+                  }
+                }
+              }
+            },
+            "taskInfo": {
+              "name": "all anime data"
+            }
+          },
+          "load-big-query-data-2": {
+            "cachingOptions": {
+              "enableCache": true
+            },
+            "componentRef": {
+              "name": "comp-load-big-query-data-2"
+            },
+            "inputs": {
+              "parameters": {
+                "query": {
+                  "runtimeValue": {
+                    "constantValue": {
+                      "stringValue": "\n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 0\n    "
+                    }
+                  }
+                }
+              }
+            },
+            "taskInfo": {
+              "name": "all user data"
+            }
+          }
+        }
+      },
+      "inputDefinitions": {
+        "parameters": {
+          "list_ranking": {
+            "type": "STRING"
+          },
+          "run_retrieval": {
+            "type": "STRING"
+          }
+        }
+      },
+      "outputDefinitions": {
+        "artifacts": {
+          "component-3-output_metric_path": {
+            "artifactType": {
+              "schemaTitle": "system.Metrics",
+              "schemaVersion": "0.0.1"
+            }
+          },
+          "component-5-output_metric_path": {
+            "artifactType": {
+              "schemaTitle": "system.Metrics",
+              "schemaVersion": "0.0.1"
+            }
+          },
+          "component-7-output_metric_path": {
+            "artifactType": {
+              "schemaTitle": "system.Metrics",
+              "schemaVersion": "0.0.1"
+            }
+          },
+          "component-9-output_metric_path": {
+            "artifactType": {
+              "schemaTitle": "system.Metrics",
+              "schemaVersion": "0.0.1"
+            }
+          },
+          "component-output_metric_path": {
+            "artifactType": {
+              "schemaTitle": "system.Metrics",
+              "schemaVersion": "0.0.1"
+            }
+          }
+        }
+      }
+    },
+    "schemaVersion": "2.0.0",
+    "sdkVersion": "kfp-1.8.10"
+  },
+  "runtimeConfig": {
+    "parameters": {
+      "list_ranking": {
+        "stringValue": "false"
+      },
+      "run_retrieval": {
+        "stringValue": "false"
+      }
+    }
+  }
+}
