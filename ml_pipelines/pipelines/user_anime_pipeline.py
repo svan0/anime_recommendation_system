@@ -54,7 +54,8 @@ def retrieval_model_steps(all_user_data, all_anime_data):
     )
     train_retrieval_model.set_display_name("train retrieval model")
     train_retrieval_model.set_cpu_limit('16').set_memory_limit('32G')
-    train_retrieval_model.add_node_selector_constraint('cloud.google.com/gke-accelerator', 'NVIDIA_TESLA_K80').set_gpu_limit(2)
+    # Quotas !
+    # train_retrieval_model.add_node_selector_constraint('cloud.google.com/gke-accelerator', 'NVIDIA_TESLA_K80').set_gpu_limit(2)
 
     infer_retrieval_model = infer_user_anime_retrieval(
         model_path = train_retrieval_model.outputs['output_model_path'],
@@ -102,8 +103,9 @@ def ranking_model_steps(all_user_data, all_anime_data, unknown_retrieved):
         early_stop_num_epochs = 5
     )
     train_ranking_model.set_display_name("train ranking model")
-    train_ranking_model.set_cpu_limit('16').set_memory_limit('32G')
-    train_ranking_model.add_node_selector_constraint('cloud.google.com/gke-accelerator', 'NVIDIA_TESLA_K80').set_gpu_limit(1)
+    train_ranking_model.set_cpu_limit('8').set_memory_limit('32G')
+    # Quotas !
+    # train_ranking_model.add_node_selector_constraint('cloud.google.com/gke-accelerator', 'NVIDIA_TESLA_K80').set_gpu_limit(1)
     
     infer_ranking_model = infer_user_anime_ranking(
         model_type = 'ranking',
@@ -141,8 +143,9 @@ def list_ranking_model_steps(all_user_data, all_anime_data, unknown_retrieved):
         early_stop_num_epochs = 5
     )
     train_ranking_model.set_display_name("train list ranking model")
-    train_ranking_model.set_cpu_limit('16').set_memory_limit('32G')
-    train_ranking_model.add_node_selector_constraint('cloud.google.com/gke-accelerator', 'NVIDIA_TESLA_K80').set_gpu_limit(1)
+    train_ranking_model.set_cpu_limit('8').set_memory_limit('32G')
+    # Quotas !
+    # train_ranking_model.add_node_selector_constraint('cloud.google.com/gke-accelerator', 'NVIDIA_TESLA_K80').set_gpu_limit(1)
 
     
     infer_ranking_model = infer_user_anime_ranking(

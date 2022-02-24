@@ -81,7 +81,7 @@ def user_last_anime_watched_query(
             {user_list_query("`anime-rec-dev.processed_area.user_anime`", users_min_completed_and_rated)}
         ),
         filtered_user_anime AS (
-            {user_anime_filter_anime_filter_users_query("`anime-rec-dev.processed_area.user_anime`", "list_anime", "list_user")}
+            {user_anime_filter_anime_filter_users_query("`anime-rec-dev.processed_area.user_anime`", "list_anime", "list_users")}
         ),
         user_anime AS (
             {user_anime_completed_and_strict_ordered_query("filtered_user_anime")}
@@ -109,7 +109,7 @@ def user_last_anime_retrieved_animes_query(
             {user_list_query("`anime-rec-dev.processed_area.user_anime`", users_min_completed_and_rated)}
         ),
         filtered_user_anime AS (
-            {user_anime_filter_anime_filter_users_query("`anime-rec-dev.processed_area.user_anime`", "list_anime", "list_user")}
+            {user_anime_filter_anime_filter_users_query("`anime-rec-dev.processed_area.user_anime`", "list_anime", "list_users")}
         )
         SELECT A.user_id, A.anime_id, A.retrieved_anime_id
         FROM {user_retrieved_anime_relation} A

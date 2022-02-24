@@ -22,15 +22,22 @@ def gcs_create_empty_folder(gcs_path):
     blob = bucket.blob(folder_path)
     blob.upload_from_string('')
 
-def download_from_gcs_to_local(gcs_path, local_path):
+def download_from_gcs_to_local(gcs_path, local_path_dir):
     '''
-        Takes GCS path to a file and downloads file to specified
-        local folder
+        Takes GCS path to a file and downloads files to 
+        specified local folder
     '''
     storage_client = storage.Client()
-    bucket = storage_client.bucket(gcs_path.split('/')[2])
-    blob = bucket.blob("/".join(gcs_path.split('/')[3:]))
-    blob.download_to_filename(local_path)
+    
+    bucket_name = gcs_path.split('/')[2]
+    bucket = storage_client.bucket(bucket_name)
+    
+    file_prefix = "/".join(gcs_path.split('/')[3:])
+    blobs = bucket.list_blobs(prefix = file_prefix)
+    for blob in blobs:
+        filename = blob.name.split('/')[-1]
+        local_path_file = f"{local_path_dir}/{filename}"
+        blob.download_to_filename(local_path_file)
 
 def write_json_to_gcs(data, gcs_path):
     '''

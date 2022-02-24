@@ -36,7 +36,7 @@ def anime_anime_retrieval_query(
         {user_list_query("`anime-rec-dev.processed_area.user_anime`", users_min_completed_and_rated)}
     ),
     filtered_user_anime AS (
-        {user_anime_filter_anime_filter_users_query("`anime-rec-dev.processed_area.user_anime`", "list_anime", "list_user")}
+        {user_anime_filter_anime_filter_users_query("`anime-rec-dev.processed_area.user_anime`", "list_anime", "list_users")}
     ),
     user_anime AS (
         {user_anime_completed_and_strict_ordered_query("filtered_user_anime")}
@@ -108,14 +108,14 @@ def anime_anime_pair_ranking_query(
         {user_list_query("`anime-rec-dev.processed_area.user_anime`", users_min_completed_and_rated)}
     ),
     filtered_user_anime AS (
-        {user_anime_filter_anime_filter_users_query("`anime-rec-dev.processed_area.user_anime`", "list_anime", "list_user")}
+        {user_anime_filter_anime_filter_users_query("`anime-rec-dev.processed_area.user_anime`", "list_anime", "list_users")}
     ),
     user_anime AS (
         {user_anime_completed_and_scored_and_strict_ordered_query("filtered_user_anime")}
     ),
     anime_co_completed_anime AS (
         {anime_anime_co_occurance_query('user_anime', max_co_completed_distance, min_co_completed_count)}
-    )
+    ),
     positive_pairs AS (
         SELECT A.animeA AS anchor_anime, A.animeB AS rel_anime_1, B.animeB AS rel_anime_2, 1 AS label
         FROM anime_co_completed_anime A

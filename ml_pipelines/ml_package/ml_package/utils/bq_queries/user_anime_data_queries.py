@@ -19,7 +19,7 @@ def user_anime_completed_and_strict_ordered_query(
     user_anime_relation = "`anime-rec-dev.processed_area.user_anime`"
 ):
     query = f"""
-        SELECT user_id, anime_id, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY last_interaction_date DESC) AS user_anime_order
+        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY last_interaction_date DESC) AS user_anime_order
         FROM {user_anime_relation}
         WHERE status = 'completed' AND last_interaction_date IS NOT NULL
     """
@@ -39,7 +39,7 @@ def user_anime_completed_and_not_strict_ordered_query(
     user_anime_relation = "`anime-rec-dev.processed_area.user_anime`"
 ):
     query = f"""
-        SELECT user_id, anime_id, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order
+        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order
         FROM {user_anime_relation}
         WHERE status = 'completed'
     """
@@ -74,7 +74,7 @@ def user_retrieved_animes_query(
             {user_list_query("`anime-rec-dev.processed_area.user_anime`", users_min_completed_and_rated)}
         ),
         filtered_user_anime AS (
-            {user_anime_filter_anime_filter_users_query("`anime-rec-dev.processed_area.user_anime`", "list_anime", "list_user")}
+            {user_anime_filter_anime_filter_users_query("`anime-rec-dev.processed_area.user_anime`", "list_anime", "list_users")}
         )
         SELECT A.user_id, A.retrieved_anime_id
         FROM {user_retrieved_anime_relation} A
@@ -102,7 +102,7 @@ def user_all_possible_animes_query(
             {user_list_query("`anime-rec-dev.processed_area.user_anime`", users_min_completed_and_rated)}
         ),
         filtered_user_anime AS (
-            {user_anime_filter_anime_filter_users_query("`anime-rec-dev.processed_area.user_anime`", "list_anime", "list_user")}
+            {user_anime_filter_anime_filter_users_query("`anime-rec-dev.processed_area.user_anime`", "list_anime", "list_users")}
         ),
         user_anime_cross AS (
             SELECT A.user_id, B.anime_id AS retrieved_anime_id
