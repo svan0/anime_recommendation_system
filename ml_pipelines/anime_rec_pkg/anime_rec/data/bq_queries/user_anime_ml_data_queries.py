@@ -136,7 +136,7 @@ def user_anime_list_ranking_query(
     train_data_random_order AS (
         SELECT user_id, 
                anime_id, 
-               score, 
+               CAST(score AS STRING) AS score, 
                ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY RAND()) - 1 AS random_order_anime_per_user
         FROM train_data
     ),
@@ -149,7 +149,7 @@ def user_anime_list_ranking_query(
         HAVING ARRAY_LENGTH(anime_id) = 10
     ),
     val_data AS (
-        SELECT user_id, anime_id, score
+        SELECT user_id, anime_id, CAST(score AS STRING) AS score
         FROM filtered_ordered_user_anime
         WHERE user_anime_order BETWEEN 11 AND 20
     ),
@@ -161,7 +161,7 @@ def user_anime_list_ranking_query(
         GROUP BY user_id
     ),
     test_data AS (
-        SELECT user_id, anime_id, score
+        SELECT user_id, anime_id, CAST(score AS STRING) AS score
         FROM filtered_ordered_user_anime
         WHERE user_anime_order BETWEEN 1 AND 10
     ),

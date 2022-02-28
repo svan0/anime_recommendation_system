@@ -567,505 +567,7 @@
           }
         }
       },
-      "comp-condition-1": {
-        "dag": {
-          "outputs": {
-            "artifacts": {
-              "component-3-metrics_path": {
-                "artifactSelectors": [
-                  {
-                    "outputArtifactKey": "component-3-metrics_path",
-                    "producerSubtask": "condition-2"
-                  }
-                ]
-              },
-              "component-5-metrics_path": {
-                "artifactSelectors": [
-                  {
-                    "outputArtifactKey": "component-5-metrics_path",
-                    "producerSubtask": "condition-3"
-                  }
-                ]
-              },
-              "component-metrics_path": {
-                "artifactSelectors": [
-                  {
-                    "outputArtifactKey": "metrics_path",
-                    "producerSubtask": "component"
-                  }
-                ]
-              }
-            }
-          },
-          "tasks": {
-            "component": {
-              "cachingOptions": {
-                "enableCache": true
-              },
-              "componentRef": {
-                "name": "comp-component"
-              },
-              "dependentTasks": [
-                "run-query-save-to-bq-table-and-gcs-3",
-                "run-query-save-to-bq-table-and-gcs-4",
-                "run-query-save-to-bq-table-and-gcs-5"
-              ],
-              "inputs": {
-                "artifacts": {
-                  "anime_data_path": {
-                    "componentInputArtifact": "pipelineparam--run-query-save-to-bq-table-and-gcs-gcs_output_data"
-                  },
-                  "test_data_path": {
-                    "taskOutputArtifact": {
-                      "outputArtifactKey": "gcs_output_data",
-                      "producerTask": "run-query-save-to-bq-table-and-gcs-5"
-                    }
-                  },
-                  "train_data_path": {
-                    "taskOutputArtifact": {
-                      "outputArtifactKey": "gcs_output_data",
-                      "producerTask": "run-query-save-to-bq-table-and-gcs-3"
-                    }
-                  },
-                  "user_data_path": {
-                    "componentInputArtifact": "pipelineparam--run-query-save-to-bq-table-and-gcs-2-gcs_output_data"
-                  },
-                  "val_data_path": {
-                    "taskOutputArtifact": {
-                      "outputArtifactKey": "gcs_output_data",
-                      "producerTask": "run-query-save-to-bq-table-and-gcs-4"
-                    }
-                  }
-                },
-                "parameters": {
-                  "data_format": {
-                    "componentInputParameter": "pipelineparam--data_format"
-                  },
-                  "early_stop_num_epochs": {
-                    "runtimeValue": {
-                      "constantValue": {
-                        "intValue": "5"
-                      }
-                    }
-                  },
-                  "learning_rate": {
-                    "runtimeValue": {
-                      "constantValue": {
-                        "doubleValue": 0.005
-                      }
-                    }
-                  },
-                  "max_num_epochs": {
-                    "runtimeValue": {
-                      "constantValue": {
-                        "intValue": "30"
-                      }
-                    }
-                  },
-                  "optimizer": {
-                    "runtimeValue": {
-                      "constantValue": {
-                        "stringValue": "adam"
-                      }
-                    }
-                  },
-                  "user_anime_embedding_size": {
-                    "runtimeValue": {
-                      "constantValue": {
-                        "intValue": "128"
-                      }
-                    }
-                  }
-                }
-              },
-              "taskInfo": {
-                "name": "TRAIN: user anime retrieval"
-              }
-            },
-            "component-2": {
-              "cachingOptions": {
-                "enableCache": true
-              },
-              "componentRef": {
-                "name": "comp-component-2"
-              },
-              "dependentTasks": [
-                "component"
-              ],
-              "inputs": {
-                "artifacts": {
-                  "input_data_path": {
-                    "componentInputArtifact": "pipelineparam--run-query-save-to-bq-table-and-gcs-2-gcs_output_data"
-                  },
-                  "model_path": {
-                    "taskOutputArtifact": {
-                      "outputArtifactKey": "model_path",
-                      "producerTask": "component"
-                    }
-                  }
-                }
-              },
-              "taskInfo": {
-                "name": "INFER: user anime retrieval"
-              }
-            },
-            "condition-2": {
-              "componentRef": {
-                "name": "comp-condition-2"
-              },
-              "dependentTasks": [
-                "run-query-save-to-bq-table-and-gcs-6"
-              ],
-              "inputs": {
-                "artifacts": {
-                  "pipelineparam--run-query-save-to-bq-table-and-gcs-2-gcs_output_data": {
-                    "componentInputArtifact": "pipelineparam--run-query-save-to-bq-table-and-gcs-2-gcs_output_data"
-                  },
-                  "pipelineparam--run-query-save-to-bq-table-and-gcs-6-gcs_output_data": {
-                    "taskOutputArtifact": {
-                      "outputArtifactKey": "gcs_output_data",
-                      "producerTask": "run-query-save-to-bq-table-and-gcs-6"
-                    }
-                  },
-                  "pipelineparam--run-query-save-to-bq-table-and-gcs-gcs_output_data": {
-                    "componentInputArtifact": "pipelineparam--run-query-save-to-bq-table-and-gcs-gcs_output_data"
-                  }
-                },
-                "parameters": {
-                  "pipelineparam--data_format": {
-                    "componentInputParameter": "pipelineparam--data_format"
-                  },
-                  "pipelineparam--dataset_id": {
-                    "componentInputParameter": "pipelineparam--dataset_id"
-                  },
-                  "pipelineparam--list_ranking": {
-                    "componentInputParameter": "pipelineparam--list_ranking"
-                  },
-                  "pipelineparam--project_id": {
-                    "componentInputParameter": "pipelineparam--project_id"
-                  },
-                  "pipelineparam--run_retrieval": {
-                    "componentInputParameter": "pipelineparam--run_retrieval"
-                  }
-                }
-              },
-              "taskInfo": {
-                "name": "condition-2"
-              },
-              "triggerPolicy": {
-                "condition": "inputs.parameters['pipelineparam--list_ranking'].string_value == 'true'"
-              }
-            },
-            "condition-3": {
-              "componentRef": {
-                "name": "comp-condition-3"
-              },
-              "dependentTasks": [
-                "run-query-save-to-bq-table-and-gcs-6"
-              ],
-              "inputs": {
-                "artifacts": {
-                  "pipelineparam--run-query-save-to-bq-table-and-gcs-2-gcs_output_data": {
-                    "componentInputArtifact": "pipelineparam--run-query-save-to-bq-table-and-gcs-2-gcs_output_data"
-                  },
-                  "pipelineparam--run-query-save-to-bq-table-and-gcs-6-gcs_output_data": {
-                    "taskOutputArtifact": {
-                      "outputArtifactKey": "gcs_output_data",
-                      "producerTask": "run-query-save-to-bq-table-and-gcs-6"
-                    }
-                  },
-                  "pipelineparam--run-query-save-to-bq-table-and-gcs-gcs_output_data": {
-                    "componentInputArtifact": "pipelineparam--run-query-save-to-bq-table-and-gcs-gcs_output_data"
-                  }
-                },
-                "parameters": {
-                  "pipelineparam--data_format": {
-                    "componentInputParameter": "pipelineparam--data_format"
-                  },
-                  "pipelineparam--dataset_id": {
-                    "componentInputParameter": "pipelineparam--dataset_id"
-                  },
-                  "pipelineparam--list_ranking": {
-                    "componentInputParameter": "pipelineparam--list_ranking"
-                  },
-                  "pipelineparam--project_id": {
-                    "componentInputParameter": "pipelineparam--project_id"
-                  },
-                  "pipelineparam--run_retrieval": {
-                    "componentInputParameter": "pipelineparam--run_retrieval"
-                  }
-                }
-              },
-              "taskInfo": {
-                "name": "condition-3"
-              },
-              "triggerPolicy": {
-                "condition": "inputs.parameters['pipelineparam--list_ranking'].string_value == 'false'"
-              }
-            },
-            "gcs-to-bq-table": {
-              "cachingOptions": {
-                "enableCache": true
-              },
-              "componentRef": {
-                "name": "comp-gcs-to-bq-table"
-              },
-              "dependentTasks": [
-                "component-2"
-              ],
-              "inputs": {
-                "artifacts": {
-                  "gcs_input_data": {
-                    "taskOutputArtifact": {
-                      "outputArtifactKey": "output_data_path",
-                      "producerTask": "component-2"
-                    }
-                  }
-                },
-                "parameters": {
-                  "destination_dataset_id": {
-                    "componentInputParameter": "pipelineparam--dataset_id"
-                  },
-                  "destination_table_id": {
-                    "runtimeValue": {
-                      "constantValue": {
-                        "stringValue": "user_anime_retrieval_infer_20220228165328"
-                      }
-                    }
-                  },
-                  "gcs_input_data_format": {
-                    "componentInputParameter": "pipelineparam--data_format"
-                  },
-                  "gcs_input_data_schema": {
-                    "runtimeValue": {
-                      "constantValue": {
-                        "stringValue": "[[\"user_id\", \"STRING\"], [\"anime_id\", \"STRING\"]]"
-                      }
-                    }
-                  },
-                  "project_id": {
-                    "componentInputParameter": "pipelineparam--project_id"
-                  }
-                }
-              },
-              "taskInfo": {
-                "name": "INFER: user anime retrieval to BQ"
-              }
-            },
-            "run-query-save-to-bq-table-and-gcs-3": {
-              "cachingOptions": {
-                "enableCache": true
-              },
-              "componentRef": {
-                "name": "comp-run-query-save-to-bq-table-and-gcs-3"
-              },
-              "inputs": {
-                "parameters": {
-                  "destination_dataset_id": {
-                    "componentInputParameter": "pipelineparam--dataset_id"
-                  },
-                  "destination_table_id": {
-                    "runtimeValue": {
-                      "constantValue": {
-                        "stringValue": "user_anime_retrieval_train_20220228165328"
-                      }
-                    }
-                  },
-                  "gcs_output_format": {
-                    "componentInputParameter": "pipelineparam--data_format"
-                  },
-                  "project_id": {
-                    "componentInputParameter": "pipelineparam--project_id"
-                  },
-                  "query": {
-                    "runtimeValue": {
-                      "constantValue": {
-                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed'\n    \n    )\n    \n        SELECT user_id, anime_id \n        FROM filtered_ordered_user_anime \n        WHERE user_anime_order >= 21\n        "
-                      }
-                    }
-                  }
-                }
-              },
-              "taskInfo": {
-                "name": "DATA: train user anime retrieval"
-              }
-            },
-            "run-query-save-to-bq-table-and-gcs-4": {
-              "cachingOptions": {
-                "enableCache": true
-              },
-              "componentRef": {
-                "name": "comp-run-query-save-to-bq-table-and-gcs-4"
-              },
-              "inputs": {
-                "parameters": {
-                  "destination_dataset_id": {
-                    "componentInputParameter": "pipelineparam--dataset_id"
-                  },
-                  "destination_table_id": {
-                    "runtimeValue": {
-                      "constantValue": {
-                        "stringValue": "user_anime_retrieval_val_20220228165328"
-                      }
-                    }
-                  },
-                  "gcs_output_format": {
-                    "componentInputParameter": "pipelineparam--data_format"
-                  },
-                  "project_id": {
-                    "componentInputParameter": "pipelineparam--project_id"
-                  },
-                  "query": {
-                    "runtimeValue": {
-                      "constantValue": {
-                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed'\n    \n    )\n    \n        SELECT user_id, anime_id \n        FROM filtered_ordered_user_anime \n        WHERE user_anime_order BETWEEN 11 AND 20\n        "
-                      }
-                    }
-                  }
-                }
-              },
-              "taskInfo": {
-                "name": "DATA: val user anime retrieval"
-              }
-            },
-            "run-query-save-to-bq-table-and-gcs-5": {
-              "cachingOptions": {
-                "enableCache": true
-              },
-              "componentRef": {
-                "name": "comp-run-query-save-to-bq-table-and-gcs-5"
-              },
-              "inputs": {
-                "parameters": {
-                  "destination_dataset_id": {
-                    "componentInputParameter": "pipelineparam--dataset_id"
-                  },
-                  "destination_table_id": {
-                    "runtimeValue": {
-                      "constantValue": {
-                        "stringValue": "user_anime_retrieval_test_20220228165328"
-                      }
-                    }
-                  },
-                  "gcs_output_format": {
-                    "componentInputParameter": "pipelineparam--data_format"
-                  },
-                  "project_id": {
-                    "componentInputParameter": "pipelineparam--project_id"
-                  },
-                  "query": {
-                    "runtimeValue": {
-                      "constantValue": {
-                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed'\n    \n    )\n    \n        SELECT user_id, anime_id \n        FROM filtered_ordered_user_anime \n        WHERE user_anime_order BETWEEN 1 AND 10\n        "
-                      }
-                    }
-                  }
-                }
-              },
-              "taskInfo": {
-                "name": "DATA: test user anime retrieval"
-              }
-            },
-            "run-query-save-to-bq-table-and-gcs-6": {
-              "cachingOptions": {
-                "enableCache": true
-              },
-              "componentRef": {
-                "name": "comp-run-query-save-to-bq-table-and-gcs-6"
-              },
-              "dependentTasks": [
-                "gcs-to-bq-table"
-              ],
-              "inputs": {
-                "parameters": {
-                  "destination_dataset_id": {
-                    "componentInputParameter": "pipelineparam--dataset_id"
-                  },
-                  "destination_table_id": {
-                    "runtimeValue": {
-                      "constantValue": {
-                        "stringValue": "user_anime_retrieval_to_rank_20220228165328"
-                      }
-                    }
-                  },
-                  "gcs_output_format": {
-                    "componentInputParameter": "pipelineparam--data_format"
-                  },
-                  "project_id": {
-                    "componentInputParameter": "pipelineparam--project_id"
-                  },
-                  "query": {
-                    "runtimeValue": {
-                      "constantValue": {
-                        "stringValue": "\n        WITH \n        list_anime AS (\n            \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n        ),\n        list_users AS (\n            \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n        ),\n        filtered_user_anime AS (\n            \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n        )\n        SELECT A.user_id, A.anime_id\n        FROM {project_id}.{dataset_id}.user_anime_retrieval_infer_{current_time} A\n        LEFT JOIN filtered_user_anime B\n        ON A.user_id = B.user_id AND A.anime_id = B.anime_id\n        WHERE B.status IS NULL\n    "
-                      }
-                    }
-                  }
-                }
-              },
-              "taskInfo": {
-                "name": "INFER: user anime retrieval to be ranked"
-              }
-            }
-          }
-        },
-        "inputDefinitions": {
-          "artifacts": {
-            "pipelineparam--run-query-save-to-bq-table-and-gcs-2-gcs_output_data": {
-              "artifactType": {
-                "schemaTitle": "system.Dataset",
-                "schemaVersion": "0.0.1"
-              }
-            },
-            "pipelineparam--run-query-save-to-bq-table-and-gcs-gcs_output_data": {
-              "artifactType": {
-                "schemaTitle": "system.Dataset",
-                "schemaVersion": "0.0.1"
-              }
-            }
-          },
-          "parameters": {
-            "pipelineparam--data_format": {
-              "type": "STRING"
-            },
-            "pipelineparam--dataset_id": {
-              "type": "STRING"
-            },
-            "pipelineparam--list_ranking": {
-              "type": "STRING"
-            },
-            "pipelineparam--project_id": {
-              "type": "STRING"
-            },
-            "pipelineparam--run_retrieval": {
-              "type": "STRING"
-            }
-          }
-        },
-        "outputDefinitions": {
-          "artifacts": {
-            "component-3-metrics_path": {
-              "artifactType": {
-                "schemaTitle": "system.Metrics",
-                "schemaVersion": "0.0.1"
-              }
-            },
-            "component-5-metrics_path": {
-              "artifactType": {
-                "schemaTitle": "system.Metrics",
-                "schemaVersion": "0.0.1"
-              }
-            },
-            "component-metrics_path": {
-              "artifactType": {
-                "schemaTitle": "system.Metrics",
-                "schemaVersion": "0.0.1"
-              }
-            }
-          }
-        }
-      },
-      "comp-condition-2": {
+      "comp-condition-list-ranking-2": {
         "dag": {
           "outputs": {
             "artifacts": {
@@ -1247,7 +749,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_list_ranking_infer_20220228165328"
+                        "stringValue": "user_anime_list_ranking_infer_20220228171711"
                       }
                     }
                   },
@@ -1285,7 +787,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_list_ranking_train_20220228165328"
+                        "stringValue": "user_anime_list_ranking_train_20220228171711"
                       }
                     }
                   },
@@ -1298,7 +800,7 @@
                   "query": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    ),\n    train_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order >= 21\n    ),\n    train_data_random_order AS (\n        SELECT user_id, \n               anime_id, \n               score, \n               ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY RAND()) - 1 AS random_order_anime_per_user\n        FROM train_data\n    ),\n    train_data_list AS (\n        SELECT user_id, \n               ARRAY_TO_STRING(ARRAY_AGG(anime_id), '|') AS anime_id, \n               ARRAY_TO_STRING(ARRAY_AGG(score), '|') AS score \n        FROM train_data_random_order\n        GROUP BY user_id, DIV(random_order_anime_per_user, 10)\n        HAVING ARRAY_LENGTH(anime_id) = 10\n    ),\n    val_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 11 AND 20\n    ),\n    val_data_list AS (\n        SELECT user_id, \n               ARRAY_TO_STRING(ARRAY_AGG(anime_id), '|') AS anime_id, \n               ARRAY_TO_STRING(ARRAY_AGG(score), '|') AS score \n        FROM val_data \n        GROUP BY user_id\n    ),\n    test_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 1 AND 10\n    ),\n    test_data_list AS (\n        SELECT user_id, \n               ARRAY_TO_STRING(ARRAY_AGG(anime_id), '|') AS anime_id, \n               ARRAY_TO_STRING(ARRAY_AGG(score), '|') AS score \n        FROM test_data \n        GROUP BY user_id\n    )\n    \n        SELECT *\n        FROM train_data_list\n        "
+                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    ),\n    train_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order >= 21\n    ),\n    train_data_random_order AS (\n        SELECT user_id, \n               anime_id, \n               CAST(score AS STRING) AS score, \n               ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY RAND()) - 1 AS random_order_anime_per_user\n        FROM train_data\n    ),\n    train_data_list AS (\n        SELECT user_id, \n               ARRAY_TO_STRING(ARRAY_AGG(anime_id), '|') AS anime_id, \n               ARRAY_TO_STRING(ARRAY_AGG(score), '|') AS score \n        FROM train_data_random_order\n        GROUP BY user_id, DIV(random_order_anime_per_user, 10)\n        HAVING ARRAY_LENGTH(anime_id) = 10\n    ),\n    val_data AS (\n        SELECT user_id, anime_id, CAST(score AS STRING) AS score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 11 AND 20\n    ),\n    val_data_list AS (\n        SELECT user_id, \n               ARRAY_TO_STRING(ARRAY_AGG(anime_id), '|') AS anime_id, \n               ARRAY_TO_STRING(ARRAY_AGG(score), '|') AS score \n        FROM val_data \n        GROUP BY user_id\n    ),\n    test_data AS (\n        SELECT user_id, anime_id, CAST(score AS STRING) AS score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 1 AND 10\n    ),\n    test_data_list AS (\n        SELECT user_id, \n               ARRAY_TO_STRING(ARRAY_AGG(anime_id), '|') AS anime_id, \n               ARRAY_TO_STRING(ARRAY_AGG(score), '|') AS score \n        FROM test_data \n        GROUP BY user_id\n    )\n    \n        SELECT *\n        FROM train_data_list\n        "
                       }
                     }
                   }
@@ -1323,7 +825,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_list_ranking_val_20220228165328"
+                        "stringValue": "user_anime_list_ranking_val_20220228171711"
                       }
                     }
                   },
@@ -1336,7 +838,7 @@
                   "query": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    ),\n    train_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order >= 21\n    ),\n    train_data_random_order AS (\n        SELECT user_id, \n               anime_id, \n               score, \n               ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY RAND()) - 1 AS random_order_anime_per_user\n        FROM train_data\n    ),\n    train_data_list AS (\n        SELECT user_id, \n               ARRAY_TO_STRING(ARRAY_AGG(anime_id), '|') AS anime_id, \n               ARRAY_TO_STRING(ARRAY_AGG(score), '|') AS score \n        FROM train_data_random_order\n        GROUP BY user_id, DIV(random_order_anime_per_user, 10)\n        HAVING ARRAY_LENGTH(anime_id) = 10\n    ),\n    val_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 11 AND 20\n    ),\n    val_data_list AS (\n        SELECT user_id, \n               ARRAY_TO_STRING(ARRAY_AGG(anime_id), '|') AS anime_id, \n               ARRAY_TO_STRING(ARRAY_AGG(score), '|') AS score \n        FROM val_data \n        GROUP BY user_id\n    ),\n    test_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 1 AND 10\n    ),\n    test_data_list AS (\n        SELECT user_id, \n               ARRAY_TO_STRING(ARRAY_AGG(anime_id), '|') AS anime_id, \n               ARRAY_TO_STRING(ARRAY_AGG(score), '|') AS score \n        FROM test_data \n        GROUP BY user_id\n    )\n    \n        SELECT *\n        FROM val_data_list\n        "
+                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    ),\n    train_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order >= 21\n    ),\n    train_data_random_order AS (\n        SELECT user_id, \n               anime_id, \n               CAST(score AS STRING) AS score, \n               ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY RAND()) - 1 AS random_order_anime_per_user\n        FROM train_data\n    ),\n    train_data_list AS (\n        SELECT user_id, \n               ARRAY_TO_STRING(ARRAY_AGG(anime_id), '|') AS anime_id, \n               ARRAY_TO_STRING(ARRAY_AGG(score), '|') AS score \n        FROM train_data_random_order\n        GROUP BY user_id, DIV(random_order_anime_per_user, 10)\n        HAVING ARRAY_LENGTH(anime_id) = 10\n    ),\n    val_data AS (\n        SELECT user_id, anime_id, CAST(score AS STRING) AS score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 11 AND 20\n    ),\n    val_data_list AS (\n        SELECT user_id, \n               ARRAY_TO_STRING(ARRAY_AGG(anime_id), '|') AS anime_id, \n               ARRAY_TO_STRING(ARRAY_AGG(score), '|') AS score \n        FROM val_data \n        GROUP BY user_id\n    ),\n    test_data AS (\n        SELECT user_id, anime_id, CAST(score AS STRING) AS score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 1 AND 10\n    ),\n    test_data_list AS (\n        SELECT user_id, \n               ARRAY_TO_STRING(ARRAY_AGG(anime_id), '|') AS anime_id, \n               ARRAY_TO_STRING(ARRAY_AGG(score), '|') AS score \n        FROM test_data \n        GROUP BY user_id\n    )\n    \n        SELECT *\n        FROM val_data_list\n        "
                       }
                     }
                   }
@@ -1361,7 +863,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_list_ranking_test_20220228165328"
+                        "stringValue": "user_anime_list_ranking_test_20220228171711"
                       }
                     }
                   },
@@ -1374,7 +876,7 @@
                   "query": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    ),\n    train_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order >= 21\n    ),\n    train_data_random_order AS (\n        SELECT user_id, \n               anime_id, \n               score, \n               ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY RAND()) - 1 AS random_order_anime_per_user\n        FROM train_data\n    ),\n    train_data_list AS (\n        SELECT user_id, \n               ARRAY_TO_STRING(ARRAY_AGG(anime_id), '|') AS anime_id, \n               ARRAY_TO_STRING(ARRAY_AGG(score), '|') AS score \n        FROM train_data_random_order\n        GROUP BY user_id, DIV(random_order_anime_per_user, 10)\n        HAVING ARRAY_LENGTH(anime_id) = 10\n    ),\n    val_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 11 AND 20\n    ),\n    val_data_list AS (\n        SELECT user_id, \n               ARRAY_TO_STRING(ARRAY_AGG(anime_id), '|') AS anime_id, \n               ARRAY_TO_STRING(ARRAY_AGG(score), '|') AS score \n        FROM val_data \n        GROUP BY user_id\n    ),\n    test_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 1 AND 10\n    ),\n    test_data_list AS (\n        SELECT user_id, \n               ARRAY_TO_STRING(ARRAY_AGG(anime_id), '|') AS anime_id, \n               ARRAY_TO_STRING(ARRAY_AGG(score), '|') AS score \n        FROM test_data \n        GROUP BY user_id\n    )\n    \n        SELECT *\n        FROM test_data_list\n        "
+                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    ),\n    train_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order >= 21\n    ),\n    train_data_random_order AS (\n        SELECT user_id, \n               anime_id, \n               CAST(score AS STRING) AS score, \n               ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY RAND()) - 1 AS random_order_anime_per_user\n        FROM train_data\n    ),\n    train_data_list AS (\n        SELECT user_id, \n               ARRAY_TO_STRING(ARRAY_AGG(anime_id), '|') AS anime_id, \n               ARRAY_TO_STRING(ARRAY_AGG(score), '|') AS score \n        FROM train_data_random_order\n        GROUP BY user_id, DIV(random_order_anime_per_user, 10)\n        HAVING ARRAY_LENGTH(anime_id) = 10\n    ),\n    val_data AS (\n        SELECT user_id, anime_id, CAST(score AS STRING) AS score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 11 AND 20\n    ),\n    val_data_list AS (\n        SELECT user_id, \n               ARRAY_TO_STRING(ARRAY_AGG(anime_id), '|') AS anime_id, \n               ARRAY_TO_STRING(ARRAY_AGG(score), '|') AS score \n        FROM val_data \n        GROUP BY user_id\n    ),\n    test_data AS (\n        SELECT user_id, anime_id, CAST(score AS STRING) AS score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 1 AND 10\n    ),\n    test_data_list AS (\n        SELECT user_id, \n               ARRAY_TO_STRING(ARRAY_AGG(anime_id), '|') AS anime_id, \n               ARRAY_TO_STRING(ARRAY_AGG(score), '|') AS score \n        FROM test_data \n        GROUP BY user_id\n    )\n    \n        SELECT *\n        FROM test_data_list\n        "
                       }
                     }
                   }
@@ -1436,585 +938,7 @@
           }
         }
       },
-      "comp-condition-3": {
-        "dag": {
-          "outputs": {
-            "artifacts": {
-              "component-5-metrics_path": {
-                "artifactSelectors": [
-                  {
-                    "outputArtifactKey": "metrics_path",
-                    "producerSubtask": "component-5"
-                  }
-                ]
-              }
-            }
-          },
-          "tasks": {
-            "component-5": {
-              "cachingOptions": {
-                "enableCache": true
-              },
-              "componentRef": {
-                "name": "comp-component-5"
-              },
-              "dependentTasks": [
-                "run-query-save-to-bq-table-and-gcs-10",
-                "run-query-save-to-bq-table-and-gcs-11",
-                "run-query-save-to-bq-table-and-gcs-12"
-              ],
-              "inputs": {
-                "artifacts": {
-                  "anime_data_path": {
-                    "componentInputArtifact": "pipelineparam--run-query-save-to-bq-table-and-gcs-gcs_output_data"
-                  },
-                  "test_data_path": {
-                    "taskOutputArtifact": {
-                      "outputArtifactKey": "gcs_output_data",
-                      "producerTask": "run-query-save-to-bq-table-and-gcs-12"
-                    }
-                  },
-                  "train_data_path": {
-                    "taskOutputArtifact": {
-                      "outputArtifactKey": "gcs_output_data",
-                      "producerTask": "run-query-save-to-bq-table-and-gcs-10"
-                    }
-                  },
-                  "user_data_path": {
-                    "componentInputArtifact": "pipelineparam--run-query-save-to-bq-table-and-gcs-2-gcs_output_data"
-                  },
-                  "val_data_path": {
-                    "taskOutputArtifact": {
-                      "outputArtifactKey": "gcs_output_data",
-                      "producerTask": "run-query-save-to-bq-table-and-gcs-11"
-                    }
-                  }
-                },
-                "parameters": {
-                  "anime_embedding_size": {
-                    "runtimeValue": {
-                      "constantValue": {
-                        "intValue": "128"
-                      }
-                    }
-                  },
-                  "data_format": {
-                    "componentInputParameter": "pipelineparam--data_format"
-                  },
-                  "early_stop_num_epochs": {
-                    "runtimeValue": {
-                      "constantValue": {
-                        "intValue": "5"
-                      }
-                    }
-                  },
-                  "learning_rate": {
-                    "runtimeValue": {
-                      "constantValue": {
-                        "doubleValue": 0.005
-                      }
-                    }
-                  },
-                  "max_num_epochs": {
-                    "runtimeValue": {
-                      "constantValue": {
-                        "intValue": "30"
-                      }
-                    }
-                  },
-                  "model_type": {
-                    "runtimeValue": {
-                      "constantValue": {
-                        "stringValue": "ranking"
-                      }
-                    }
-                  },
-                  "optimizer": {
-                    "runtimeValue": {
-                      "constantValue": {
-                        "stringValue": "adam"
-                      }
-                    }
-                  },
-                  "scoring_layer_size": {
-                    "runtimeValue": {
-                      "constantValue": {
-                        "intValue": "128"
-                      }
-                    }
-                  },
-                  "user_embedding_size": {
-                    "runtimeValue": {
-                      "constantValue": {
-                        "intValue": "256"
-                      }
-                    }
-                  }
-                }
-              },
-              "taskInfo": {
-                "name": "TRAIN: user anime ranking"
-              }
-            },
-            "component-6": {
-              "cachingOptions": {
-                "enableCache": true
-              },
-              "componentRef": {
-                "name": "comp-component-6"
-              },
-              "dependentTasks": [
-                "component-5"
-              ],
-              "inputs": {
-                "artifacts": {
-                  "input_data_path": {
-                    "componentInputArtifact": "pipelineparam--run-query-save-to-bq-table-and-gcs-6-gcs_output_data"
-                  },
-                  "model_path": {
-                    "taskOutputArtifact": {
-                      "outputArtifactKey": "model_path",
-                      "producerTask": "component-5"
-                    }
-                  }
-                },
-                "parameters": {
-                  "model_type": {
-                    "runtimeValue": {
-                      "constantValue": {
-                        "stringValue": "ranking"
-                      }
-                    }
-                  }
-                }
-              },
-              "taskInfo": {
-                "name": "INFER: user anime ranking"
-              }
-            },
-            "gcs-to-bq-table-3": {
-              "cachingOptions": {
-                "enableCache": true
-              },
-              "componentRef": {
-                "name": "comp-gcs-to-bq-table-3"
-              },
-              "dependentTasks": [
-                "component-6"
-              ],
-              "inputs": {
-                "artifacts": {
-                  "gcs_input_data": {
-                    "taskOutputArtifact": {
-                      "outputArtifactKey": "output_data_path",
-                      "producerTask": "component-6"
-                    }
-                  }
-                },
-                "parameters": {
-                  "destination_dataset_id": {
-                    "componentInputParameter": "pipelineparam--dataset_id"
-                  },
-                  "destination_table_id": {
-                    "runtimeValue": {
-                      "constantValue": {
-                        "stringValue": "user_anime_ranking_infer_20220228165328"
-                      }
-                    }
-                  },
-                  "gcs_input_data_format": {
-                    "componentInputParameter": "pipelineparam--data_format"
-                  },
-                  "gcs_input_data_schema": {
-                    "runtimeValue": {
-                      "constantValue": {
-                        "stringValue": "[[\"user_id\", \"STRING\"], [\"anime_id\", \"STRING\"], [\"score\", \"FLOAT\"]]"
-                      }
-                    }
-                  },
-                  "project_id": {
-                    "componentInputParameter": "pipelineparam--project_id"
-                  }
-                }
-              },
-              "taskInfo": {
-                "name": "INFER: user anime ranking to BQ"
-              }
-            },
-            "run-query-save-to-bq-table-and-gcs-10": {
-              "cachingOptions": {
-                "enableCache": true
-              },
-              "componentRef": {
-                "name": "comp-run-query-save-to-bq-table-and-gcs-10"
-              },
-              "inputs": {
-                "parameters": {
-                  "destination_dataset_id": {
-                    "componentInputParameter": "pipelineparam--dataset_id"
-                  },
-                  "destination_table_id": {
-                    "runtimeValue": {
-                      "constantValue": {
-                        "stringValue": "user_anime_ranking_train_20220228165328"
-                      }
-                    }
-                  },
-                  "gcs_output_format": {
-                    "componentInputParameter": "pipelineparam--data_format"
-                  },
-                  "project_id": {
-                    "componentInputParameter": "pipelineparam--project_id"
-                  },
-                  "query": {
-                    "runtimeValue": {
-                      "constantValue": {
-                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    )\n    \n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order >= 21\n        "
-                      }
-                    }
-                  }
-                }
-              },
-              "taskInfo": {
-                "name": "DATA: train user anime ranking"
-              }
-            },
-            "run-query-save-to-bq-table-and-gcs-11": {
-              "cachingOptions": {
-                "enableCache": true
-              },
-              "componentRef": {
-                "name": "comp-run-query-save-to-bq-table-and-gcs-11"
-              },
-              "inputs": {
-                "parameters": {
-                  "destination_dataset_id": {
-                    "componentInputParameter": "pipelineparam--dataset_id"
-                  },
-                  "destination_table_id": {
-                    "runtimeValue": {
-                      "constantValue": {
-                        "stringValue": "user_anime_ranking_val_20220228165328"
-                      }
-                    }
-                  },
-                  "gcs_output_format": {
-                    "componentInputParameter": "pipelineparam--data_format"
-                  },
-                  "project_id": {
-                    "componentInputParameter": "pipelineparam--project_id"
-                  },
-                  "query": {
-                    "runtimeValue": {
-                      "constantValue": {
-                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    )\n    \n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 11 AND 20\n        "
-                      }
-                    }
-                  }
-                }
-              },
-              "taskInfo": {
-                "name": "DATA: validation user anime ranking"
-              }
-            },
-            "run-query-save-to-bq-table-and-gcs-12": {
-              "cachingOptions": {
-                "enableCache": true
-              },
-              "componentRef": {
-                "name": "comp-run-query-save-to-bq-table-and-gcs-12"
-              },
-              "inputs": {
-                "parameters": {
-                  "destination_dataset_id": {
-                    "componentInputParameter": "pipelineparam--dataset_id"
-                  },
-                  "destination_table_id": {
-                    "runtimeValue": {
-                      "constantValue": {
-                        "stringValue": "user_anime_ranking_test_20220228165328"
-                      }
-                    }
-                  },
-                  "gcs_output_format": {
-                    "componentInputParameter": "pipelineparam--data_format"
-                  },
-                  "project_id": {
-                    "componentInputParameter": "pipelineparam--project_id"
-                  },
-                  "query": {
-                    "runtimeValue": {
-                      "constantValue": {
-                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    )\n    \n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 1 AND 10\n        "
-                      }
-                    }
-                  }
-                }
-              },
-              "taskInfo": {
-                "name": "DATA: test user anime ranking"
-              }
-            }
-          }
-        },
-        "inputDefinitions": {
-          "artifacts": {
-            "pipelineparam--run-query-save-to-bq-table-and-gcs-2-gcs_output_data": {
-              "artifactType": {
-                "schemaTitle": "system.Dataset",
-                "schemaVersion": "0.0.1"
-              }
-            },
-            "pipelineparam--run-query-save-to-bq-table-and-gcs-6-gcs_output_data": {
-              "artifactType": {
-                "schemaTitle": "system.Dataset",
-                "schemaVersion": "0.0.1"
-              }
-            },
-            "pipelineparam--run-query-save-to-bq-table-and-gcs-gcs_output_data": {
-              "artifactType": {
-                "schemaTitle": "system.Dataset",
-                "schemaVersion": "0.0.1"
-              }
-            }
-          },
-          "parameters": {
-            "pipelineparam--data_format": {
-              "type": "STRING"
-            },
-            "pipelineparam--dataset_id": {
-              "type": "STRING"
-            },
-            "pipelineparam--list_ranking": {
-              "type": "STRING"
-            },
-            "pipelineparam--project_id": {
-              "type": "STRING"
-            },
-            "pipelineparam--run_retrieval": {
-              "type": "STRING"
-            }
-          }
-        },
-        "outputDefinitions": {
-          "artifacts": {
-            "component-5-metrics_path": {
-              "artifactType": {
-                "schemaTitle": "system.Metrics",
-                "schemaVersion": "0.0.1"
-              }
-            }
-          }
-        }
-      },
-      "comp-condition-4": {
-        "dag": {
-          "outputs": {
-            "artifacts": {
-              "component-7-metrics_path": {
-                "artifactSelectors": [
-                  {
-                    "outputArtifactKey": "component-7-metrics_path",
-                    "producerSubtask": "condition-5"
-                  }
-                ]
-              },
-              "component-9-metrics_path": {
-                "artifactSelectors": [
-                  {
-                    "outputArtifactKey": "component-9-metrics_path",
-                    "producerSubtask": "condition-6"
-                  }
-                ]
-              }
-            }
-          },
-          "tasks": {
-            "condition-5": {
-              "componentRef": {
-                "name": "comp-condition-5"
-              },
-              "dependentTasks": [
-                "run-query-save-to-bq-table-and-gcs-13"
-              ],
-              "inputs": {
-                "artifacts": {
-                  "pipelineparam--run-query-save-to-bq-table-and-gcs-13-gcs_output_data": {
-                    "taskOutputArtifact": {
-                      "outputArtifactKey": "gcs_output_data",
-                      "producerTask": "run-query-save-to-bq-table-and-gcs-13"
-                    }
-                  },
-                  "pipelineparam--run-query-save-to-bq-table-and-gcs-2-gcs_output_data": {
-                    "componentInputArtifact": "pipelineparam--run-query-save-to-bq-table-and-gcs-2-gcs_output_data"
-                  },
-                  "pipelineparam--run-query-save-to-bq-table-and-gcs-gcs_output_data": {
-                    "componentInputArtifact": "pipelineparam--run-query-save-to-bq-table-and-gcs-gcs_output_data"
-                  }
-                },
-                "parameters": {
-                  "pipelineparam--data_format": {
-                    "componentInputParameter": "pipelineparam--data_format"
-                  },
-                  "pipelineparam--dataset_id": {
-                    "componentInputParameter": "pipelineparam--dataset_id"
-                  },
-                  "pipelineparam--list_ranking": {
-                    "componentInputParameter": "pipelineparam--list_ranking"
-                  },
-                  "pipelineparam--project_id": {
-                    "componentInputParameter": "pipelineparam--project_id"
-                  },
-                  "pipelineparam--run_retrieval": {
-                    "componentInputParameter": "pipelineparam--run_retrieval"
-                  }
-                }
-              },
-              "taskInfo": {
-                "name": "condition-5"
-              },
-              "triggerPolicy": {
-                "condition": "inputs.parameters['pipelineparam--list_ranking'].string_value == 'true'"
-              }
-            },
-            "condition-6": {
-              "componentRef": {
-                "name": "comp-condition-6"
-              },
-              "dependentTasks": [
-                "run-query-save-to-bq-table-and-gcs-13"
-              ],
-              "inputs": {
-                "artifacts": {
-                  "pipelineparam--run-query-save-to-bq-table-and-gcs-13-gcs_output_data": {
-                    "taskOutputArtifact": {
-                      "outputArtifactKey": "gcs_output_data",
-                      "producerTask": "run-query-save-to-bq-table-and-gcs-13"
-                    }
-                  },
-                  "pipelineparam--run-query-save-to-bq-table-and-gcs-2-gcs_output_data": {
-                    "componentInputArtifact": "pipelineparam--run-query-save-to-bq-table-and-gcs-2-gcs_output_data"
-                  },
-                  "pipelineparam--run-query-save-to-bq-table-and-gcs-gcs_output_data": {
-                    "componentInputArtifact": "pipelineparam--run-query-save-to-bq-table-and-gcs-gcs_output_data"
-                  }
-                },
-                "parameters": {
-                  "pipelineparam--data_format": {
-                    "componentInputParameter": "pipelineparam--data_format"
-                  },
-                  "pipelineparam--dataset_id": {
-                    "componentInputParameter": "pipelineparam--dataset_id"
-                  },
-                  "pipelineparam--list_ranking": {
-                    "componentInputParameter": "pipelineparam--list_ranking"
-                  },
-                  "pipelineparam--project_id": {
-                    "componentInputParameter": "pipelineparam--project_id"
-                  },
-                  "pipelineparam--run_retrieval": {
-                    "componentInputParameter": "pipelineparam--run_retrieval"
-                  }
-                }
-              },
-              "taskInfo": {
-                "name": "condition-6"
-              },
-              "triggerPolicy": {
-                "condition": "inputs.parameters['pipelineparam--list_ranking'].string_value == 'false'"
-              }
-            },
-            "run-query-save-to-bq-table-and-gcs-13": {
-              "cachingOptions": {
-                "enableCache": true
-              },
-              "componentRef": {
-                "name": "comp-run-query-save-to-bq-table-and-gcs-13"
-              },
-              "inputs": {
-                "parameters": {
-                  "destination_dataset_id": {
-                    "componentInputParameter": "pipelineparam--dataset_id"
-                  },
-                  "destination_table_id": {
-                    "runtimeValue": {
-                      "constantValue": {
-                        "stringValue": "user_cross_anime_20220228165328"
-                      }
-                    }
-                  },
-                  "gcs_output_format": {
-                    "componentInputParameter": "pipelineparam--data_format"
-                  },
-                  "project_id": {
-                    "componentInputParameter": "pipelineparam--project_id"
-                  },
-                  "query": {
-                    "runtimeValue": {
-                      "constantValue": {
-                        "stringValue": "\n        WITH \n        list_anime AS (\n            \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n        ),\n        list_users AS (\n            \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n        ),\n        filtered_user_anime AS (\n            \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n        )\n        SELECT A.user_id, B.anime_id\n        FROM list_users A\n        CROSS JOIN list_anime B  \n    "
-                      }
-                    }
-                  }
-                }
-              },
-              "taskInfo": {
-                "name": "DATA: user cross anime not interacted with data"
-              }
-            }
-          }
-        },
-        "inputDefinitions": {
-          "artifacts": {
-            "pipelineparam--run-query-save-to-bq-table-and-gcs-2-gcs_output_data": {
-              "artifactType": {
-                "schemaTitle": "system.Dataset",
-                "schemaVersion": "0.0.1"
-              }
-            },
-            "pipelineparam--run-query-save-to-bq-table-and-gcs-gcs_output_data": {
-              "artifactType": {
-                "schemaTitle": "system.Dataset",
-                "schemaVersion": "0.0.1"
-              }
-            }
-          },
-          "parameters": {
-            "pipelineparam--data_format": {
-              "type": "STRING"
-            },
-            "pipelineparam--dataset_id": {
-              "type": "STRING"
-            },
-            "pipelineparam--list_ranking": {
-              "type": "STRING"
-            },
-            "pipelineparam--project_id": {
-              "type": "STRING"
-            },
-            "pipelineparam--run_retrieval": {
-              "type": "STRING"
-            }
-          }
-        },
-        "outputDefinitions": {
-          "artifacts": {
-            "component-7-metrics_path": {
-              "artifactType": {
-                "schemaTitle": "system.Metrics",
-                "schemaVersion": "0.0.1"
-              }
-            },
-            "component-9-metrics_path": {
-              "artifactType": {
-                "schemaTitle": "system.Metrics",
-                "schemaVersion": "0.0.1"
-              }
-            }
-          }
-        }
-      },
-      "comp-condition-5": {
+      "comp-condition-list-ranking-5": {
         "dag": {
           "outputs": {
             "artifacts": {
@@ -2196,7 +1120,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_list_ranking_infer_20220228165328"
+                        "stringValue": "user_anime_list_ranking_infer_20220228171711"
                       }
                     }
                   },
@@ -2234,7 +1158,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_list_ranking_train_20220228165328"
+                        "stringValue": "user_anime_list_ranking_train_20220228171711"
                       }
                     }
                   },
@@ -2247,7 +1171,7 @@
                   "query": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    ),\n    train_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order >= 21\n    ),\n    train_data_random_order AS (\n        SELECT user_id, \n               anime_id, \n               score, \n               ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY RAND()) - 1 AS random_order_anime_per_user\n        FROM train_data\n    ),\n    train_data_list AS (\n        SELECT user_id, \n               ARRAY_TO_STRING(ARRAY_AGG(anime_id), '|') AS anime_id, \n               ARRAY_TO_STRING(ARRAY_AGG(score), '|') AS score \n        FROM train_data_random_order\n        GROUP BY user_id, DIV(random_order_anime_per_user, 10)\n        HAVING ARRAY_LENGTH(anime_id) = 10\n    ),\n    val_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 11 AND 20\n    ),\n    val_data_list AS (\n        SELECT user_id, \n               ARRAY_TO_STRING(ARRAY_AGG(anime_id), '|') AS anime_id, \n               ARRAY_TO_STRING(ARRAY_AGG(score), '|') AS score \n        FROM val_data \n        GROUP BY user_id\n    ),\n    test_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 1 AND 10\n    ),\n    test_data_list AS (\n        SELECT user_id, \n               ARRAY_TO_STRING(ARRAY_AGG(anime_id), '|') AS anime_id, \n               ARRAY_TO_STRING(ARRAY_AGG(score), '|') AS score \n        FROM test_data \n        GROUP BY user_id\n    )\n    \n        SELECT *\n        FROM train_data_list\n        "
+                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    ),\n    train_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order >= 21\n    ),\n    train_data_random_order AS (\n        SELECT user_id, \n               anime_id, \n               CAST(score AS STRING) AS score, \n               ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY RAND()) - 1 AS random_order_anime_per_user\n        FROM train_data\n    ),\n    train_data_list AS (\n        SELECT user_id, \n               ARRAY_TO_STRING(ARRAY_AGG(anime_id), '|') AS anime_id, \n               ARRAY_TO_STRING(ARRAY_AGG(score), '|') AS score \n        FROM train_data_random_order\n        GROUP BY user_id, DIV(random_order_anime_per_user, 10)\n        HAVING ARRAY_LENGTH(anime_id) = 10\n    ),\n    val_data AS (\n        SELECT user_id, anime_id, CAST(score AS STRING) AS score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 11 AND 20\n    ),\n    val_data_list AS (\n        SELECT user_id, \n               ARRAY_TO_STRING(ARRAY_AGG(anime_id), '|') AS anime_id, \n               ARRAY_TO_STRING(ARRAY_AGG(score), '|') AS score \n        FROM val_data \n        GROUP BY user_id\n    ),\n    test_data AS (\n        SELECT user_id, anime_id, CAST(score AS STRING) AS score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 1 AND 10\n    ),\n    test_data_list AS (\n        SELECT user_id, \n               ARRAY_TO_STRING(ARRAY_AGG(anime_id), '|') AS anime_id, \n               ARRAY_TO_STRING(ARRAY_AGG(score), '|') AS score \n        FROM test_data \n        GROUP BY user_id\n    )\n    \n        SELECT *\n        FROM train_data_list\n        "
                       }
                     }
                   }
@@ -2272,7 +1196,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_list_ranking_val_20220228165328"
+                        "stringValue": "user_anime_list_ranking_val_20220228171711"
                       }
                     }
                   },
@@ -2285,7 +1209,7 @@
                   "query": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    ),\n    train_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order >= 21\n    ),\n    train_data_random_order AS (\n        SELECT user_id, \n               anime_id, \n               score, \n               ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY RAND()) - 1 AS random_order_anime_per_user\n        FROM train_data\n    ),\n    train_data_list AS (\n        SELECT user_id, \n               ARRAY_TO_STRING(ARRAY_AGG(anime_id), '|') AS anime_id, \n               ARRAY_TO_STRING(ARRAY_AGG(score), '|') AS score \n        FROM train_data_random_order\n        GROUP BY user_id, DIV(random_order_anime_per_user, 10)\n        HAVING ARRAY_LENGTH(anime_id) = 10\n    ),\n    val_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 11 AND 20\n    ),\n    val_data_list AS (\n        SELECT user_id, \n               ARRAY_TO_STRING(ARRAY_AGG(anime_id), '|') AS anime_id, \n               ARRAY_TO_STRING(ARRAY_AGG(score), '|') AS score \n        FROM val_data \n        GROUP BY user_id\n    ),\n    test_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 1 AND 10\n    ),\n    test_data_list AS (\n        SELECT user_id, \n               ARRAY_TO_STRING(ARRAY_AGG(anime_id), '|') AS anime_id, \n               ARRAY_TO_STRING(ARRAY_AGG(score), '|') AS score \n        FROM test_data \n        GROUP BY user_id\n    )\n    \n        SELECT *\n        FROM val_data_list\n        "
+                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    ),\n    train_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order >= 21\n    ),\n    train_data_random_order AS (\n        SELECT user_id, \n               anime_id, \n               CAST(score AS STRING) AS score, \n               ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY RAND()) - 1 AS random_order_anime_per_user\n        FROM train_data\n    ),\n    train_data_list AS (\n        SELECT user_id, \n               ARRAY_TO_STRING(ARRAY_AGG(anime_id), '|') AS anime_id, \n               ARRAY_TO_STRING(ARRAY_AGG(score), '|') AS score \n        FROM train_data_random_order\n        GROUP BY user_id, DIV(random_order_anime_per_user, 10)\n        HAVING ARRAY_LENGTH(anime_id) = 10\n    ),\n    val_data AS (\n        SELECT user_id, anime_id, CAST(score AS STRING) AS score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 11 AND 20\n    ),\n    val_data_list AS (\n        SELECT user_id, \n               ARRAY_TO_STRING(ARRAY_AGG(anime_id), '|') AS anime_id, \n               ARRAY_TO_STRING(ARRAY_AGG(score), '|') AS score \n        FROM val_data \n        GROUP BY user_id\n    ),\n    test_data AS (\n        SELECT user_id, anime_id, CAST(score AS STRING) AS score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 1 AND 10\n    ),\n    test_data_list AS (\n        SELECT user_id, \n               ARRAY_TO_STRING(ARRAY_AGG(anime_id), '|') AS anime_id, \n               ARRAY_TO_STRING(ARRAY_AGG(score), '|') AS score \n        FROM test_data \n        GROUP BY user_id\n    )\n    \n        SELECT *\n        FROM val_data_list\n        "
                       }
                     }
                   }
@@ -2310,7 +1234,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_list_ranking_test_20220228165328"
+                        "stringValue": "user_anime_list_ranking_test_20220228171711"
                       }
                     }
                   },
@@ -2323,7 +1247,7 @@
                   "query": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    ),\n    train_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order >= 21\n    ),\n    train_data_random_order AS (\n        SELECT user_id, \n               anime_id, \n               score, \n               ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY RAND()) - 1 AS random_order_anime_per_user\n        FROM train_data\n    ),\n    train_data_list AS (\n        SELECT user_id, \n               ARRAY_TO_STRING(ARRAY_AGG(anime_id), '|') AS anime_id, \n               ARRAY_TO_STRING(ARRAY_AGG(score), '|') AS score \n        FROM train_data_random_order\n        GROUP BY user_id, DIV(random_order_anime_per_user, 10)\n        HAVING ARRAY_LENGTH(anime_id) = 10\n    ),\n    val_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 11 AND 20\n    ),\n    val_data_list AS (\n        SELECT user_id, \n               ARRAY_TO_STRING(ARRAY_AGG(anime_id), '|') AS anime_id, \n               ARRAY_TO_STRING(ARRAY_AGG(score), '|') AS score \n        FROM val_data \n        GROUP BY user_id\n    ),\n    test_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 1 AND 10\n    ),\n    test_data_list AS (\n        SELECT user_id, \n               ARRAY_TO_STRING(ARRAY_AGG(anime_id), '|') AS anime_id, \n               ARRAY_TO_STRING(ARRAY_AGG(score), '|') AS score \n        FROM test_data \n        GROUP BY user_id\n    )\n    \n        SELECT *\n        FROM test_data_list\n        "
+                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    ),\n    train_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order >= 21\n    ),\n    train_data_random_order AS (\n        SELECT user_id, \n               anime_id, \n               CAST(score AS STRING) AS score, \n               ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY RAND()) - 1 AS random_order_anime_per_user\n        FROM train_data\n    ),\n    train_data_list AS (\n        SELECT user_id, \n               ARRAY_TO_STRING(ARRAY_AGG(anime_id), '|') AS anime_id, \n               ARRAY_TO_STRING(ARRAY_AGG(score), '|') AS score \n        FROM train_data_random_order\n        GROUP BY user_id, DIV(random_order_anime_per_user, 10)\n        HAVING ARRAY_LENGTH(anime_id) = 10\n    ),\n    val_data AS (\n        SELECT user_id, anime_id, CAST(score AS STRING) AS score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 11 AND 20\n    ),\n    val_data_list AS (\n        SELECT user_id, \n               ARRAY_TO_STRING(ARRAY_AGG(anime_id), '|') AS anime_id, \n               ARRAY_TO_STRING(ARRAY_AGG(score), '|') AS score \n        FROM val_data \n        GROUP BY user_id\n    ),\n    test_data AS (\n        SELECT user_id, anime_id, CAST(score AS STRING) AS score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 1 AND 10\n    ),\n    test_data_list AS (\n        SELECT user_id, \n               ARRAY_TO_STRING(ARRAY_AGG(anime_id), '|') AS anime_id, \n               ARRAY_TO_STRING(ARRAY_AGG(score), '|') AS score \n        FROM test_data \n        GROUP BY user_id\n    )\n    \n        SELECT *\n        FROM test_data_list\n        "
                       }
                     }
                   }
@@ -2385,7 +1309,585 @@
           }
         }
       },
-      "comp-condition-6": {
+      "comp-condition-no-run-retrieval-4": {
+        "dag": {
+          "outputs": {
+            "artifacts": {
+              "component-7-metrics_path": {
+                "artifactSelectors": [
+                  {
+                    "outputArtifactKey": "component-7-metrics_path",
+                    "producerSubtask": "condition-list-ranking-5"
+                  }
+                ]
+              },
+              "component-9-metrics_path": {
+                "artifactSelectors": [
+                  {
+                    "outputArtifactKey": "component-9-metrics_path",
+                    "producerSubtask": "condition-ranking-6"
+                  }
+                ]
+              }
+            }
+          },
+          "tasks": {
+            "condition-list-ranking-5": {
+              "componentRef": {
+                "name": "comp-condition-list-ranking-5"
+              },
+              "dependentTasks": [
+                "run-query-save-to-bq-table-and-gcs-13"
+              ],
+              "inputs": {
+                "artifacts": {
+                  "pipelineparam--run-query-save-to-bq-table-and-gcs-13-gcs_output_data": {
+                    "taskOutputArtifact": {
+                      "outputArtifactKey": "gcs_output_data",
+                      "producerTask": "run-query-save-to-bq-table-and-gcs-13"
+                    }
+                  },
+                  "pipelineparam--run-query-save-to-bq-table-and-gcs-2-gcs_output_data": {
+                    "componentInputArtifact": "pipelineparam--run-query-save-to-bq-table-and-gcs-2-gcs_output_data"
+                  },
+                  "pipelineparam--run-query-save-to-bq-table-and-gcs-gcs_output_data": {
+                    "componentInputArtifact": "pipelineparam--run-query-save-to-bq-table-and-gcs-gcs_output_data"
+                  }
+                },
+                "parameters": {
+                  "pipelineparam--data_format": {
+                    "componentInputParameter": "pipelineparam--data_format"
+                  },
+                  "pipelineparam--dataset_id": {
+                    "componentInputParameter": "pipelineparam--dataset_id"
+                  },
+                  "pipelineparam--list_ranking": {
+                    "componentInputParameter": "pipelineparam--list_ranking"
+                  },
+                  "pipelineparam--project_id": {
+                    "componentInputParameter": "pipelineparam--project_id"
+                  },
+                  "pipelineparam--run_retrieval": {
+                    "componentInputParameter": "pipelineparam--run_retrieval"
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "condition-list-ranking-5"
+              },
+              "triggerPolicy": {
+                "condition": "inputs.parameters['pipelineparam--list_ranking'].string_value == 'true'"
+              }
+            },
+            "condition-ranking-6": {
+              "componentRef": {
+                "name": "comp-condition-ranking-6"
+              },
+              "dependentTasks": [
+                "run-query-save-to-bq-table-and-gcs-13"
+              ],
+              "inputs": {
+                "artifacts": {
+                  "pipelineparam--run-query-save-to-bq-table-and-gcs-13-gcs_output_data": {
+                    "taskOutputArtifact": {
+                      "outputArtifactKey": "gcs_output_data",
+                      "producerTask": "run-query-save-to-bq-table-and-gcs-13"
+                    }
+                  },
+                  "pipelineparam--run-query-save-to-bq-table-and-gcs-2-gcs_output_data": {
+                    "componentInputArtifact": "pipelineparam--run-query-save-to-bq-table-and-gcs-2-gcs_output_data"
+                  },
+                  "pipelineparam--run-query-save-to-bq-table-and-gcs-gcs_output_data": {
+                    "componentInputArtifact": "pipelineparam--run-query-save-to-bq-table-and-gcs-gcs_output_data"
+                  }
+                },
+                "parameters": {
+                  "pipelineparam--data_format": {
+                    "componentInputParameter": "pipelineparam--data_format"
+                  },
+                  "pipelineparam--dataset_id": {
+                    "componentInputParameter": "pipelineparam--dataset_id"
+                  },
+                  "pipelineparam--list_ranking": {
+                    "componentInputParameter": "pipelineparam--list_ranking"
+                  },
+                  "pipelineparam--project_id": {
+                    "componentInputParameter": "pipelineparam--project_id"
+                  },
+                  "pipelineparam--run_retrieval": {
+                    "componentInputParameter": "pipelineparam--run_retrieval"
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "condition-ranking-6"
+              },
+              "triggerPolicy": {
+                "condition": "inputs.parameters['pipelineparam--list_ranking'].string_value == 'false'"
+              }
+            },
+            "run-query-save-to-bq-table-and-gcs-13": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-run-query-save-to-bq-table-and-gcs-13"
+              },
+              "inputs": {
+                "parameters": {
+                  "destination_dataset_id": {
+                    "componentInputParameter": "pipelineparam--dataset_id"
+                  },
+                  "destination_table_id": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "user_cross_anime_20220228171711"
+                      }
+                    }
+                  },
+                  "gcs_output_format": {
+                    "componentInputParameter": "pipelineparam--data_format"
+                  },
+                  "project_id": {
+                    "componentInputParameter": "pipelineparam--project_id"
+                  },
+                  "query": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "\n        WITH \n        list_anime AS (\n            \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n        ),\n        list_users AS (\n            \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n        ),\n        filtered_user_anime AS (\n            \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n        )\n        SELECT A.user_id, B.anime_id\n        FROM list_users A\n        CROSS JOIN list_anime B  \n    "
+                      }
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "DATA: user cross anime not interacted with data"
+              }
+            }
+          }
+        },
+        "inputDefinitions": {
+          "artifacts": {
+            "pipelineparam--run-query-save-to-bq-table-and-gcs-2-gcs_output_data": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "pipelineparam--run-query-save-to-bq-table-and-gcs-gcs_output_data": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          },
+          "parameters": {
+            "pipelineparam--data_format": {
+              "type": "STRING"
+            },
+            "pipelineparam--dataset_id": {
+              "type": "STRING"
+            },
+            "pipelineparam--list_ranking": {
+              "type": "STRING"
+            },
+            "pipelineparam--project_id": {
+              "type": "STRING"
+            },
+            "pipelineparam--run_retrieval": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "component-7-metrics_path": {
+              "artifactType": {
+                "schemaTitle": "system.Metrics",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "component-9-metrics_path": {
+              "artifactType": {
+                "schemaTitle": "system.Metrics",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-condition-ranking-3": {
+        "dag": {
+          "outputs": {
+            "artifacts": {
+              "component-5-metrics_path": {
+                "artifactSelectors": [
+                  {
+                    "outputArtifactKey": "metrics_path",
+                    "producerSubtask": "component-5"
+                  }
+                ]
+              }
+            }
+          },
+          "tasks": {
+            "component-5": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-component-5"
+              },
+              "dependentTasks": [
+                "run-query-save-to-bq-table-and-gcs-10",
+                "run-query-save-to-bq-table-and-gcs-11",
+                "run-query-save-to-bq-table-and-gcs-12"
+              ],
+              "inputs": {
+                "artifacts": {
+                  "anime_data_path": {
+                    "componentInputArtifact": "pipelineparam--run-query-save-to-bq-table-and-gcs-gcs_output_data"
+                  },
+                  "test_data_path": {
+                    "taskOutputArtifact": {
+                      "outputArtifactKey": "gcs_output_data",
+                      "producerTask": "run-query-save-to-bq-table-and-gcs-12"
+                    }
+                  },
+                  "train_data_path": {
+                    "taskOutputArtifact": {
+                      "outputArtifactKey": "gcs_output_data",
+                      "producerTask": "run-query-save-to-bq-table-and-gcs-10"
+                    }
+                  },
+                  "user_data_path": {
+                    "componentInputArtifact": "pipelineparam--run-query-save-to-bq-table-and-gcs-2-gcs_output_data"
+                  },
+                  "val_data_path": {
+                    "taskOutputArtifact": {
+                      "outputArtifactKey": "gcs_output_data",
+                      "producerTask": "run-query-save-to-bq-table-and-gcs-11"
+                    }
+                  }
+                },
+                "parameters": {
+                  "anime_embedding_size": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "intValue": "128"
+                      }
+                    }
+                  },
+                  "data_format": {
+                    "componentInputParameter": "pipelineparam--data_format"
+                  },
+                  "early_stop_num_epochs": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "intValue": "5"
+                      }
+                    }
+                  },
+                  "learning_rate": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "doubleValue": 0.005
+                      }
+                    }
+                  },
+                  "max_num_epochs": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "intValue": "30"
+                      }
+                    }
+                  },
+                  "model_type": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "ranking"
+                      }
+                    }
+                  },
+                  "optimizer": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "adam"
+                      }
+                    }
+                  },
+                  "scoring_layer_size": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "intValue": "128"
+                      }
+                    }
+                  },
+                  "user_embedding_size": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "intValue": "256"
+                      }
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "TRAIN: user anime ranking"
+              }
+            },
+            "component-6": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-component-6"
+              },
+              "dependentTasks": [
+                "component-5"
+              ],
+              "inputs": {
+                "artifacts": {
+                  "input_data_path": {
+                    "componentInputArtifact": "pipelineparam--run-query-save-to-bq-table-and-gcs-6-gcs_output_data"
+                  },
+                  "model_path": {
+                    "taskOutputArtifact": {
+                      "outputArtifactKey": "model_path",
+                      "producerTask": "component-5"
+                    }
+                  }
+                },
+                "parameters": {
+                  "model_type": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "ranking"
+                      }
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "INFER: user anime ranking"
+              }
+            },
+            "gcs-to-bq-table-3": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-gcs-to-bq-table-3"
+              },
+              "dependentTasks": [
+                "component-6"
+              ],
+              "inputs": {
+                "artifacts": {
+                  "gcs_input_data": {
+                    "taskOutputArtifact": {
+                      "outputArtifactKey": "output_data_path",
+                      "producerTask": "component-6"
+                    }
+                  }
+                },
+                "parameters": {
+                  "destination_dataset_id": {
+                    "componentInputParameter": "pipelineparam--dataset_id"
+                  },
+                  "destination_table_id": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "user_anime_ranking_infer_20220228171711"
+                      }
+                    }
+                  },
+                  "gcs_input_data_format": {
+                    "componentInputParameter": "pipelineparam--data_format"
+                  },
+                  "gcs_input_data_schema": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "[[\"user_id\", \"STRING\"], [\"anime_id\", \"STRING\"], [\"score\", \"FLOAT\"]]"
+                      }
+                    }
+                  },
+                  "project_id": {
+                    "componentInputParameter": "pipelineparam--project_id"
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "INFER: user anime ranking to BQ"
+              }
+            },
+            "run-query-save-to-bq-table-and-gcs-10": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-run-query-save-to-bq-table-and-gcs-10"
+              },
+              "inputs": {
+                "parameters": {
+                  "destination_dataset_id": {
+                    "componentInputParameter": "pipelineparam--dataset_id"
+                  },
+                  "destination_table_id": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "user_anime_ranking_train_20220228171711"
+                      }
+                    }
+                  },
+                  "gcs_output_format": {
+                    "componentInputParameter": "pipelineparam--data_format"
+                  },
+                  "project_id": {
+                    "componentInputParameter": "pipelineparam--project_id"
+                  },
+                  "query": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    )\n    \n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order >= 21\n        "
+                      }
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "DATA: train user anime ranking"
+              }
+            },
+            "run-query-save-to-bq-table-and-gcs-11": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-run-query-save-to-bq-table-and-gcs-11"
+              },
+              "inputs": {
+                "parameters": {
+                  "destination_dataset_id": {
+                    "componentInputParameter": "pipelineparam--dataset_id"
+                  },
+                  "destination_table_id": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "user_anime_ranking_val_20220228171711"
+                      }
+                    }
+                  },
+                  "gcs_output_format": {
+                    "componentInputParameter": "pipelineparam--data_format"
+                  },
+                  "project_id": {
+                    "componentInputParameter": "pipelineparam--project_id"
+                  },
+                  "query": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    )\n    \n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 11 AND 20\n        "
+                      }
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "DATA: validation user anime ranking"
+              }
+            },
+            "run-query-save-to-bq-table-and-gcs-12": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-run-query-save-to-bq-table-and-gcs-12"
+              },
+              "inputs": {
+                "parameters": {
+                  "destination_dataset_id": {
+                    "componentInputParameter": "pipelineparam--dataset_id"
+                  },
+                  "destination_table_id": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "user_anime_ranking_test_20220228171711"
+                      }
+                    }
+                  },
+                  "gcs_output_format": {
+                    "componentInputParameter": "pipelineparam--data_format"
+                  },
+                  "project_id": {
+                    "componentInputParameter": "pipelineparam--project_id"
+                  },
+                  "query": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    )\n    \n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 1 AND 10\n        "
+                      }
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "DATA: test user anime ranking"
+              }
+            }
+          }
+        },
+        "inputDefinitions": {
+          "artifacts": {
+            "pipelineparam--run-query-save-to-bq-table-and-gcs-2-gcs_output_data": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "pipelineparam--run-query-save-to-bq-table-and-gcs-6-gcs_output_data": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "pipelineparam--run-query-save-to-bq-table-and-gcs-gcs_output_data": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          },
+          "parameters": {
+            "pipelineparam--data_format": {
+              "type": "STRING"
+            },
+            "pipelineparam--dataset_id": {
+              "type": "STRING"
+            },
+            "pipelineparam--list_ranking": {
+              "type": "STRING"
+            },
+            "pipelineparam--project_id": {
+              "type": "STRING"
+            },
+            "pipelineparam--run_retrieval": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "component-5-metrics_path": {
+              "artifactType": {
+                "schemaTitle": "system.Metrics",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-condition-ranking-6": {
         "dag": {
           "outputs": {
             "artifacts": {
@@ -2567,7 +2069,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_ranking_infer_20220228165328"
+                        "stringValue": "user_anime_ranking_infer_20220228171711"
                       }
                     }
                   },
@@ -2605,7 +2107,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_ranking_train_20220228165328"
+                        "stringValue": "user_anime_ranking_train_20220228171711"
                       }
                     }
                   },
@@ -2643,7 +2145,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_ranking_val_20220228165328"
+                        "stringValue": "user_anime_ranking_val_20220228171711"
                       }
                     }
                   },
@@ -2681,7 +2183,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_ranking_test_20220228165328"
+                        "stringValue": "user_anime_ranking_test_20220228171711"
                       }
                     }
                   },
@@ -2748,6 +2250,504 @@
         "outputDefinitions": {
           "artifacts": {
             "component-9-metrics_path": {
+              "artifactType": {
+                "schemaTitle": "system.Metrics",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          }
+        }
+      },
+      "comp-condition-yes-run-retrieval-1": {
+        "dag": {
+          "outputs": {
+            "artifacts": {
+              "component-3-metrics_path": {
+                "artifactSelectors": [
+                  {
+                    "outputArtifactKey": "component-3-metrics_path",
+                    "producerSubtask": "condition-list-ranking-2"
+                  }
+                ]
+              },
+              "component-5-metrics_path": {
+                "artifactSelectors": [
+                  {
+                    "outputArtifactKey": "component-5-metrics_path",
+                    "producerSubtask": "condition-ranking-3"
+                  }
+                ]
+              },
+              "component-metrics_path": {
+                "artifactSelectors": [
+                  {
+                    "outputArtifactKey": "metrics_path",
+                    "producerSubtask": "component"
+                  }
+                ]
+              }
+            }
+          },
+          "tasks": {
+            "component": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-component"
+              },
+              "dependentTasks": [
+                "run-query-save-to-bq-table-and-gcs-3",
+                "run-query-save-to-bq-table-and-gcs-4",
+                "run-query-save-to-bq-table-and-gcs-5"
+              ],
+              "inputs": {
+                "artifacts": {
+                  "anime_data_path": {
+                    "componentInputArtifact": "pipelineparam--run-query-save-to-bq-table-and-gcs-gcs_output_data"
+                  },
+                  "test_data_path": {
+                    "taskOutputArtifact": {
+                      "outputArtifactKey": "gcs_output_data",
+                      "producerTask": "run-query-save-to-bq-table-and-gcs-5"
+                    }
+                  },
+                  "train_data_path": {
+                    "taskOutputArtifact": {
+                      "outputArtifactKey": "gcs_output_data",
+                      "producerTask": "run-query-save-to-bq-table-and-gcs-3"
+                    }
+                  },
+                  "user_data_path": {
+                    "componentInputArtifact": "pipelineparam--run-query-save-to-bq-table-and-gcs-2-gcs_output_data"
+                  },
+                  "val_data_path": {
+                    "taskOutputArtifact": {
+                      "outputArtifactKey": "gcs_output_data",
+                      "producerTask": "run-query-save-to-bq-table-and-gcs-4"
+                    }
+                  }
+                },
+                "parameters": {
+                  "data_format": {
+                    "componentInputParameter": "pipelineparam--data_format"
+                  },
+                  "early_stop_num_epochs": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "intValue": "5"
+                      }
+                    }
+                  },
+                  "learning_rate": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "doubleValue": 0.005
+                      }
+                    }
+                  },
+                  "max_num_epochs": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "intValue": "30"
+                      }
+                    }
+                  },
+                  "optimizer": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "adam"
+                      }
+                    }
+                  },
+                  "user_anime_embedding_size": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "intValue": "128"
+                      }
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "TRAIN: user anime retrieval"
+              }
+            },
+            "component-2": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-component-2"
+              },
+              "dependentTasks": [
+                "component"
+              ],
+              "inputs": {
+                "artifacts": {
+                  "input_data_path": {
+                    "componentInputArtifact": "pipelineparam--run-query-save-to-bq-table-and-gcs-2-gcs_output_data"
+                  },
+                  "model_path": {
+                    "taskOutputArtifact": {
+                      "outputArtifactKey": "model_path",
+                      "producerTask": "component"
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "INFER: user anime retrieval"
+              }
+            },
+            "condition-list-ranking-2": {
+              "componentRef": {
+                "name": "comp-condition-list-ranking-2"
+              },
+              "dependentTasks": [
+                "run-query-save-to-bq-table-and-gcs-6"
+              ],
+              "inputs": {
+                "artifacts": {
+                  "pipelineparam--run-query-save-to-bq-table-and-gcs-2-gcs_output_data": {
+                    "componentInputArtifact": "pipelineparam--run-query-save-to-bq-table-and-gcs-2-gcs_output_data"
+                  },
+                  "pipelineparam--run-query-save-to-bq-table-and-gcs-6-gcs_output_data": {
+                    "taskOutputArtifact": {
+                      "outputArtifactKey": "gcs_output_data",
+                      "producerTask": "run-query-save-to-bq-table-and-gcs-6"
+                    }
+                  },
+                  "pipelineparam--run-query-save-to-bq-table-and-gcs-gcs_output_data": {
+                    "componentInputArtifact": "pipelineparam--run-query-save-to-bq-table-and-gcs-gcs_output_data"
+                  }
+                },
+                "parameters": {
+                  "pipelineparam--data_format": {
+                    "componentInputParameter": "pipelineparam--data_format"
+                  },
+                  "pipelineparam--dataset_id": {
+                    "componentInputParameter": "pipelineparam--dataset_id"
+                  },
+                  "pipelineparam--list_ranking": {
+                    "componentInputParameter": "pipelineparam--list_ranking"
+                  },
+                  "pipelineparam--project_id": {
+                    "componentInputParameter": "pipelineparam--project_id"
+                  },
+                  "pipelineparam--run_retrieval": {
+                    "componentInputParameter": "pipelineparam--run_retrieval"
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "condition-list-ranking-2"
+              },
+              "triggerPolicy": {
+                "condition": "inputs.parameters['pipelineparam--list_ranking'].string_value == 'true'"
+              }
+            },
+            "condition-ranking-3": {
+              "componentRef": {
+                "name": "comp-condition-ranking-3"
+              },
+              "dependentTasks": [
+                "run-query-save-to-bq-table-and-gcs-6"
+              ],
+              "inputs": {
+                "artifacts": {
+                  "pipelineparam--run-query-save-to-bq-table-and-gcs-2-gcs_output_data": {
+                    "componentInputArtifact": "pipelineparam--run-query-save-to-bq-table-and-gcs-2-gcs_output_data"
+                  },
+                  "pipelineparam--run-query-save-to-bq-table-and-gcs-6-gcs_output_data": {
+                    "taskOutputArtifact": {
+                      "outputArtifactKey": "gcs_output_data",
+                      "producerTask": "run-query-save-to-bq-table-and-gcs-6"
+                    }
+                  },
+                  "pipelineparam--run-query-save-to-bq-table-and-gcs-gcs_output_data": {
+                    "componentInputArtifact": "pipelineparam--run-query-save-to-bq-table-and-gcs-gcs_output_data"
+                  }
+                },
+                "parameters": {
+                  "pipelineparam--data_format": {
+                    "componentInputParameter": "pipelineparam--data_format"
+                  },
+                  "pipelineparam--dataset_id": {
+                    "componentInputParameter": "pipelineparam--dataset_id"
+                  },
+                  "pipelineparam--list_ranking": {
+                    "componentInputParameter": "pipelineparam--list_ranking"
+                  },
+                  "pipelineparam--project_id": {
+                    "componentInputParameter": "pipelineparam--project_id"
+                  },
+                  "pipelineparam--run_retrieval": {
+                    "componentInputParameter": "pipelineparam--run_retrieval"
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "condition-ranking-3"
+              },
+              "triggerPolicy": {
+                "condition": "inputs.parameters['pipelineparam--list_ranking'].string_value == 'false'"
+              }
+            },
+            "gcs-to-bq-table": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-gcs-to-bq-table"
+              },
+              "dependentTasks": [
+                "component-2"
+              ],
+              "inputs": {
+                "artifacts": {
+                  "gcs_input_data": {
+                    "taskOutputArtifact": {
+                      "outputArtifactKey": "output_data_path",
+                      "producerTask": "component-2"
+                    }
+                  }
+                },
+                "parameters": {
+                  "destination_dataset_id": {
+                    "componentInputParameter": "pipelineparam--dataset_id"
+                  },
+                  "destination_table_id": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "user_anime_retrieval_infer_20220228171711"
+                      }
+                    }
+                  },
+                  "gcs_input_data_format": {
+                    "componentInputParameter": "pipelineparam--data_format"
+                  },
+                  "gcs_input_data_schema": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "[[\"user_id\", \"STRING\"], [\"anime_id\", \"STRING\"]]"
+                      }
+                    }
+                  },
+                  "project_id": {
+                    "componentInputParameter": "pipelineparam--project_id"
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "INFER: user anime retrieval to BQ"
+              }
+            },
+            "run-query-save-to-bq-table-and-gcs-3": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-run-query-save-to-bq-table-and-gcs-3"
+              },
+              "inputs": {
+                "parameters": {
+                  "destination_dataset_id": {
+                    "componentInputParameter": "pipelineparam--dataset_id"
+                  },
+                  "destination_table_id": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "user_anime_retrieval_train_20220228171711"
+                      }
+                    }
+                  },
+                  "gcs_output_format": {
+                    "componentInputParameter": "pipelineparam--data_format"
+                  },
+                  "project_id": {
+                    "componentInputParameter": "pipelineparam--project_id"
+                  },
+                  "query": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed'\n    \n    )\n    \n        SELECT user_id, anime_id \n        FROM filtered_ordered_user_anime \n        WHERE user_anime_order >= 21\n        "
+                      }
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "DATA: train user anime retrieval"
+              }
+            },
+            "run-query-save-to-bq-table-and-gcs-4": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-run-query-save-to-bq-table-and-gcs-4"
+              },
+              "inputs": {
+                "parameters": {
+                  "destination_dataset_id": {
+                    "componentInputParameter": "pipelineparam--dataset_id"
+                  },
+                  "destination_table_id": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "user_anime_retrieval_val_20220228171711"
+                      }
+                    }
+                  },
+                  "gcs_output_format": {
+                    "componentInputParameter": "pipelineparam--data_format"
+                  },
+                  "project_id": {
+                    "componentInputParameter": "pipelineparam--project_id"
+                  },
+                  "query": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed'\n    \n    )\n    \n        SELECT user_id, anime_id \n        FROM filtered_ordered_user_anime \n        WHERE user_anime_order BETWEEN 11 AND 20\n        "
+                      }
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "DATA: val user anime retrieval"
+              }
+            },
+            "run-query-save-to-bq-table-and-gcs-5": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-run-query-save-to-bq-table-and-gcs-5"
+              },
+              "inputs": {
+                "parameters": {
+                  "destination_dataset_id": {
+                    "componentInputParameter": "pipelineparam--dataset_id"
+                  },
+                  "destination_table_id": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "user_anime_retrieval_test_20220228171711"
+                      }
+                    }
+                  },
+                  "gcs_output_format": {
+                    "componentInputParameter": "pipelineparam--data_format"
+                  },
+                  "project_id": {
+                    "componentInputParameter": "pipelineparam--project_id"
+                  },
+                  "query": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed'\n    \n    )\n    \n        SELECT user_id, anime_id \n        FROM filtered_ordered_user_anime \n        WHERE user_anime_order BETWEEN 1 AND 10\n        "
+                      }
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "DATA: test user anime retrieval"
+              }
+            },
+            "run-query-save-to-bq-table-and-gcs-6": {
+              "cachingOptions": {
+                "enableCache": true
+              },
+              "componentRef": {
+                "name": "comp-run-query-save-to-bq-table-and-gcs-6"
+              },
+              "dependentTasks": [
+                "gcs-to-bq-table"
+              ],
+              "inputs": {
+                "parameters": {
+                  "destination_dataset_id": {
+                    "componentInputParameter": "pipelineparam--dataset_id"
+                  },
+                  "destination_table_id": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "user_anime_retrieval_to_rank_20220228171711"
+                      }
+                    }
+                  },
+                  "gcs_output_format": {
+                    "componentInputParameter": "pipelineparam--data_format"
+                  },
+                  "project_id": {
+                    "componentInputParameter": "pipelineparam--project_id"
+                  },
+                  "query": {
+                    "runtimeValue": {
+                      "constantValue": {
+                        "stringValue": "\n        WITH \n        list_anime AS (\n            \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 1000\n    \n        ),\n        list_users AS (\n            \n        SELECT user_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n        ),\n        filtered_user_anime AS (\n            \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n        INNER JOIN list_users C\n        ON A.user_id = C.user_id\n    \n        )\n        SELECT A.user_id, A.anime_id\n        FROM {project_id}.{dataset_id}.user_anime_retrieval_infer_{current_time} A\n        LEFT JOIN filtered_user_anime B\n        ON A.user_id = B.user_id AND A.anime_id = B.anime_id\n        WHERE B.status IS NULL\n    "
+                      }
+                    }
+                  }
+                }
+              },
+              "taskInfo": {
+                "name": "INFER: user anime retrieval to be ranked"
+              }
+            }
+          }
+        },
+        "inputDefinitions": {
+          "artifacts": {
+            "pipelineparam--run-query-save-to-bq-table-and-gcs-2-gcs_output_data": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "pipelineparam--run-query-save-to-bq-table-and-gcs-gcs_output_data": {
+              "artifactType": {
+                "schemaTitle": "system.Dataset",
+                "schemaVersion": "0.0.1"
+              }
+            }
+          },
+          "parameters": {
+            "pipelineparam--data_format": {
+              "type": "STRING"
+            },
+            "pipelineparam--dataset_id": {
+              "type": "STRING"
+            },
+            "pipelineparam--list_ranking": {
+              "type": "STRING"
+            },
+            "pipelineparam--project_id": {
+              "type": "STRING"
+            },
+            "pipelineparam--run_retrieval": {
+              "type": "STRING"
+            }
+          }
+        },
+        "outputDefinitions": {
+          "artifacts": {
+            "component-3-metrics_path": {
+              "artifactType": {
+                "schemaTitle": "system.Metrics",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "component-5-metrics_path": {
+              "artifactType": {
+                "schemaTitle": "system.Metrics",
+                "schemaVersion": "0.0.1"
+              }
+            },
+            "component-metrics_path": {
               "artifactType": {
                 "schemaTitle": "system.Metrics",
                 "schemaVersion": "0.0.1"
@@ -4316,7 +4316,7 @@
               "artifactSelectors": [
                 {
                   "outputArtifactKey": "component-3-metrics_path",
-                  "producerSubtask": "condition-1"
+                  "producerSubtask": "condition-yes-run-retrieval-1"
                 }
               ]
             },
@@ -4324,7 +4324,7 @@
               "artifactSelectors": [
                 {
                   "outputArtifactKey": "component-5-metrics_path",
-                  "producerSubtask": "condition-1"
+                  "producerSubtask": "condition-yes-run-retrieval-1"
                 }
               ]
             },
@@ -4332,7 +4332,7 @@
               "artifactSelectors": [
                 {
                   "outputArtifactKey": "component-7-metrics_path",
-                  "producerSubtask": "condition-4"
+                  "producerSubtask": "condition-no-run-retrieval-4"
                 }
               ]
             },
@@ -4340,7 +4340,7 @@
               "artifactSelectors": [
                 {
                   "outputArtifactKey": "component-9-metrics_path",
-                  "producerSubtask": "condition-4"
+                  "producerSubtask": "condition-no-run-retrieval-4"
                 }
               ]
             },
@@ -4348,16 +4348,16 @@
               "artifactSelectors": [
                 {
                   "outputArtifactKey": "component-metrics_path",
-                  "producerSubtask": "condition-1"
+                  "producerSubtask": "condition-yes-run-retrieval-1"
                 }
               ]
             }
           }
         },
         "tasks": {
-          "condition-1": {
+          "condition-no-run-retrieval-4": {
             "componentRef": {
-              "name": "comp-condition-1"
+              "name": "comp-condition-no-run-retrieval-4"
             },
             "dependentTasks": [
               "run-query-save-to-bq-table-and-gcs",
@@ -4397,58 +4397,58 @@
               }
             },
             "taskInfo": {
-              "name": "condition-1"
-            },
-            "triggerPolicy": {
-              "condition": "inputs.parameters['pipelineparam--run_retrieval'].string_value == 'true'"
-            }
-          },
-          "condition-4": {
-            "componentRef": {
-              "name": "comp-condition-4"
-            },
-            "dependentTasks": [
-              "run-query-save-to-bq-table-and-gcs",
-              "run-query-save-to-bq-table-and-gcs-2"
-            ],
-            "inputs": {
-              "artifacts": {
-                "pipelineparam--run-query-save-to-bq-table-and-gcs-2-gcs_output_data": {
-                  "taskOutputArtifact": {
-                    "outputArtifactKey": "gcs_output_data",
-                    "producerTask": "run-query-save-to-bq-table-and-gcs-2"
-                  }
-                },
-                "pipelineparam--run-query-save-to-bq-table-and-gcs-gcs_output_data": {
-                  "taskOutputArtifact": {
-                    "outputArtifactKey": "gcs_output_data",
-                    "producerTask": "run-query-save-to-bq-table-and-gcs"
-                  }
-                }
-              },
-              "parameters": {
-                "pipelineparam--data_format": {
-                  "componentInputParameter": "data_format"
-                },
-                "pipelineparam--dataset_id": {
-                  "componentInputParameter": "dataset_id"
-                },
-                "pipelineparam--list_ranking": {
-                  "componentInputParameter": "list_ranking"
-                },
-                "pipelineparam--project_id": {
-                  "componentInputParameter": "project_id"
-                },
-                "pipelineparam--run_retrieval": {
-                  "componentInputParameter": "run_retrieval"
-                }
-              }
-            },
-            "taskInfo": {
-              "name": "condition-4"
+              "name": "condition-no-run-retrieval-4"
             },
             "triggerPolicy": {
               "condition": "inputs.parameters['pipelineparam--run_retrieval'].string_value == 'false'"
+            }
+          },
+          "condition-yes-run-retrieval-1": {
+            "componentRef": {
+              "name": "comp-condition-yes-run-retrieval-1"
+            },
+            "dependentTasks": [
+              "run-query-save-to-bq-table-and-gcs",
+              "run-query-save-to-bq-table-and-gcs-2"
+            ],
+            "inputs": {
+              "artifacts": {
+                "pipelineparam--run-query-save-to-bq-table-and-gcs-2-gcs_output_data": {
+                  "taskOutputArtifact": {
+                    "outputArtifactKey": "gcs_output_data",
+                    "producerTask": "run-query-save-to-bq-table-and-gcs-2"
+                  }
+                },
+                "pipelineparam--run-query-save-to-bq-table-and-gcs-gcs_output_data": {
+                  "taskOutputArtifact": {
+                    "outputArtifactKey": "gcs_output_data",
+                    "producerTask": "run-query-save-to-bq-table-and-gcs"
+                  }
+                }
+              },
+              "parameters": {
+                "pipelineparam--data_format": {
+                  "componentInputParameter": "data_format"
+                },
+                "pipelineparam--dataset_id": {
+                  "componentInputParameter": "dataset_id"
+                },
+                "pipelineparam--list_ranking": {
+                  "componentInputParameter": "list_ranking"
+                },
+                "pipelineparam--project_id": {
+                  "componentInputParameter": "project_id"
+                },
+                "pipelineparam--run_retrieval": {
+                  "componentInputParameter": "run_retrieval"
+                }
+              }
+            },
+            "taskInfo": {
+              "name": "condition-yes-run-retrieval-1"
+            },
+            "triggerPolicy": {
+              "condition": "inputs.parameters['pipelineparam--run_retrieval'].string_value == 'true'"
             }
           },
           "run-query-save-to-bq-table-and-gcs": {
@@ -4466,7 +4466,7 @@
                 "destination_table_id": {
                   "runtimeValue": {
                     "constantValue": {
-                      "stringValue": "list_anime_20220228165328"
+                      "stringValue": "list_anime_20220228171711"
                     }
                   }
                 },
@@ -4504,7 +4504,7 @@
                 "destination_table_id": {
                   "runtimeValue": {
                     "constantValue": {
-                      "stringValue": "list_user_20220228165328"
+                      "stringValue": "list_user_20220228171711"
                     }
                   }
                 },

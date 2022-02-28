@@ -287,7 +287,7 @@ def user_anime_recommendation_pipeline(
     )
     list_user_data.set_display_name("DATA: list user")
 
-    with dsl.Condition(run_retrieval=='true'):
+    with dsl.Condition(run_retrieval=='true', name='yes-run-retrieval'):
 
         user_anime_to_rank = user_anime_retrieval_step(
             list_anime_data, 
@@ -298,7 +298,7 @@ def user_anime_recommendation_pipeline(
             data_format
         )
 
-        with dsl.Condition(list_ranking=='true'):
+        with dsl.Condition(list_ranking=='true', name='list-ranking'):
             _ = user_anime_list_ranking_steps(
                 list_anime_data, 
                 list_user_data, 
@@ -309,7 +309,7 @@ def user_anime_recommendation_pipeline(
                 data_format
             )
         
-        with dsl.Condition(list_ranking=='false'):
+        with dsl.Condition(list_ranking=='false', name='ranking'):
             _ = user_anime_ranking_steps(
                 list_anime_data, 
                 list_user_data, 
@@ -320,7 +320,7 @@ def user_anime_recommendation_pipeline(
                 data_format
             )
 
-    with dsl.Condition(run_retrieval=='false'):
+    with dsl.Condition(run_retrieval=='false', name='no-run-retrieval'):
 
         user_anime_to_rank = run_query_save_to_bq_table_and_gcs(
             query = user_all_possible_animes_query(),
@@ -331,7 +331,7 @@ def user_anime_recommendation_pipeline(
         )
         user_anime_to_rank.set_display_name("DATA: user cross anime not interacted with data")
     
-        with dsl.Condition(list_ranking=='true'):
+        with dsl.Condition(list_ranking=='true', name='list-ranking'):
             _ = user_anime_list_ranking_steps(
                 list_anime_data, 
                 list_user_data, 
@@ -342,7 +342,7 @@ def user_anime_recommendation_pipeline(
                 data_format
             )
         
-        with dsl.Condition(list_ranking=='false'):
+        with dsl.Condition(list_ranking=='false', name='ranking'):
             _ = user_anime_ranking_steps(
                 list_anime_data, 
                 list_user_data, 
