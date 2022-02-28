@@ -142,8 +142,8 @@ def user_anime_list_ranking_query(
     ),
     train_data_list AS (
         SELECT user_id, 
-               ARRAY_TO_STRING(ARRAY_AGG(anime_id), '|') AS anime_id, 
-               ARRAY_TO_STRING(ARRAY_AGG(score), '|') AS score 
+               ARRAY_AGG(anime_id) AS anime_id, 
+               ARRAY_AGG(score) AS score 
         FROM train_data_random_order
         GROUP BY user_id, DIV(random_order_anime_per_user, 10)
         HAVING ARRAY_LENGTH(anime_id) = 10
@@ -155,8 +155,8 @@ def user_anime_list_ranking_query(
     ),
     val_data_list AS (
         SELECT user_id, 
-               ARRAY_TO_STRING(ARRAY_AGG(anime_id), '|') AS anime_id, 
-               ARRAY_TO_STRING(ARRAY_AGG(score), '|') AS score 
+               ARRAY_AGG(anime_id) AS anime_id, 
+               ARRAY_AGG(score) AS score 
         FROM val_data 
         GROUP BY user_id
     ),
@@ -167,25 +167,25 @@ def user_anime_list_ranking_query(
     ),
     test_data_list AS (
         SELECT user_id, 
-               ARRAY_TO_STRING(ARRAY_AGG(anime_id), '|') AS anime_id, 
-               ARRAY_TO_STRING(ARRAY_AGG(score), '|') AS score 
+               ARRAY_AGG(anime_id) AS anime_id, 
+               ARRAY_AGG(score) AS score 
         FROM test_data 
         GROUP BY user_id
     )
     """
     if mode == 'TRAIN':
         query += """
-        SELECT *
+        SELECT user_id, ARRAY_TO_STRING(anime_id) AS anime_id, ARRAY_TO_STRING(score) AS score
         FROM train_data_list
         """
     elif mode == 'VAL':
         query += """
-        SELECT *
+        SELECT user_id, ARRAY_TO_STRING(anime_id) AS anime_id, ARRAY_TO_STRING(score) AS score
         FROM val_data_list
         """
     else:
         query += """
-        SELECT *
+        SELECT user_id, ARRAY_TO_STRING(anime_id) AS anime_id, ARRAY_TO_STRING(score) AS score
         FROM test_data_list
         """
     return query
