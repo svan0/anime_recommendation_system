@@ -1,5 +1,5 @@
 FROM python:3.8
-COPY ml_pipelines/requirements.txt .
+COPY requirements.txt .
 RUN pip install -r requirements.txt
-RUN python3 setup.py install
-COPY ml_pipelines ./ml_pipelines
+COPY anime_rec_pkg/ ./anime_rec_pkg
+WORKDIR "/anime_rec_pkg"
