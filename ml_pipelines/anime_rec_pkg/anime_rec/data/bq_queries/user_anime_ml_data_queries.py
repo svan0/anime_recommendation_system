@@ -3,7 +3,7 @@
     based on the what the user watched (collaborative filtering)
 '''
 from anime_rec.data.bq_queries.common_data_queries import anime_list_query, user_list_query
-from anime_rec.data.bq_queries.user_anime_data_queries import user_anime_filter_anime_filter_users_query
+from anime_rec.data.bq_queries.user_anime_data_queries import user_anime_filter_anime, user_anime_filter_user
 from anime_rec.data.bq_queries.user_anime_data_queries import user_anime_completed_and_not_strict_ordered_query
 from anime_rec.data.bq_queries.user_anime_data_queries import user_anime_completed_and_scored_and_not_strict_ordered_query
 
@@ -25,11 +25,14 @@ def user_anime_retrieval_query(
     list_anime AS (
         {anime_list_query("`anime-rec-dev.processed_area.user_anime`", anime_min_completed_and_rated)}
     ),
+    filtered_user_anime_on_anime AS (
+        {user_anime_filter_anime("`anime-rec-dev.processed_area.user_anime`", "list_anime")}
+    ),
     list_users AS (
-        {user_list_query("`anime-rec-dev.processed_area.user_anime`", users_min_completed_and_rated)}
+        {user_list_query("filtered_user_anime_on_anime", users_min_completed_and_rated)}
     ),
     filtered_user_anime AS (
-        {user_anime_filter_anime_filter_users_query("`anime-rec-dev.processed_area.user_anime`", "list_anime", "list_users")}
+        {user_anime_filter_user("filtered_user_anime_on_anime", "list_users")}
     ),
     filtered_ordered_user_anime AS (
         {user_anime_completed_and_not_strict_ordered_query("filtered_user_anime")}
@@ -72,11 +75,14 @@ def user_anime_ranking_query(
     list_anime AS (
         {anime_list_query("`anime-rec-dev.processed_area.user_anime`", anime_min_completed_and_rated)}
     ),
+    filtered_user_anime_on_anime AS (
+        {user_anime_filter_anime("`anime-rec-dev.processed_area.user_anime`", "list_anime")}
+    ),
     list_users AS (
-        {user_list_query("`anime-rec-dev.processed_area.user_anime`", users_min_completed_and_rated)}
+        {user_list_query("filtered_user_anime_on_anime", users_min_completed_and_rated)}
     ),
     filtered_user_anime AS (
-        {user_anime_filter_anime_filter_users_query("`anime-rec-dev.processed_area.user_anime`", "list_anime", "list_users")}
+        {user_anime_filter_user("filtered_user_anime_on_anime", "list_users")}
     ),
     filtered_ordered_user_anime AS (
         {user_anime_completed_and_scored_and_not_strict_ordered_query("filtered_user_anime")}
@@ -119,11 +125,14 @@ def user_anime_list_ranking_query(
     list_anime AS (
         {anime_list_query("`anime-rec-dev.processed_area.user_anime`", anime_min_completed_and_rated)}
     ),
+    filtered_user_anime_on_anime AS (
+        {user_anime_filter_anime("`anime-rec-dev.processed_area.user_anime`", "list_anime")}
+    ),
     list_users AS (
-        {user_list_query("`anime-rec-dev.processed_area.user_anime`", users_min_completed_and_rated)}
+        {user_list_query("filtered_user_anime_on_anime", users_min_completed_and_rated)}
     ),
     filtered_user_anime AS (
-        {user_anime_filter_anime_filter_users_query("`anime-rec-dev.processed_area.user_anime`", "list_anime", "list_users")}
+        {user_anime_filter_user("filtered_user_anime_on_anime", "list_users")}
     ),
     filtered_ordered_user_anime AS (
         {user_anime_completed_and_scored_and_not_strict_ordered_query("filtered_user_anime")}
@@ -175,17 +184,17 @@ def user_anime_list_ranking_query(
     """
     if mode == 'TRAIN':
         query += """
-        SELECT user_id, ARRAY_TO_STRING(anime_id) AS anime_id, ARRAY_TO_STRING(score) AS score
+        SELECT user_id, ARRAY_TO_STRING(anime_id, '|') AS anime_id, ARRAY_TO_STRING(score, '|') AS score
         FROM train_data_list
         """
     elif mode == 'VAL':
         query += """
-        SELECT user_id, ARRAY_TO_STRING(anime_id) AS anime_id, ARRAY_TO_STRING(score) AS score
+        SELECT user_id, ARRAY_TO_STRING(anime_id, '|') AS anime_id, ARRAY_TO_STRING(score, '|') AS score
         FROM val_data_list
         """
     else:
         query += """
-        SELECT user_id, ARRAY_TO_STRING(anime_id) AS anime_id, ARRAY_TO_STRING(score) AS score
+        SELECT user_id, ARRAY_TO_STRING(anime_id, '|') AS anime_id, ARRAY_TO_STRING(score, '|') AS score
         FROM test_data_list
         """
     return query

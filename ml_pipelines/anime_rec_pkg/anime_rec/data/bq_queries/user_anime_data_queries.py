@@ -1,17 +1,26 @@
 from anime_rec.data.bq_queries.common_data_queries import anime_list_query, user_list_query
 
-def user_anime_filter_anime_filter_users_query(
+def user_anime_filter_anime(
     user_anime_relation = "`anime-rec-dev.processed_area.user_anime`",
-    anime_relation = "list_anime",
-    user_relation = "list_user"
+    anime_relation = "list_anime"
 ):
     query = f"""
         SELECT A.*
         FROM {user_anime_relation} A
         INNER JOIN {anime_relation} B
         ON A.anime_id = B.anime_id
-        INNER JOIN {user_relation} C
-        ON A.user_id = C.user_id
+    """
+    return query
+
+def user_anime_filter_user(
+    user_anime_relation = "`anime-rec-dev.processed_area.user_anime`",
+    user_relation = "list_user"
+):
+    query = f"""
+        SELECT A.*
+        FROM {user_anime_relation} A
+        INNER JOIN {user_relation} B
+        ON A.user_id = B.user_id
     """
     return query
 
@@ -70,11 +79,14 @@ def user_retrieved_animes_query(
         list_anime AS (
             {anime_list_query("`anime-rec-dev.processed_area.user_anime`", anime_min_completed_and_rated)}
         ),
+        filtered_user_anime_on_anime AS (
+            {user_anime_filter_anime("`anime-rec-dev.processed_area.user_anime`", "list_anime")}
+        ),
         list_users AS (
-            {user_list_query("`anime-rec-dev.processed_area.user_anime`", users_min_completed_and_rated)}
+            {user_list_query("filtered_user_anime_on_anime", users_min_completed_and_rated)}
         ),
         filtered_user_anime AS (
-            {user_anime_filter_anime_filter_users_query("`anime-rec-dev.processed_area.user_anime`", "list_anime", "list_users")}
+            {user_anime_filter_user("filtered_user_anime_on_anime", "list_users")}
         )
         SELECT A.user_id, A.anime_id
         FROM {user_retrieved_anime_relation} A
@@ -98,11 +110,14 @@ def user_all_possible_animes_query(
         list_anime AS (
             {anime_list_query("`anime-rec-dev.processed_area.user_anime`", anime_min_completed_and_rated)}
         ),
+        filtered_user_anime_on_anime AS (
+            {user_anime_filter_anime("`anime-rec-dev.processed_area.user_anime`", "list_anime")}
+        ),
         list_users AS (
-            {user_list_query("`anime-rec-dev.processed_area.user_anime`", users_min_completed_and_rated)}
+            {user_list_query("filtered_user_anime_on_anime", users_min_completed_and_rated)}
         ),
         filtered_user_anime AS (
-            {user_anime_filter_anime_filter_users_query("`anime-rec-dev.processed_area.user_anime`", "list_anime", "list_users")}
+            {user_anime_filter_user("filtered_user_anime_on_anime", "list_users")}
         )
         SELECT A.user_id, B.anime_id
         FROM list_users A
