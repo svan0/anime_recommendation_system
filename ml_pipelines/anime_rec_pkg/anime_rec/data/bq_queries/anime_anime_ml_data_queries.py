@@ -124,14 +124,14 @@ def anime_anime_pair_ranking_query(
         {anime_anime_co_occurance_query('user_anime', max_co_completed_distance, min_co_completed_count)}
     ),
     positive_pairs AS (
-        SELECT A.animeA AS anime_id, A.animeB AS retrieved_anime_id_1, B.animeB AS retrieved_anime_id_1, 1 AS label
+        SELECT A.animeA AS anime_id, A.animeB AS retrieved_anime_id_1, B.animeB AS retrieved_anime_id_2, 1 AS label
         FROM anime_co_completed_anime A
         LEFT JOIN anime_co_completed_anime B
         ON A.animeA = B.animeA
         WHERE A.avg_score_diff > B.avg_score_diff + 3.0
     ),
     negative_pairs AS (
-        SELECT A.animeA AS anime_id, A.animeB AS retrieved_anime_id_1, B.animeB AS retrieved_anime_id_1, 0 AS label
+        SELECT A.animeA AS anime_id, A.animeB AS retrieved_anime_id_1, B.animeB AS retrieved_anime_id_2, 0 AS label
         FROM anime_co_completed_anime A
         LEFT JOIN anime_co_completed_anime B
         ON A.animeA = B.animeA

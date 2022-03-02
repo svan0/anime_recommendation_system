@@ -38,7 +38,7 @@ def upload_local_folder_to_gcs(local_path, gcs_path):
         if os.path.isfile(local_file):
 
            remote_path = os.path.join(gcs_path, local_file[1 + len(local_path):])
-           blob = bucket.get_blob(remote_path, retry=Retry())
+           blob = bucket.blob(remote_path)
            blob.upload_from_filename(local_file, retry=Retry())
            
            logging.info(f"Uploading {local_file} to {remote_path}")
