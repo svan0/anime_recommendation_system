@@ -1,2 +1,2 @@
 crawler/tests/fake_responses/** filter=lfs diff=lfs merge=lfs -text
-ml_pipelines/pipelines/components/**/tests/sample_data/** filter=lfs diff=lfs merge=lfs -text
+ml_pipelines/anime_rec_pkg/tests/sample_data/** filter=lfs diff=lfs merge=lfs -text
