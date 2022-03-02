@@ -24,9 +24,9 @@ def _load_anime_anime_retrieval_to_pd(data_path, file_format='csv'):
     else:
         raise(f"File format {file_format} is not supported. Specify 'csv'")
     
-    anime_anime_retrieval['animeA'] = anime_anime_retrieval['animeA'].apply(str)
-    anime_anime_retrieval['animeB'] = anime_anime_retrieval['animeB'].apply(str)
-    anime_anime_retrieval = anime_anime_retrieval[['animeA', 'animeB']]
+    anime_anime_retrieval['anime_id'] = anime_anime_retrieval['anime_id'].apply(str)
+    anime_anime_retrieval['retrieved_anime_id'] = anime_anime_retrieval['retrieved_anime_id'].apply(str)
+    anime_anime_retrieval = anime_anime_retrieval[['anime_id', 'retrieved_anime_id']]
     return anime_anime_retrieval
 
 def _load_anime_anime_retrieval_to_np(data_path):
@@ -44,8 +44,8 @@ def _load_anime_anime_retrieval_to_tfds(data_path, file_format='csv'):
     
     anime_anime_retrieval = anime_anime_retrieval.map(lambda x : 
         {
-            'animeA' : tf.strings.as_string(x['animeA']),
-            'animeB' : tf.strings.as_string(x['animeB'])
+            'anime_id' : tf.strings.as_string(x['anime_id']),
+            'retrieved_anime_id' : tf.strings.as_string(x['retrieved_anime_id'])
         }
     )
     return anime_anime_retrieval
@@ -73,11 +73,11 @@ def _load_anime_anime_pair_classification_ranking_to_pd(data_path, file_format='
     else:
         raise(f"File format {file_format} is not supported. Specify 'csv'")
     
-    anime_anime_ranking['anchor_anime'] = anime_anime_ranking['anchor_anime'].apply(str)
-    anime_anime_ranking['rel_anime_1'] = anime_anime_ranking['rel_anime_1'].apply(str)
-    anime_anime_ranking['rel_anime_2'] = anime_anime_ranking['rel_anime_2'].apply(str)
+    anime_anime_ranking['anime_id'] = anime_anime_ranking['anime_id'].apply(str)
+    anime_anime_ranking['retrieved_anime_id_1'] = anime_anime_ranking['retrieved_anime_id_1'].apply(str)
+    anime_anime_ranking['retrieved_anime_id_2'] = anime_anime_ranking['retrieved_anime_id_2'].apply(str)
     anime_anime_ranking['label'] = anime_anime_ranking['label'].apply(float)
-    anime_anime_ranking = anime_anime_ranking[['anchor_anime', 'rel_anime_1', 'rel_anime_2', 'label']]
+    anime_anime_ranking = anime_anime_ranking[['anime_id', 'retrieved_anime_id_1', 'retrieved_anime_id_2s', 'label']]
     return anime_anime_ranking
 
 def _load_anime_anime_pair_classification_ranking_to_np(data_path):
@@ -95,9 +95,9 @@ def _load_anime_anime_pair_classification_ranking_to_tfds(data_path, file_format
     
     anime_anime_ranking = anime_anime_ranking.map(lambda x : 
         {
-            'anchor_anime' : tf.strings.as_string(x['anchor_anime']),
-            'rel_anime_1' : tf.strings.as_string(x['rel_anime_1']),
-            'rel_anime_2' : tf.strings.as_string(x['rel_anime_2']),
+            'anime_id' : tf.strings.as_string(x['anime_id']),
+            'retrieved_anime_id_1' : tf.strings.as_string(x['retrieved_anime_id_1']),
+            'retrieved_anime_id_2' : tf.strings.as_string(x['retrieved_anime_id_2']),
             'label' : x['label']
         }
     )

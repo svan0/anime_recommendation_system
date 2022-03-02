@@ -7,7 +7,7 @@ python3 task.py --data-format csv \
     --anime-data-path gs://anime-rec-dev-ml-pipelines/sample_data/list_anime \
     --user-data-path gs://anime-rec-dev-ml-pipelines/sample_data/list_user \
     --model-path gs://anime-rec-dev-ml-pipelines/sample_data/user_anime/retrieval/model \
-    --metrics-path gs://anime-rec-dev-ml-pipelines/sample_data/user_anime/retrieval/new_trained_metrics \
+    --metrics-path gs://anime-rec-dev-ml-pipelines/sample_data/user_anime/retrieval/metrics \
     --user-anime-embedding-size 128 \
     --learning-rate 128 \
     --optimizer adam \

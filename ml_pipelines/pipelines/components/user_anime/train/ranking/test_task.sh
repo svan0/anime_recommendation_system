@@ -6,8 +6,8 @@ python3 task.py --model-type ranking --data-format csv \
     --test-data-path gs://anime-rec-dev-ml-pipelines/sample_data/user_anime/ranking/test \
     --anime-data-path gs://anime-rec-dev-ml-pipelines/sample_data/list_anime \
     --user-data-path gs://anime-rec-dev-ml-pipelines/sample_data/list_user \
-    --model-path gs://anime-rec-dev-ml-pipelines/sample_data/user_anime/ranking/model2 \
-    --metrics-path gs://anime-rec-dev-ml-pipelines/sample_data/user_anime/ranking/new_trained_metrics \
+    --model-path gs://anime-rec-dev-ml-pipelines/sample_data/user_anime/ranking/model \
+    --metrics-path gs://anime-rec-dev-ml-pipelines/sample_data/user_anime/ranking/metrics \
     --anime-embedding-size 128 \
     --user-embedding-size 128 \
     --scoring-layer-size 128 \
@@ -22,8 +22,8 @@ python3 task.py --model-type list_ranking --data-format csv \
     --test-data-path gs://anime-rec-dev-ml-pipelines/sample_data/user_anime/list_ranking/test \
     --anime-data-path gs://anime-rec-dev-ml-pipelines/sample_data/list_anime \
     --user-data-path gs://anime-rec-dev-ml-pipelines/sample_data/list_user \
-    --model-path gs://anime-rec-dev-ml-pipelines/sample_data/user_anime/list_ranking/model2 \
-    --metrics-path gs://anime-rec-dev-ml-pipelines/sample_data/user_anime/list_ranking/new_trained_metrics \
+    --model-path gs://anime-rec-dev-ml-pipelines/sample_data/user_anime/list_ranking/model \
+    --metrics-path gs://anime-rec-dev-ml-pipelines/sample_data/user_anime/list_ranking/metrics \
     --anime-embedding-size 128 \
     --user-embedding-size 128 \
     --scoring-layer-size 128 \

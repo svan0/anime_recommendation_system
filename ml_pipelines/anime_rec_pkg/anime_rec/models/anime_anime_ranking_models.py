@@ -25,12 +25,12 @@ class AnimeAnimeScoringModel(tf.keras.Model):
     def call(self, data):
         '''
             Compute the anime pair score
-            anchor_anime : initial anime
-            rel_anime : anime to be scored. The higher the score
-                the more relevant rel_anime is to the anchor anime
+            anime_id : initial anime
+            retrieved_anime_id : anime to be scored. The higher the score
+                the more relevant retrieved_anime_id is to the anchor anime
         '''
-        anchor_anime_embedding = self.anime_model(data["anchor_anime"])
-        relevant_anime_embedding = self.anime_model(data["rel_anime"])
+        anchor_anime_embedding = self.anime_model(data["anime_id"])
+        relevant_anime_embedding = self.anime_model(data["retrieved_anime_id"])
 
         pred_score = self.scoring_layer(tf.concat([anchor_anime_embedding, relevant_anime_embedding], axis=-1))
 
@@ -40,10 +40,10 @@ class AnimeAnimePairClassificationModel(tf.keras.Model):
     '''
         Classification model that trains the scoring model
         This model takes as input three anime_ids and a label
-            anchor_anime : the initial anime
-            rel_anime_1 : first anime to be scored
-            rel_anime_2 : second anime to be score
-            label : 1 if rel_anime_1 is more relevant to anchor_anime than rel_anime_2
+            anime_id : the initial anime
+            retrieved_anime_id_1 : first anime to be scored
+            retrieved_anime_id_2 : second anime to be score
+            label : 1 if retrieved_anime_id_1 is more relevant to anchor_anime than retrieved_anime_id_2
                     0 else
         Model computes the two scores and return
         sigmoid(score1 - score2) as binary classification prediction
@@ -57,13 +57,13 @@ class AnimeAnimePairClassificationModel(tf.keras.Model):
     def call(self, data):
 
         pred_score_1 = self.anime_scoring_model({
-            'anchor_anime' : data["anchor_anime"],
-            'rel_anime' : data["rel_anime_1"]
+            'anime_id' : data["anime_id"],
+            'retrieved_anime_id' : data["retrieved_anime_id_1"]
         })
 
         pred_score_2 = self.anime_scoring_model({
-            'anchor_anime' : data["anchor_anime"],
-            'rel_anime' : data["rel_anime_2"]
+            'anime_id' : data["anime_id"],
+            'retrieved_anime_id' : data["retrieved_anime_id_2"]
         })
 
         classification_score = tf.math.sigmoid(pred_score_1 - pred_score_2)

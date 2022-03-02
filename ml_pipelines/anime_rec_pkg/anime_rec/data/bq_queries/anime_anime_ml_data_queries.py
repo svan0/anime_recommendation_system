@@ -62,7 +62,7 @@ def anime_anime_retrieval_query(
     """
     if mode == 'TRAIN':
         anime_anime_query += f"""
-        SELECT animeA, animeB 
+        SELECT animeA AS anime_id, animeB AS retrieved_anime_id
         FROM anime_anime_ordered 
         WHERE (animeA_rank <= {max_rank} OR animeB_rank <= {max_rank}) 
         AND animeA < animeB 
@@ -70,7 +70,7 @@ def anime_anime_retrieval_query(
         """
     elif mode == 'VAL':
         anime_anime_query += f"""
-        SELECT animeA, animeB 
+        SELECT animeA AS anime_id, animeB AS retrieved_anime_id
         FROM anime_anime_ordered 
         WHERE (animeA_rank <= {max_rank} OR animeB_rank <= {max_rank})
         AND animeA < animeB 
@@ -78,7 +78,7 @@ def anime_anime_retrieval_query(
         """
     else:
         anime_anime_query += f"""
-        SELECT animeA, animeB 
+        SELECT animeA AS anime_id, animeB AS retrieved_anime_id
         FROM anime_anime_ordered 
         WHERE (animeA_rank <= {max_rank} OR animeB_rank <= {max_rank}) 
         AND animeA < animeB 
@@ -123,41 +123,41 @@ def anime_anime_pair_ranking_query(
         {anime_anime_co_occurance_query('user_anime', max_co_completed_distance, min_co_completed_count)}
     ),
     positive_pairs AS (
-        SELECT A.animeA AS anchor_anime, A.animeB AS rel_anime_1, B.animeB AS rel_anime_2, 1 AS label
+        SELECT A.animeA AS anime_id, A.animeB AS retrieved_anime_id_1, B.animeB AS retrieved_anime_id_1, 1 AS label
         FROM anime_co_completed_anime A
         LEFT JOIN anime_co_completed_anime B
         ON A.animeA = B.animeA
         WHERE A.avg_score_diff > B.avg_score_diff + 3.0
     ),
     negative_pairs AS (
-        SELECT A.animeA AS anchor_anime, A.animeB AS rel_anime_1, B.animeB AS rel_anime_2, 0 AS label
+        SELECT A.animeA AS anime_id, A.animeB AS retrieved_anime_id_1, B.animeB AS retrieved_anime_id_1, 0 AS label
         FROM anime_co_completed_anime A
         LEFT JOIN anime_co_completed_anime B
         ON A.animeA = B.animeA
         WHERE B.avg_score_diff > A.avg_score_diff + 3.0
     ),
     all_pairs AS (
-        SELECT anchor_anime, rel_anime_1, rel_anime_2, label FROM positive_pairs
+        SELECT anime_id, retrieved_anime_id_1, retrieved_anime_id_2, label FROM positive_pairs
         UNION DISTINCT
-        SELECT anchor_anime, rel_anime_1, rel_anime_2, label FROM negative_pairs
+        SELECT anime_id, retrieved_anime_id_1, retrieved_anime_id_2, label FROM negative_pairs
     )
     """
     if mode == 'TRAIN':
         anime_anime_query += """
         SELECT *
         FROM all_pairs 
-        WHERE ABS(MOD(FARM_FINGERPRINT(CONCAT(anchor_anime, rel_anime_1)), 10)) BETWEEN 0 AND 7
+        WHERE ABS(MOD(FARM_FINGERPRINT(CONCAT(anime_id, retrieved_anime_id_1)), 10)) BETWEEN 0 AND 7
         """
     elif mode == 'VAL':
         anime_anime_query += """
         SELECT *
         FROM all_pairs 
-        WHERE ABS(MOD(FARM_FINGERPRINT(CONCAT(anchor_anime, rel_anime_1)), 10)) = 8
+        WHERE ABS(MOD(FARM_FINGERPRINT(CONCAT(anime_id, retrieved_anime_id_1)), 10)) = 8
         """
     else:
         anime_anime_query += """
         SELECT *
         FROM all_pairs 
-        WHERE ABS(MOD(FARM_FINGERPRINT(CONCAT(anchor_anime, rel_anime_1)), 10)) = 9
+        WHERE ABS(MOD(FARM_FINGERPRINT(CONCAT(anime_id, retrieved_anime_id_1)), 10)) = 9
         """
     return anime_anime_query

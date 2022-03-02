@@ -1,4 +1,5 @@
 inputs:
+- {name: data_format, type: String, description: 'Data format'}
 - {name: model_type, type: String, description: 'User Anime Ranking Model Type'}
 - {name: model_path, type: Model, description: 'User Anime Ranking Model'}
 - {name: input_data_path, type: Dataset, description: 'User retrieved Anime data path'}
@@ -12,6 +13,8 @@ implementation:
     command: [
       python3,
       task.py,
+      --data-format,
+      {inputValue: data_format},
       --model-type,
       {inputValue: model_type},
       --model-path,

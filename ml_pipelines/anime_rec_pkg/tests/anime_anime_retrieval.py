@@ -1,34 +1,38 @@
 import os
 import unittest
 
+import pandas as pd
 import tensorflow as tf
 
 from anime_rec.data.data_loaders.common.anime import load_list_anime
-from anime_rec.data.data_loaders.train.anime_anime import load_anime_anime_retrieval
+from anime_rec.data.data_loaders.train.anime_anime import load_anime_anime_retrieval as train_load_anime_anime_retrieval
+from anime_rec.data.data_loaders.infer.anime_anime import load_anime_anime_retrieval as infer_load_anime_anime_retrieval
 
 from anime_rec.train.anime_anime import get_anime_anime_retrieval_model, train_anime_anime_retrieval_model, get_anime_anime_retrieval_index
 
-class DataLoadTest(unittest.TestCase):
+from anime_rec.infer.anime_anime import infer_anime_anime_retrieval
+
+class Test1DataLoadTest(unittest.TestCase):
 
     def test_user_anime_retrieval_dataload(self):
 
         dir_path = os.path.dirname(os.path.realpath(__file__))
         data_path = os.path.join(dir_path, 'sample_data/anime_anime/retrieval/train')
 
-        dataset = load_anime_anime_retrieval(data_path, 'csv', 'tfds').batch(16)
+        dataset = train_load_anime_anime_retrieval(data_path, 'csv', 'tfds').batch(16)
 
-        assert('animeA' in dataset.element_spec)
-        assert('animeB' in dataset.element_spec)
+        assert('anime_id' in dataset.element_spec)
+        assert('retrieved_anime_id' in dataset.element_spec)
         assert(len(dataset.element_spec.keys()) == 2)
 
-        assert(dataset.element_spec['animeA'].dtype == tf.string)
-        assert(dataset.element_spec['animeB'].dtype == tf.string)
+        assert(dataset.element_spec['anime_id'].dtype == tf.string)
+        assert(dataset.element_spec['retrieved_anime_id'].dtype == tf.string)
 
         for x in dataset.take(1):
-            assert(x['animeA'].shape == (16,))
-            assert(x['animeB'].shape == (16,))
+            assert(x['anime_id'].shape == (16,))
+            assert(x['retrieved_anime_id'].shape == (16,))
 
-class TrainingTest(unittest.TestCase):
+class Test2TrainingTest(unittest.TestCase):
 
     def test_weights_updated(self):
 
@@ -38,7 +42,7 @@ class TrainingTest(unittest.TestCase):
         train_data_path = os.path.join(dir_path, 'sample_data/anime_anime/retrieval/train')
 
         list_anime = load_list_anime(all_anime_data_path, 'csv', 'numpy')
-        train_dataset = load_anime_anime_retrieval(train_data_path, 'csv', 'tfds').batch(2048)
+        train_dataset = train_load_anime_anime_retrieval(train_data_path, 'csv', 'tfds').batch(2048)
 
         model = get_anime_anime_retrieval_model(
             list_anime,
@@ -64,8 +68,8 @@ class TrainingTest(unittest.TestCase):
         validation_data_path = os.path.join(dir_path, 'sample_data/anime_anime/retrieval/val')
 
         list_anime = load_list_anime(all_anime_data_path, 'csv', 'numpy')
-        train_dataset = load_anime_anime_retrieval(train_data_path, 'csv', 'tfds').batch(16).take(1)
-        val_dataset = load_anime_anime_retrieval(validation_data_path, 'csv', 'tfds').batch(16).take(1)
+        train_dataset = train_load_anime_anime_retrieval(train_data_path, 'csv', 'tfds').batch(16).take(1)
+        val_dataset = train_load_anime_anime_retrieval(validation_data_path, 'csv', 'tfds').batch(16).take(1)
         
         hyperparameters = {
             'anime_embedding_size' : 128,
@@ -97,8 +101,8 @@ class TrainingTest(unittest.TestCase):
         validation_data_path = os.path.join(dir_path, 'sample_data/anime_anime/retrieval/val')
 
         list_anime = load_list_anime(all_anime_data_path, 'csv', 'numpy')
-        train_dataset = load_anime_anime_retrieval(train_data_path, 'csv', 'tfds').batch(2048).shuffle(100_000, reshuffle_each_iteration=True)
-        val_dataset = load_anime_anime_retrieval(validation_data_path, 'csv', 'tfds').batch(2048)
+        train_dataset = train_load_anime_anime_retrieval(train_data_path, 'csv', 'tfds').batch(2048).shuffle(100_000, reshuffle_each_iteration=True)
+        val_dataset = train_load_anime_anime_retrieval(validation_data_path, 'csv', 'tfds').batch(2048)
         
         hyperparameters = {
             'anime_embedding_size' : 128,
@@ -118,4 +122,41 @@ class TrainingTest(unittest.TestCase):
         index_model = get_anime_anime_retrieval_index(list_anime, model, k = 2)
         retrieved_results = index_model(tf.constant([list_anime[0]]))[1][0]
 
+        tf.saved_model.save(
+            index_model,
+            os.path.join(dir_path, 'sample_data/anime_anime/retrieval/model')
+        )
+
         assert(retrieved_results.shape == (2,))
+
+class Test3InferenceTest(unittest.TestCase):
+    
+    def test_inference(self):
+        
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+
+        model_path = os.path.join(dir_path, 'sample_data/anime_anime/retrieval/model')
+        input_data_path = os.path.join(dir_path, 'sample_data/anime_anime/retrieval/infer')
+
+        infer_data = infer_load_anime_anime_retrieval(input_data_path, 'csv', 'tfds')
+        infer_data = infer_data.batch(16)
+
+        model = tf.saved_model.load(model_path)
+
+        local_infer_result_path = infer_anime_anime_retrieval(infer_data, model)
+
+        results = pd.read_csv(f"{local_infer_result_path}/result_0.csv")
+        
+        results['anime_id'] = results['anime_id'].apply(str)
+        results['retrieved_anime_id'] = results['retrieved_anime_id'].apply(str)
+        results = results[results['anime_id'] == '32281']['retrieved_anime_id'].values
+        results = list(results)
+
+        _, results_2 = model(tf.constant(['32281']))
+        results_2 = results_2.numpy()[0]
+        results_2 = list(map(lambda x : x.decode('utf-8'), results_2))
+
+        self.assertCountEqual(
+            results,
+            results_2
+        )

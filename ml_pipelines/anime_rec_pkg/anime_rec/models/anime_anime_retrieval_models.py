@@ -28,7 +28,7 @@ class AnimeAnimeRetrievalModel(tfrs.Model):
         '''
             Run retrieval task
         '''
-        anchor_anime_embedding = self.anime_model(data["animeA"])
-        positive_anime_embeddings = self.anime_model(data["animeB"])
+        anchor_anime_embedding = self.anime_model(data["anime_id"])
+        positive_anime_embeddings = self.anime_model(data["retrieved_anime_id"])
 
         return self.task(anchor_anime_embedding, positive_anime_embeddings, compute_metrics=not training)

@@ -1,0 +1,47 @@
+inputs:
+- {name: data_format, type: String, description: 'Input data format'}
+- {name: train_data_path, type: Dataset, description: 'Anime Anime Retrieval train data path'}
+- {name: val_data_path, type: Dataset, description: 'Anime Anime Retrieval validation data path'}
+- {name: test_data_path, type: Dataset, description: 'Anime Anime Retrieval test data path'}
+- {name: anime_data_path, type: Dataset, description: 'List of all Anime data path'}
+- {name: anime_embedding_size, type: Integer, description: 'Anime Embedding size', optional: true, default: '128'}
+- {name: learning_rate, type: Float, description: 'learning rate', optional: true, default: '0.0005'}
+- {name: optimizer, type: String, description: 'optimizer', optional: true, default: 'adam'}
+- {name: max_num_epochs, type: Integer, description: 'Maximum number of training epochs', optional: true, default: '50'}
+- {name: early_stop_num_epochs, type: Integer, description: 'Maximum number of non improvemennt training epochs', optional: true, default: '2'}
+
+outputs:
+- {name: model_path, type: Model, description: 'Retrieval Model path'}
+- {name: metrics_path, type: Metrics, description: 'Retrieval Model metrics'}
+
+implementation:
+  container:
+    image: gcr.io/anime-rec-dev/anime_anime_train_retrieval:latest
+    command: [
+      python3,
+      task.py,
+      --data-format,
+      {inputValue: data_format},
+      --train-data-path,
+      {inputPath: train_data_path},
+      --val-data-path,
+      {inputPath: val_data_path},
+      --test-data-path,
+      {inputPath: test_data_path},
+      --anime-data-path,
+      {inputPath: anime_data_path},
+      --model-path,
+      {outputPath: model_path},
+      --metrics-path,
+      {outputPath: metrics_path},
+      --anime-embedding-size,
+      {inputValue: anime_embedding_size},
+      --learning-rate,
+      {inputValue: learning_rate},
+      --optimizer,
+      {inputValue: optimizer},
+      --max-num-epochs,
+      {inputValue: max_num_epochs},
+      --early-stop-num-epochs,
+      {inputValue: early_stop_num_epochs},
+    ]

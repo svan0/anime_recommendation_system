@@ -72,8 +72,8 @@ def user_anime_retrieval_step(list_anime_data, list_user_data, current_time, pro
         user_anime_embedding_size = 128,
         learning_rate = 0.005,
         optimizer = 'adam',
-        max_num_epochs = 30,
-        early_stop_num_epochs = 5
+        max_num_epochs = 5,
+        early_stop_num_epochs = 1
     )
     train_retrieval_model.set_display_name("TRAIN: user anime retrieval")
     train_retrieval_model.set_cpu_limit('16').set_memory_limit('32G')
@@ -81,13 +81,16 @@ def user_anime_retrieval_step(list_anime_data, list_user_data, current_time, pro
     """
         Batch Inference
     """
+    # Outputs user_id, anime_id to GCS
     infer_retrieval_model = infer_user_anime_retrieval_op(
+        data_format = data_format,
         model_path = train_retrieval_model.outputs['model_path'],
         input_data_path = list_user_data.outputs['gcs_output_data']
     )
     infer_retrieval_model = infer_retrieval_model.set_cpu_limit('16').set_memory_limit('32G')
     infer_retrieval_model.set_display_name("INFER: user anime retrieval")
 
+    # Outputs user_id, anime_id to BQ
     infer_retrieval_to_bq = gcs_to_bq_table(
         gcs_input_data=infer_retrieval_model.outputs['output_data_path'],
         gcs_input_data_format=data_format,
@@ -98,6 +101,7 @@ def user_anime_retrieval_step(list_anime_data, list_user_data, current_time, pro
     )
     infer_retrieval_to_bq.set_display_name("INFER: user anime retrieval to BQ")
     
+    # Outputs user_id, anime_id to GCS and BQ (filter animes that user has watched)
     user_anime_to_rank = run_query_save_to_bq_table_and_gcs(
         query = user_retrieved_animes_query("{project_id}.{dataset_id}.user_anime_retrieval_infer_{current_time}"),
         project_id=project_id,
@@ -157,8 +161,8 @@ def user_anime_ranking_steps(list_anime_data, list_user_data, user_anime_to_rank
         scoring_layer_size = 128,
         learning_rate = 0.005,
         optimizer = 'adam',
-        max_num_epochs = 30,
-        early_stop_num_epochs = 5
+        max_num_epochs = 5,
+        early_stop_num_epochs = 1
     )
     train_ranking_model.set_display_name("TRAIN: user anime ranking")
     train_ranking_model.set_cpu_limit('8').set_memory_limit('32G')
@@ -168,6 +172,7 @@ def user_anime_ranking_steps(list_anime_data, list_user_data, user_anime_to_rank
     """
     infer_ranking_model = infer_user_anime_ranking_op(
         model_type = 'ranking',
+        data_format = data_format,
         model_path = train_ranking_model.outputs['model_path'],
         input_data_path = user_anime_to_rank.outputs['gcs_output_data']
     )
@@ -230,8 +235,8 @@ def user_anime_list_ranking_steps(list_anime_data, list_user_data, user_anime_to
         scoring_layer_size = 128,
         learning_rate = 0.005,
         optimizer = 'adam',
-        max_num_epochs = 30,
-        early_stop_num_epochs = 5
+        max_num_epochs = 5,
+        early_stop_num_epochs = 1
     )
     train_list_ranking_model.set_display_name("TRAIN: user anime list ranking")
     train_list_ranking_model.set_cpu_limit('8').set_memory_limit('32G')
@@ -241,6 +246,7 @@ def user_anime_list_ranking_steps(list_anime_data, list_user_data, user_anime_to
     """
     infer_list_ranking_model = infer_user_anime_ranking_op(
         model_type = 'list_ranking',
+        data_format = data_format,
         model_path = train_list_ranking_model.outputs['model_path'],
         input_data_path = user_anime_to_rank.outputs['gcs_output_data']
     )
@@ -321,15 +327,27 @@ def user_anime_recommendation_pipeline(
             )
 
     with dsl.Condition(run_retrieval=='false', name='no-run-retrieval'):
-
-        user_anime_to_rank = run_query_save_to_bq_table_and_gcs(
+        
+        # Outputs user_id, anime_id to GCS and BQ
+        user_cross_anime = run_query_save_to_bq_table_and_gcs(
             query = user_all_possible_animes_query(),
             project_id=project_id,
             destination_dataset_id=dataset_id,
             destination_table_id=f"user_cross_anime_{current_time}",
             gcs_output_format=data_format
         )
-        user_anime_to_rank.set_display_name("DATA: user cross anime not interacted with data")
+        user_cross_anime.set_display_name("DATA: user cross anime")
+
+        # Outputs user_id, anime_id to GCS and BQ (filter anime user has watched)
+        user_anime_to_rank = run_query_save_to_bq_table_and_gcs(
+            query = user_retrieved_animes_query(f"user_cross_anime_{current_time}"),
+            project_id=project_id,
+            destination_dataset_id=dataset_id,
+            destination_table_id=f"user_cross_anime_to_rank_{current_time}",
+            gcs_output_format=data_format
+        )
+        user_anime_to_rank.after(user_cross_anime)
+        user_anime_to_rank.set_display_name("DATA: user cross anime to be ranked")
     
         with dsl.Condition(list_ranking=='true', name='list-ranking'):
             _ = user_anime_list_ranking_steps(
@@ -369,7 +387,7 @@ if __name__ == '__main__':
 
     response = api_client.create_run_from_job_spec(
         job_spec_path=package_path,
-        pipeline_root='gs://anime-rec-dev-ml-pipelines/user-anime-ranking-pipeline',
+        pipeline_root='gs://anime-rec-dev-ml-pipelines/user-anime-recommendation-pipeline',
         enable_caching=False,
         parameter_values={
             'project_id': 'anime-rec-dev',

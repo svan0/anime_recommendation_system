@@ -115,9 +115,6 @@ def user_all_possible_animes_query(
         ),
         list_users AS (
             {user_list_query("filtered_user_anime_on_anime", users_min_completed_and_rated)}
-        ),
-        filtered_user_anime AS (
-            {user_anime_filter_user("filtered_user_anime_on_anime", "list_users")}
         )
         SELECT A.user_id, B.anime_id
         FROM list_users A

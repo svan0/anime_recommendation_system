@@ -18,6 +18,7 @@ if __name__=='__main__':
     )
 
     parser = argparse.ArgumentParser(description = 'Infer user anime ranking model')
+    parser.add_argument('--data-format', type = str)
     parser.add_argument('--model-type', type = str)
     parser.add_argument('--model-path', type = str)
     parser.add_argument('--input-data-path', type = str)
@@ -36,7 +37,7 @@ if __name__=='__main__':
                 'UserAnimeListRankingModel' : UserAnimeRankingModel
             }
         )
-        infer_data = load_user_anime_ranking(input_data_path, 'csv', 'tfds')
+        infer_data = load_user_anime_ranking(input_data_path, args.data_format, 'tfds')
         infer_data = infer_data.batch(2048)
         local_infer_result_path = infer_user_anime_ranking(infer_data, model)
         upload_local_folder_to_gcs(local_infer_result_path, output_data_path)
@@ -49,7 +50,7 @@ if __name__=='__main__':
                 'UserAnimeListRankingModel' : UserAnimeListRankingModel
             }
         )
-        infer_data = load_user_anime_list_ranking(input_data_path, 'csv', 'tfds')
+        infer_data = load_user_anime_list_ranking(input_data_path, args.data_format, 'tfds')
         infer_data = infer_data.batch(2048)
         local_infer_result_path = infer_user_anime_list_ranking(infer_data, model)
         upload_local_folder_to_gcs(local_infer_result_path, output_data_path)

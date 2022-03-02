@@ -5,6 +5,7 @@ import os
 import glob
 import logging
 from google.cloud import storage
+from google.api_core.retry import Retry
 
 def download_from_gcs_to_local(gcs_path, local_path_dir):
     '''
@@ -14,32 +15,14 @@ def download_from_gcs_to_local(gcs_path, local_path_dir):
     storage_client = storage.Client()
     
     bucket_name = gcs_path.split('/')[2]
-    bucket = storage_client.bucket(bucket_name)
+    bucket = storage_client.get_bucket(bucket_name, retry=Retry())
     file_prefix = "/".join(gcs_path.split('/')[3:])
-    blobs = bucket.list_blobs(prefix = file_prefix)
+    blobs = bucket.list_blobs(prefix = file_prefix, retry=Retry())
     for blob in blobs:
         filename = blob.name.split('/')[-1]
         local_path_file = f"{local_path_dir}/{filename}"
-        blob.download_to_filename(local_path_file)
+        blob.download_to_filename(local_path_file, retry=Retry())
         logging.info(f"Downloading {blob.name} to {local_path_file}")
-
-def gcs_create_empty_folder(gcs_path):
-    '''
-        Takes GCS path (path to a file or a folder)
-        and create an empty GCS folder
-    '''
-    storage_client = storage.Client()
-    bucket = storage_client.get_bucket(gcs_path.split('/')[2])
-    if gcs_path.endswith('/'):
-        # If path to a folder, keep as is
-        folder_path = "/".join(gcs_path.split('/')[3:])
-    else:
-        # If path to a file, take the parent folder
-        folder_path = "/".join(gcs_path.split('/')[3:-1])
-        folder_path = folder_path + '/'
-
-    blob = bucket.blob(folder_path)
-    blob.upload_from_string('')
 
 def upload_local_folder_to_gcs(local_path, gcs_path):
     '''
@@ -47,7 +30,7 @@ def upload_local_folder_to_gcs(local_path, gcs_path):
     '''
 
     storage_client = storage.Client()
-    bucket = storage_client.get_bucket(gcs_path.split('/')[2])
+    bucket = storage_client.get_bucket(gcs_path.split('/')[2], retry=Retry())
     gcs_path = "/".join(gcs_path.split('/')[3:])
 
     assert(os.path.isdir(local_path))
@@ -55,7 +38,7 @@ def upload_local_folder_to_gcs(local_path, gcs_path):
         if os.path.isfile(local_file):
 
            remote_path = os.path.join(gcs_path, local_file[1 + len(local_path):])
-           blob = bucket.blob(remote_path)
-           blob.upload_from_filename(local_file)
+           blob = bucket.get_blob(remote_path, retry=Retry())
+           blob.upload_from_filename(local_file, retry=Retry())
            
            logging.info(f"Uploading {local_file} to {remote_path}")

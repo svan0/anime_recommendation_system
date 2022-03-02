@@ -65,6 +65,18 @@ def anime_anime_all_order_query(anime_anime_relation = 'anime_anime'):
     """
     return query
 
+def anime_all_possible_anime_query(anime_min_completed_and_rated=1000)
+    anime_cross_anime = f"""
+        sWITH 
+        list_anime AS (
+            {anime_list_query("`anime-rec-dev.processed_area.user_anime`", anime_min_completed_and_rated)}
+        ),
+        SELECT A.anime_id, B.anime_id AS retrieved_anime_id
+        FROM list_anime A
+        CROSS JOIN list_anime B
+    """
+    return anime_cross_anime
+
 def user_last_anime_watched_query(
     anime_min_completed_and_rated=1000,
     users_min_completed_and_rated=50,
@@ -87,23 +99,24 @@ def user_last_anime_watched_query(
             {user_anime_filter_user("filtered_user_anime_on_anime", "list_users")}
         ),
         user_anime AS (
-            {user_anime_completed_and_strict_ordered_query("filtered_user_anime")}
+            {user_anime_completed_and_strict_ordered_query("filtered_user_anime")} AND score IS NOT NULL AND score > 5
         )
         SELECT user_id, anime_id FROM user_anime WHERE user_anime_order = 1
     """
     return last_watched_query
 
-def user_last_anime_retrieved_animes_query(
-    user_retrieved_anime_relation="user_last_anime_retrieved_anime_table",
+def user_last_anime_ranked_animes_query(
+    user_last_watched_relation="user_last_anime_watched_table",
+    anime_anime_scored_relation="anime_anime_scored_table",
     anime_min_completed_and_rated=1000,
     users_min_completed_and_rated=50
 ):
     '''
-        SQL queries that takes all the retrieved animes for each user
-        and only returns retrieved animes that haven't been seen
-        by the user
+        SQL queries that takes all the ranked animes for each anime
+        and each user's last wacthed anime
+        and returns ranked anime for each user 
     '''
-    retrieved_anime_query = f"""
+    user_anime_scored_query = f"""
         WITH 
         list_anime AS (
             {anime_list_query("`anime-rec-dev.processed_area.user_anime`", anime_min_completed_and_rated)}
@@ -117,10 +130,12 @@ def user_last_anime_retrieved_animes_query(
         filtered_user_anime AS (
             {user_anime_filter_user("filtered_user_anime_on_anime", "list_users")}
         )
-        SELECT A.user_id, A.anime_id, A.retrieved_anime_id
-        FROM {user_retrieved_anime_relation} A
-        LEFT JOIN filtered_user_anime B
-        ON A.user_id = B.user_id AND A.retrieved_anime_id = B.anime_id
-        WHERE B.status IS NULL
+        SELECT A.user_id, A.anime_id AS last_watched, B.retrieved_anime_id, B.score
+        FROM {user_last_watched_relation} A
+        LEFT JOIN {anime_anime_scored_relation} B
+        ON A.anime_id = B.retrieved_anime_id
+        LEFT JOIN filtered_user_anime C
+        ON A.user_id = C.user_id AND B.retrieved_anime_id = C.anime_id
+        WHERE C.status IS NULL
     """
-    return retrieved_anime_query
+    return user_anime_scored_query
