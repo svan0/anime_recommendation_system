@@ -19,6 +19,7 @@ def gcs_to_bq_table(
     
     import logging
     from google.cloud import bigquery
+    from google.api_core.exceptions import Conflict 
 
     logging.basicConfig(
         format='%(levelname)s: %(asctime)s: %(message)s',
@@ -26,6 +27,14 @@ def gcs_to_bq_table(
     )
 
     client = bigquery.Client(project=project_id)
+
+    try:
+        dataset = bigquery.Dataset(f"{project_id}.{destination_dataset_id}")
+        dataset.location = "us-central1"
+        dataset = client.create_dataset(dataset, timeout=30)
+        logging.info("Created dataset {}.{}".format(client.project, dataset.dataset_id))
+    except Conflict as e:
+        pass
 
     table_ref = client.dataset(destination_dataset_id).table(destination_table_id)
 
@@ -67,18 +76,28 @@ def run_query_save_to_bq_table_and_gcs(
     destination_dataset_id: str, 
     destination_table_id: str,
     gcs_output_format: str,
-    gcs_output_data: Output[Dataset]
+    output_data_path: Output[Dataset]
 ):
     
     import logging
     from google.cloud import bigquery
-    
+    from google.api_core.exceptions import Conflict 
+
     logging.basicConfig(
         format='%(levelname)s: %(asctime)s: %(message)s',
         level=logging.INFO
     )
 
     client = bigquery.Client(project=project_id)
+    
+    try:
+        dataset = bigquery.Dataset(f"{project_id}.{destination_dataset_id}")
+        dataset.location = "us-central1"
+        dataset = client.create_dataset(dataset, timeout=30)
+        logging.info("Created dataset {}.{}".format(client.project, dataset.dataset_id))
+    except Conflict as e:
+        pass
+
     destination_table_ref = client.dataset(destination_dataset_id).table(destination_table_id)
 
     job_config = bigquery.QueryJobConfig()
@@ -109,7 +128,7 @@ def run_query_save_to_bq_table_and_gcs(
     else:
         raise(f"{gcs_output_format} format is not supported. Specify either 'CSV' or 'AVRO'")
     
-    gcs_output_path = gcs_output_data.path.replace('/gcs/', 'gs://') + "/*"
+    gcs_output_path = output_data_path.path.replace('/gcs/', 'gs://') + "/*"
     extract_job = client.extract_table(
         source=destination_table_ref,
         destination_uris=gcs_output_path,

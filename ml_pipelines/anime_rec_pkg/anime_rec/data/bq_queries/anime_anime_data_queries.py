@@ -1,4 +1,5 @@
-from anime_rec.data.bq_queries.user_anime_data_queries import user_anime_filter_anime, user_anime_filter_user, user_anime_completed_and_strict_ordered_query
+from anime_rec.data.bq_queries.common_data_queries import user_anime_filter_anime
+from anime_rec.data.bq_queries.user_anime_data_queries import user_anime_filter_user, user_anime_completed_and_strict_ordered_query
 from anime_rec.data.bq_queries.common_data_queries import anime_list_query, user_list_query
 
 
@@ -65,9 +66,9 @@ def anime_anime_all_order_query(anime_anime_relation = 'anime_anime'):
     """
     return query
 
-def anime_all_possible_anime_query(anime_min_completed_and_rated=1000)
+def anime_all_possible_anime_query(anime_min_completed_and_rated=1000):
     anime_cross_anime = f"""
-        sWITH 
+        WITH 
         list_anime AS (
             {anime_list_query("`anime-rec-dev.processed_area.user_anime`", anime_min_completed_and_rated)}
         ),
@@ -79,7 +80,7 @@ def anime_all_possible_anime_query(anime_min_completed_and_rated=1000)
 
 def user_last_anime_watched_query(
     anime_min_completed_and_rated=1000,
-    users_min_completed_and_rated=50,
+    user_min_completed_and_rated=50,
 ):
     '''
         SQL query that returns for each user the last anime they completed
@@ -93,7 +94,7 @@ def user_last_anime_watched_query(
             {user_anime_filter_anime("`anime-rec-dev.processed_area.user_anime`", "list_anime")}
         ),
         list_users AS (
-            {user_list_query("filtered_user_anime_on_anime", users_min_completed_and_rated)}
+            {user_list_query("filtered_user_anime_on_anime", user_min_completed_and_rated)}
         ),
         filtered_user_anime AS (
             {user_anime_filter_user("filtered_user_anime_on_anime", "list_users")}
@@ -109,7 +110,7 @@ def user_last_anime_ranked_animes_query(
     user_last_watched_relation="user_last_anime_watched_table",
     anime_anime_scored_relation="anime_anime_scored_table",
     anime_min_completed_and_rated=1000,
-    users_min_completed_and_rated=50
+    user_min_completed_and_rated=50
 ):
     '''
         SQL queries that takes all the ranked animes for each anime
@@ -125,7 +126,7 @@ def user_last_anime_ranked_animes_query(
             {user_anime_filter_anime("`anime-rec-dev.processed_area.user_anime`", "list_anime")}
         ),
         list_users AS (
-            {user_list_query("filtered_user_anime_on_anime", users_min_completed_and_rated)}
+            {user_list_query("filtered_user_anime_on_anime", user_min_completed_and_rated)}
         ),
         filtered_user_anime AS (
             {user_anime_filter_user("filtered_user_anime_on_anime", "list_users")}

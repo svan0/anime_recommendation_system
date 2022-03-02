@@ -1,16 +1,5 @@
 from anime_rec.data.bq_queries.common_data_queries import anime_list_query, user_list_query
-
-def user_anime_filter_anime(
-    user_anime_relation = "`anime-rec-dev.processed_area.user_anime`",
-    anime_relation = "list_anime"
-):
-    query = f"""
-        SELECT A.*
-        FROM {user_anime_relation} A
-        INNER JOIN {anime_relation} B
-        ON A.anime_id = B.anime_id
-    """
-    return query
+from anime_rec.data.bq_queries.common_data_queries import user_anime_filter_anime
 
 def user_anime_filter_user(
     user_anime_relation = "`anime-rec-dev.processed_area.user_anime`",
@@ -67,7 +56,7 @@ def user_anime_completed_and_scored_and_not_strict_ordered_query(
 def user_retrieved_animes_query(
     user_retrieved_anime_relation="user_retrieved_anime_table",
     anime_min_completed_and_rated=1000,
-    users_min_completed_and_rated=50
+    user_min_completed_and_rated=50
 ):
     '''
         SQL queries that takes all the retrieved animes for each user
@@ -83,7 +72,7 @@ def user_retrieved_animes_query(
             {user_anime_filter_anime("`anime-rec-dev.processed_area.user_anime`", "list_anime")}
         ),
         list_users AS (
-            {user_list_query("filtered_user_anime_on_anime", users_min_completed_and_rated)}
+            {user_list_query("filtered_user_anime_on_anime", user_min_completed_and_rated)}
         ),
         filtered_user_anime AS (
             {user_anime_filter_user("filtered_user_anime_on_anime", "list_users")}
@@ -98,7 +87,7 @@ def user_retrieved_animes_query(
 
 def user_all_possible_animes_query(
     anime_min_completed_and_rated=1000,
-    users_min_completed_and_rated=50
+    user_min_completed_and_rated=50
 ):
     '''
         SQL queries that takes all the retrieved animes for each user
@@ -114,7 +103,7 @@ def user_all_possible_animes_query(
             {user_anime_filter_anime("`anime-rec-dev.processed_area.user_anime`", "list_anime")}
         ),
         list_users AS (
-            {user_list_query("filtered_user_anime_on_anime", users_min_completed_and_rated)}
+            {user_list_query("filtered_user_anime_on_anime", user_min_completed_and_rated)}
         )
         SELECT A.user_id, B.anime_id
         FROM list_users A

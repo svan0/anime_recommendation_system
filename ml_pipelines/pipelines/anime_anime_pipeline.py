@@ -9,11 +9,13 @@ from kfp.v2.google.client import AIPlatformClient
 
 from components.bq_components import gcs_to_bq_table, run_query_save_to_bq_table_and_gcs
 
-from anime_rec.data.bq_queries.common_data_queries import anime_list_query, user_list_query
-from anime_rec.data.bq_queries.anime_anime_data_queries import user_last_anime_watched_query, user_last_anime_ranked_animes_query, anime_all_possible_animes_query
+from anime_rec.data.bq_queries.common_data_queries import anime_list_query
+from anime_rec.data.bq_queries.anime_anime_data_queries import user_last_anime_watched_query, user_last_anime_ranked_animes_query, anime_all_possible_anime_query
 from anime_rec.data.bq_queries.anime_anime_ml_data_queries import anime_anime_retrieval_query
 from anime_rec.data.bq_queries.anime_anime_ml_data_queries import anime_anime_pair_ranking_query
 
+ANIME_AT_LEAST_RATED = 10000
+USER_AT_LEAST_RATED = 500
 
 train_anime_anime_retrieval_op = kfp.components.load_component_from_file(
     os.path.join(os.path.abspath(__file__ + "/../"), "components/anime_anime/train/retrieval/component.yaml")
@@ -33,7 +35,7 @@ def anime_anime_retrieval_steps(list_anime_data, current_time, project_id, datas
         Data Load
     """
     train_retrieval_data = run_query_save_to_bq_table_and_gcs(
-        query = anime_anime_retrieval_query('TRAIN'),
+        query = anime_anime_retrieval_query('TRAIN', anime_min_completed_and_rated = ANIME_AT_LEAST_RATED, user_min_completed_and_rated = USER_AT_LEAST_RATED),
         project_id=project_id,
         destination_dataset_id=dataset_id,
         destination_table_id=f"anime_anime_retrieval_train_{current_time}",
@@ -42,7 +44,7 @@ def anime_anime_retrieval_steps(list_anime_data, current_time, project_id, datas
     train_retrieval_data.set_display_name("DATA: train anime anime retrieval")
     
     val_retrieval_data = run_query_save_to_bq_table_and_gcs(
-        query = anime_anime_retrieval_query('VAL'),
+        query = anime_anime_retrieval_query('VAL', anime_min_completed_and_rated = ANIME_AT_LEAST_RATED, user_min_completed_and_rated = USER_AT_LEAST_RATED),
         project_id=project_id,
         destination_dataset_id=dataset_id,
         destination_table_id=f"anime_anime_retrieval_val_{current_time}",
@@ -51,7 +53,7 @@ def anime_anime_retrieval_steps(list_anime_data, current_time, project_id, datas
     val_retrieval_data.set_display_name("DATA: val anime anime retrieval")
     
     test_retrieval_data = run_query_save_to_bq_table_and_gcs(
-        query = anime_anime_retrieval_query('TEST'),
+        query = anime_anime_retrieval_query('TEST', anime_min_completed_and_rated = ANIME_AT_LEAST_RATED, user_min_completed_and_rated = USER_AT_LEAST_RATED),
         project_id=project_id,
         destination_dataset_id=dataset_id,
         destination_table_id=f"anime_anime_retrieval_test_{current_time}",
@@ -64,10 +66,10 @@ def anime_anime_retrieval_steps(list_anime_data, current_time, project_id, datas
     """
     train_retrieval_model = train_anime_anime_retrieval_op(
         data_format=data_format,
-        train_data_path = train_retrieval_data.outputs['gcs_output_data'], 
-        val_data_path = val_retrieval_data.outputs['gcs_output_data'],
-        test_data_path = test_retrieval_data.outputs['gcs_output_data'],
-        anime_data_path = list_anime_data.outputs['gcs_output_data'],
+        train_data_path = train_retrieval_data.outputs['output_data_path'], 
+        val_data_path = val_retrieval_data.outputs['output_data_path'],
+        test_data_path = test_retrieval_data.outputs['output_data_path'],
+        anime_data_path = list_anime_data.outputs['output_data_path'],
         anime_embedding_size = 128,
         learning_rate = 0.005,
         optimizer = 'adam',
@@ -84,7 +86,7 @@ def anime_anime_retrieval_steps(list_anime_data, current_time, project_id, datas
     infer_retrieval_model = infer_anime_anime_retrieval_op(
         data_format = data_format,
         model_path = train_retrieval_model.outputs['model_path'],
-        input_data_path = list_anime_data.outputs['gcs_output_data']
+        input_data_path = list_anime_data.outputs['output_data_path']
     )
     infer_retrieval_model.set_display_name("INFER: anime anime retrieval")
     infer_retrieval_model = infer_retrieval_model.set_cpu_limit('16').set_memory_limit('32G')
@@ -107,7 +109,7 @@ def anime_anime_ranking_steps(list_anime_data, anime_anime_to_rank, current_time
         Data Loading
     """
     train_ranking_data = run_query_save_to_bq_table_and_gcs(
-        query = anime_anime_pair_ranking_query('TRAIN'),
+        query = anime_anime_pair_ranking_query('TRAIN', anime_min_completed_and_rated = ANIME_AT_LEAST_RATED, user_min_completed_and_rated = USER_AT_LEAST_RATED),
         project_id=project_id,
         destination_dataset_id=dataset_id,
         destination_table_id=f"anime_anime_ranking_train_{current_time}",
@@ -116,7 +118,7 @@ def anime_anime_ranking_steps(list_anime_data, anime_anime_to_rank, current_time
     train_ranking_data.set_display_name("DATA: train anime anime ranking")
     
     val_ranking_data = run_query_save_to_bq_table_and_gcs(
-        query = anime_anime_pair_ranking_query('VAL'),
+        query = anime_anime_pair_ranking_query('VAL', anime_min_completed_and_rated = ANIME_AT_LEAST_RATED, user_min_completed_and_rated = USER_AT_LEAST_RATED),
         project_id=project_id,
         destination_dataset_id=dataset_id,
         destination_table_id=f"anime_anime_ranking_val_{current_time}",
@@ -125,7 +127,7 @@ def anime_anime_ranking_steps(list_anime_data, anime_anime_to_rank, current_time
     val_ranking_data.set_display_name("DATA: validation anime anime ranking")
 
     test_ranking_data = run_query_save_to_bq_table_and_gcs(
-        query = anime_anime_pair_ranking_query('TEST'),
+        query = anime_anime_pair_ranking_query('TEST', anime_min_completed_and_rated = ANIME_AT_LEAST_RATED, user_min_completed_and_rated = USER_AT_LEAST_RATED),
         project_id=project_id,
         destination_dataset_id=dataset_id,
         destination_table_id=f"anime_anime_ranking_test_{current_time}",
@@ -138,10 +140,10 @@ def anime_anime_ranking_steps(list_anime_data, anime_anime_to_rank, current_time
     """
     train_ranking_model = train_anime_anime_ranking_op(
         data_format=data_format,
-        train_data_path = train_ranking_data.outputs['gcs_output_data'], 
-        val_data_path = val_ranking_data.outputs['gcs_output_data'],
-        test_data_path = test_ranking_data.outputs['gcs_output_data'],
-        anime_data_path = list_anime_data.outputs['gcs_output_data'],
+        train_data_path = train_ranking_data.outputs['output_data_path'], 
+        val_data_path = val_ranking_data.outputs['output_data_path'],
+        test_data_path = test_ranking_data.outputs['output_data_path'],
+        anime_data_path = list_anime_data.outputs['output_data_path'],
         anime_embedding_size = 128,
         scoring_layer_size = 128,
         learning_rate = 0.005,
@@ -159,7 +161,7 @@ def anime_anime_ranking_steps(list_anime_data, anime_anime_to_rank, current_time
     infer_ranking_model = infer_anime_anime_ranking_op(
         data_format = data_format,
         model_path = train_ranking_model.outputs['model_path'],
-        input_data_path = anime_anime_to_rank.outputs['gcs_output_data']
+        input_data_path = anime_anime_to_rank.outputs['output_data_path']
     )
     infer_ranking_model.set_display_name("INFER: user anime ranking")
     infer_ranking_model.set_cpu_limit('16').set_memory_limit('32G')
@@ -180,7 +182,7 @@ def anime_anime_ranking_steps(list_anime_data, anime_anime_to_rank, current_time
     '''
     # Outputs user_id, anime_id to GCS and BQ
     user_last_watched = run_query_save_to_bq_table_and_gcs(
-        query = user_last_anime_watched_query(),
+        query = user_last_anime_watched_query(anime_min_completed_and_rated = ANIME_AT_LEAST_RATED, user_min_completed_and_rated = USER_AT_LEAST_RATED),
         project_id=project_id,
         destination_dataset_id=dataset_id,
         destination_table_id=f"anime_anime_user_last_watched_{current_time}",
@@ -190,7 +192,7 @@ def anime_anime_ranking_steps(list_anime_data, anime_anime_to_rank, current_time
 
     # Outputs user_id, anime_id, retrieved_anime_id, score to GCS and BQ
     user_ranked_recs = run_query_save_to_bq_table_and_gcs(
-        query = user_last_anime_ranked_animes_query(f"anime_anime_user_last_watched_{current_time}", f"anime_anime_ranking_infer_{current_time}"),
+        query = user_last_anime_ranked_animes_query(f"anime_anime_user_last_watched_{current_time}", f"anime_anime_ranking_infer_{current_time}", anime_min_completed_and_rated = ANIME_AT_LEAST_RATED, user_min_completed_and_rated = USER_AT_LEAST_RATED),
         project_id=project_id,
         destination_dataset_id=dataset_id,
         destination_table_id=f"anime_anime_user_anime_ranked_{current_time}",
@@ -213,7 +215,7 @@ def anime_anime_recommendation_pipeline(
     current_time = datetime.now().strftime("%Y%m%d%H%M%S")
 
     list_anime_data = run_query_save_to_bq_table_and_gcs(
-        query = anime_list_query(),
+        query = anime_list_query(anime_min_completed_and_rated = ANIME_AT_LEAST_RATED),
         project_id=project_id,
         destination_dataset_id=dataset_id,
         destination_table_id=f"list_anime_{current_time}",
@@ -246,7 +248,7 @@ def anime_anime_recommendation_pipeline(
         
         # Outputs anime_id, retrieved_anime_id to GCS and BQ
         anime_anime_to_rank = run_query_save_to_bq_table_and_gcs(
-            query = anime_all_possible_animes_query(),
+            query = anime_all_possible_anime_query(anime_min_completed_and_rated = ANIME_AT_LEAST_RATED),
             project_id=project_id,
             destination_dataset_id=dataset_id,
             destination_table_id=f"anime_cross_anime_{current_time}",
@@ -284,7 +286,7 @@ if __name__ == '__main__':
         enable_caching=False,
         parameter_values={
             'project_id': 'anime-rec-dev',
-            'dataset_id': 'ml_pipelines', 
+            'dataset_id': 'ml_pipelines_anime_anime', 
             'data_format': 'csv',
             'run_retrieval': 'true'
         }

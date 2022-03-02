@@ -3,14 +3,15 @@
     based on the what the user watched (collaborative filtering)
 '''
 from anime_rec.data.bq_queries.common_data_queries import anime_list_query, user_list_query
-from anime_rec.data.bq_queries.user_anime_data_queries import user_anime_filter_anime, user_anime_filter_user
+from anime_rec.data.bq_queries.common_data_queries import user_anime_filter_anime
+from anime_rec.data.bq_queries.user_anime_data_queries import user_anime_filter_user
 from anime_rec.data.bq_queries.user_anime_data_queries import user_anime_completed_and_not_strict_ordered_query
 from anime_rec.data.bq_queries.user_anime_data_queries import user_anime_completed_and_scored_and_not_strict_ordered_query
 
 def user_anime_retrieval_query(
     mode='TRAIN',
     anime_min_completed_and_rated=1000,
-    users_min_completed_and_rated=50
+    user_min_completed_and_rated=50
 ):
     '''
         SQL query that returns train, validation or test data
@@ -29,7 +30,7 @@ def user_anime_retrieval_query(
         {user_anime_filter_anime("`anime-rec-dev.processed_area.user_anime`", "list_anime")}
     ),
     list_users AS (
-        {user_list_query("filtered_user_anime_on_anime", users_min_completed_and_rated)}
+        {user_list_query("filtered_user_anime_on_anime", user_min_completed_and_rated)}
     ),
     filtered_user_anime AS (
         {user_anime_filter_user("filtered_user_anime_on_anime", "list_users")}
@@ -61,7 +62,7 @@ def user_anime_retrieval_query(
 def user_anime_ranking_query(
     mode='TRAIN',
     anime_min_completed_and_rated=1000,
-    users_min_completed_and_rated=50
+    user_min_completed_and_rated=50
 ):
     '''
         SQL query that returns train, validation or test data
@@ -79,7 +80,7 @@ def user_anime_ranking_query(
         {user_anime_filter_anime("`anime-rec-dev.processed_area.user_anime`", "list_anime")}
     ),
     list_users AS (
-        {user_list_query("filtered_user_anime_on_anime", users_min_completed_and_rated)}
+        {user_list_query("filtered_user_anime_on_anime", user_min_completed_and_rated)}
     ),
     filtered_user_anime AS (
         {user_anime_filter_user("filtered_user_anime_on_anime", "list_users")}
@@ -111,7 +112,7 @@ def user_anime_ranking_query(
 def user_anime_list_ranking_query(
     mode='TRAIN',
     anime_min_completed_and_rated=1000,
-    users_min_completed_and_rated=50
+    user_min_completed_and_rated=50
 ):
     '''
         SQL query that returns train, validation or test data
@@ -129,7 +130,7 @@ def user_anime_list_ranking_query(
         {user_anime_filter_anime("`anime-rec-dev.processed_area.user_anime`", "list_anime")}
     ),
     list_users AS (
-        {user_list_query("filtered_user_anime_on_anime", users_min_completed_and_rated)}
+        {user_list_query("filtered_user_anime_on_anime", user_min_completed_and_rated)}
     ),
     filtered_user_anime AS (
         {user_anime_filter_user("filtered_user_anime_on_anime", "list_users")}
