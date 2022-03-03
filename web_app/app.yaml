@@ -1,1 +1,4 @@
 runtime: python37
+env_variables:
+  PROJECT_ID: "anime-rec-dev"
+  PUBSUB_TOPIC: "web_app_click_stream_topic"
