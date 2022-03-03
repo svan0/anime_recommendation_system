@@ -44,4 +44,17 @@ def user_list_query(
     """
     return query
 
+def user_list_sub_query(
+    user_anime_relation = "`anime-rec-dev.processed_area.user_anime`",
+    user_min_completed_and_rated = 50
+):
+    query = f"""
+        SELECT user_id
+        FROM {user_anime_relation}
+        WHERE status = 'completed' AND score IS NOT NULL
+        GROUP BY user_id
+        HAVING COUNT(*) >= {user_min_completed_and_rated}
+    """
+    return query
+
 

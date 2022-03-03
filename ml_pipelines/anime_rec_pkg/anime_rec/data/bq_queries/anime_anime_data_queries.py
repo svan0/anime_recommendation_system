@@ -1,6 +1,6 @@
 from anime_rec.data.bq_queries.common_data_queries import user_anime_filter_anime
 from anime_rec.data.bq_queries.user_anime_data_queries import user_anime_filter_user, user_anime_completed_and_strict_ordered_query
-from anime_rec.data.bq_queries.common_data_queries import anime_list_query, user_list_query
+from anime_rec.data.bq_queries.common_data_queries import anime_list_query, user_list_sub_query
 
 
 def anime_anime_related_query(anime_anime_relation = "`anime-rec-dev.processed_area.anime_anime`"):
@@ -94,7 +94,7 @@ def user_last_anime_watched_query(
             {user_anime_filter_anime("`anime-rec-dev.processed_area.user_anime`", "list_anime")}
         ),
         list_users AS (
-            {user_list_query("filtered_user_anime_on_anime", user_min_completed_and_rated)}
+            {user_list_sub_query("filtered_user_anime_on_anime", user_min_completed_and_rated)}
         ),
         filtered_user_anime AS (
             {user_anime_filter_user("filtered_user_anime_on_anime", "list_users")}
@@ -126,7 +126,7 @@ def user_last_anime_ranked_animes_query(
             {user_anime_filter_anime("`anime-rec-dev.processed_area.user_anime`", "list_anime")}
         ),
         list_users AS (
-            {user_list_query("filtered_user_anime_on_anime", user_min_completed_and_rated)}
+            {user_list_sub_query("filtered_user_anime_on_anime", user_min_completed_and_rated)}
         ),
         filtered_user_anime AS (
             {user_anime_filter_user("filtered_user_anime_on_anime", "list_users")}

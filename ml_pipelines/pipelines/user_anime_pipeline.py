@@ -393,7 +393,7 @@ if __name__ == '__main__':
         enable_caching=False,
         parameter_values={
             'project_id': 'anime-rec-dev',
-            'dataset_id': 'ml_pipelines', 
+            'dataset_id': 'ml_pipelines_user_anime', 
             'data_format': 'csv',
             'run_retrieval': 'true', 
             'list_ranking':'true'
