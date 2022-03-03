@@ -71,7 +71,7 @@ def anime_all_possible_anime_query(anime_min_completed_and_rated=1000):
         WITH 
         list_anime AS (
             {anime_list_query("`anime-rec-dev.processed_area.user_anime`", anime_min_completed_and_rated)}
-        ),
+        )
         SELECT A.anime_id, B.anime_id AS retrieved_anime_id
         FROM list_anime A
         CROSS JOIN list_anime B

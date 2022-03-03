@@ -769,7 +769,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_list_ranking_infer_20220303000011"
+                        "stringValue": "user_anime_list_ranking_infer"
                       }
                     }
                   },
@@ -807,7 +807,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_list_ranking_train_20220303000011"
+                        "stringValue": "user_anime_list_ranking_train"
                       }
                     }
                   },
@@ -820,7 +820,7 @@
                   "query": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 10000\n    \n    ),\n    filtered_user_anime_on_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n    ),\n    list_users AS (\n        \n        WITH \n        list_anime AS (\n            \n        SELECT anime_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 500\n    \n        ),\n        filtered_user_anime_on_anime AS (\n            \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n        )\n        SELECT user_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM filtered_user_anime_on_anime A\n        INNER JOIN list_users B\n        ON A.user_id = B.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    ),\n    train_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order >= 21\n    ),\n    train_data_random_order AS (\n        SELECT user_id, \n               anime_id, \n               CAST(score AS STRING) AS score, \n               ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY RAND()) - 1 AS random_order_anime_per_user\n        FROM train_data\n    ),\n    train_data_list AS (\n        SELECT user_id, \n               ARRAY_AGG(anime_id) AS anime_id, \n               ARRAY_AGG(score) AS score \n        FROM train_data_random_order\n        GROUP BY user_id, DIV(random_order_anime_per_user, 10)\n        HAVING ARRAY_LENGTH(anime_id) = 10\n    ),\n    val_data AS (\n        SELECT user_id, anime_id, CAST(score AS STRING) AS score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 11 AND 20\n    ),\n    val_data_list AS (\n        SELECT user_id, \n               ARRAY_AGG(anime_id) AS anime_id, \n               ARRAY_AGG(score) AS score \n        FROM val_data \n        GROUP BY user_id\n    ),\n    test_data AS (\n        SELECT user_id, anime_id, CAST(score AS STRING) AS score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 1 AND 10\n    ),\n    test_data_list AS (\n        SELECT user_id, \n               ARRAY_AGG(anime_id) AS anime_id, \n               ARRAY_AGG(score) AS score \n        FROM test_data \n        GROUP BY user_id\n    )\n    \n        SELECT user_id, ARRAY_TO_STRING(anime_id, '|') AS anime_id, ARRAY_TO_STRING(score, '|') AS score\n        FROM train_data_list\n        "
+                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 10000\n    \n    ),\n    filtered_user_anime_on_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 500\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM filtered_user_anime_on_anime A\n        INNER JOIN list_users B\n        ON A.user_id = B.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    ),\n    train_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order >= 21\n    ),\n    train_data_random_order AS (\n        SELECT user_id, \n               anime_id, \n               CAST(score AS STRING) AS score, \n               ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY RAND()) - 1 AS random_order_anime_per_user\n        FROM train_data\n    ),\n    train_data_list AS (\n        SELECT user_id, \n               ARRAY_AGG(anime_id) AS anime_id, \n               ARRAY_AGG(score) AS score \n        FROM train_data_random_order\n        GROUP BY user_id, DIV(random_order_anime_per_user, 10)\n        HAVING ARRAY_LENGTH(anime_id) = 10\n    ),\n    val_data AS (\n        SELECT user_id, anime_id, CAST(score AS STRING) AS score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 11 AND 20\n    ),\n    val_data_list AS (\n        SELECT user_id, \n               ARRAY_AGG(anime_id) AS anime_id, \n               ARRAY_AGG(score) AS score \n        FROM val_data \n        GROUP BY user_id\n    ),\n    test_data AS (\n        SELECT user_id, anime_id, CAST(score AS STRING) AS score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 1 AND 10\n    ),\n    test_data_list AS (\n        SELECT user_id, \n               ARRAY_AGG(anime_id) AS anime_id, \n               ARRAY_AGG(score) AS score \n        FROM test_data \n        GROUP BY user_id\n    )\n    \n        SELECT user_id, ARRAY_TO_STRING(anime_id, '|') AS anime_id, ARRAY_TO_STRING(score, '|') AS score\n        FROM train_data_list\n        "
                       }
                     }
                   }
@@ -845,7 +845,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_list_ranking_val_20220303000011"
+                        "stringValue": "user_anime_list_ranking_val"
                       }
                     }
                   },
@@ -858,7 +858,7 @@
                   "query": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 10000\n    \n    ),\n    filtered_user_anime_on_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n    ),\n    list_users AS (\n        \n        WITH \n        list_anime AS (\n            \n        SELECT anime_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 500\n    \n        ),\n        filtered_user_anime_on_anime AS (\n            \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n        )\n        SELECT user_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM filtered_user_anime_on_anime A\n        INNER JOIN list_users B\n        ON A.user_id = B.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    ),\n    train_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order >= 21\n    ),\n    train_data_random_order AS (\n        SELECT user_id, \n               anime_id, \n               CAST(score AS STRING) AS score, \n               ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY RAND()) - 1 AS random_order_anime_per_user\n        FROM train_data\n    ),\n    train_data_list AS (\n        SELECT user_id, \n               ARRAY_AGG(anime_id) AS anime_id, \n               ARRAY_AGG(score) AS score \n        FROM train_data_random_order\n        GROUP BY user_id, DIV(random_order_anime_per_user, 10)\n        HAVING ARRAY_LENGTH(anime_id) = 10\n    ),\n    val_data AS (\n        SELECT user_id, anime_id, CAST(score AS STRING) AS score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 11 AND 20\n    ),\n    val_data_list AS (\n        SELECT user_id, \n               ARRAY_AGG(anime_id) AS anime_id, \n               ARRAY_AGG(score) AS score \n        FROM val_data \n        GROUP BY user_id\n    ),\n    test_data AS (\n        SELECT user_id, anime_id, CAST(score AS STRING) AS score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 1 AND 10\n    ),\n    test_data_list AS (\n        SELECT user_id, \n               ARRAY_AGG(anime_id) AS anime_id, \n               ARRAY_AGG(score) AS score \n        FROM test_data \n        GROUP BY user_id\n    )\n    \n        SELECT user_id, ARRAY_TO_STRING(anime_id, '|') AS anime_id, ARRAY_TO_STRING(score, '|') AS score\n        FROM val_data_list\n        "
+                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 10000\n    \n    ),\n    filtered_user_anime_on_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 500\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM filtered_user_anime_on_anime A\n        INNER JOIN list_users B\n        ON A.user_id = B.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    ),\n    train_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order >= 21\n    ),\n    train_data_random_order AS (\n        SELECT user_id, \n               anime_id, \n               CAST(score AS STRING) AS score, \n               ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY RAND()) - 1 AS random_order_anime_per_user\n        FROM train_data\n    ),\n    train_data_list AS (\n        SELECT user_id, \n               ARRAY_AGG(anime_id) AS anime_id, \n               ARRAY_AGG(score) AS score \n        FROM train_data_random_order\n        GROUP BY user_id, DIV(random_order_anime_per_user, 10)\n        HAVING ARRAY_LENGTH(anime_id) = 10\n    ),\n    val_data AS (\n        SELECT user_id, anime_id, CAST(score AS STRING) AS score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 11 AND 20\n    ),\n    val_data_list AS (\n        SELECT user_id, \n               ARRAY_AGG(anime_id) AS anime_id, \n               ARRAY_AGG(score) AS score \n        FROM val_data \n        GROUP BY user_id\n    ),\n    test_data AS (\n        SELECT user_id, anime_id, CAST(score AS STRING) AS score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 1 AND 10\n    ),\n    test_data_list AS (\n        SELECT user_id, \n               ARRAY_AGG(anime_id) AS anime_id, \n               ARRAY_AGG(score) AS score \n        FROM test_data \n        GROUP BY user_id\n    )\n    \n        SELECT user_id, ARRAY_TO_STRING(anime_id, '|') AS anime_id, ARRAY_TO_STRING(score, '|') AS score\n        FROM val_data_list\n        "
                       }
                     }
                   }
@@ -883,7 +883,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_list_ranking_test_20220303000011"
+                        "stringValue": "user_anime_list_ranking_test"
                       }
                     }
                   },
@@ -896,7 +896,7 @@
                   "query": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 10000\n    \n    ),\n    filtered_user_anime_on_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n    ),\n    list_users AS (\n        \n        WITH \n        list_anime AS (\n            \n        SELECT anime_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 500\n    \n        ),\n        filtered_user_anime_on_anime AS (\n            \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n        )\n        SELECT user_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM filtered_user_anime_on_anime A\n        INNER JOIN list_users B\n        ON A.user_id = B.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    ),\n    train_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order >= 21\n    ),\n    train_data_random_order AS (\n        SELECT user_id, \n               anime_id, \n               CAST(score AS STRING) AS score, \n               ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY RAND()) - 1 AS random_order_anime_per_user\n        FROM train_data\n    ),\n    train_data_list AS (\n        SELECT user_id, \n               ARRAY_AGG(anime_id) AS anime_id, \n               ARRAY_AGG(score) AS score \n        FROM train_data_random_order\n        GROUP BY user_id, DIV(random_order_anime_per_user, 10)\n        HAVING ARRAY_LENGTH(anime_id) = 10\n    ),\n    val_data AS (\n        SELECT user_id, anime_id, CAST(score AS STRING) AS score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 11 AND 20\n    ),\n    val_data_list AS (\n        SELECT user_id, \n               ARRAY_AGG(anime_id) AS anime_id, \n               ARRAY_AGG(score) AS score \n        FROM val_data \n        GROUP BY user_id\n    ),\n    test_data AS (\n        SELECT user_id, anime_id, CAST(score AS STRING) AS score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 1 AND 10\n    ),\n    test_data_list AS (\n        SELECT user_id, \n               ARRAY_AGG(anime_id) AS anime_id, \n               ARRAY_AGG(score) AS score \n        FROM test_data \n        GROUP BY user_id\n    )\n    \n        SELECT user_id, ARRAY_TO_STRING(anime_id, '|') AS anime_id, ARRAY_TO_STRING(score, '|') AS score\n        FROM test_data_list\n        "
+                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 10000\n    \n    ),\n    filtered_user_anime_on_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 500\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM filtered_user_anime_on_anime A\n        INNER JOIN list_users B\n        ON A.user_id = B.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    ),\n    train_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order >= 21\n    ),\n    train_data_random_order AS (\n        SELECT user_id, \n               anime_id, \n               CAST(score AS STRING) AS score, \n               ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY RAND()) - 1 AS random_order_anime_per_user\n        FROM train_data\n    ),\n    train_data_list AS (\n        SELECT user_id, \n               ARRAY_AGG(anime_id) AS anime_id, \n               ARRAY_AGG(score) AS score \n        FROM train_data_random_order\n        GROUP BY user_id, DIV(random_order_anime_per_user, 10)\n        HAVING ARRAY_LENGTH(anime_id) = 10\n    ),\n    val_data AS (\n        SELECT user_id, anime_id, CAST(score AS STRING) AS score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 11 AND 20\n    ),\n    val_data_list AS (\n        SELECT user_id, \n               ARRAY_AGG(anime_id) AS anime_id, \n               ARRAY_AGG(score) AS score \n        FROM val_data \n        GROUP BY user_id\n    ),\n    test_data AS (\n        SELECT user_id, anime_id, CAST(score AS STRING) AS score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 1 AND 10\n    ),\n    test_data_list AS (\n        SELECT user_id, \n               ARRAY_AGG(anime_id) AS anime_id, \n               ARRAY_AGG(score) AS score \n        FROM test_data \n        GROUP BY user_id\n    )\n    \n        SELECT user_id, ARRAY_TO_STRING(anime_id, '|') AS anime_id, ARRAY_TO_STRING(score, '|') AS score\n        FROM test_data_list\n        "
                       }
                     }
                   }
@@ -1143,7 +1143,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_list_ranking_infer_20220303000011"
+                        "stringValue": "user_anime_list_ranking_infer"
                       }
                     }
                   },
@@ -1181,7 +1181,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_list_ranking_train_20220303000011"
+                        "stringValue": "user_anime_list_ranking_train"
                       }
                     }
                   },
@@ -1194,7 +1194,7 @@
                   "query": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 10000\n    \n    ),\n    filtered_user_anime_on_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n    ),\n    list_users AS (\n        \n        WITH \n        list_anime AS (\n            \n        SELECT anime_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 500\n    \n        ),\n        filtered_user_anime_on_anime AS (\n            \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n        )\n        SELECT user_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM filtered_user_anime_on_anime A\n        INNER JOIN list_users B\n        ON A.user_id = B.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    ),\n    train_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order >= 21\n    ),\n    train_data_random_order AS (\n        SELECT user_id, \n               anime_id, \n               CAST(score AS STRING) AS score, \n               ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY RAND()) - 1 AS random_order_anime_per_user\n        FROM train_data\n    ),\n    train_data_list AS (\n        SELECT user_id, \n               ARRAY_AGG(anime_id) AS anime_id, \n               ARRAY_AGG(score) AS score \n        FROM train_data_random_order\n        GROUP BY user_id, DIV(random_order_anime_per_user, 10)\n        HAVING ARRAY_LENGTH(anime_id) = 10\n    ),\n    val_data AS (\n        SELECT user_id, anime_id, CAST(score AS STRING) AS score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 11 AND 20\n    ),\n    val_data_list AS (\n        SELECT user_id, \n               ARRAY_AGG(anime_id) AS anime_id, \n               ARRAY_AGG(score) AS score \n        FROM val_data \n        GROUP BY user_id\n    ),\n    test_data AS (\n        SELECT user_id, anime_id, CAST(score AS STRING) AS score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 1 AND 10\n    ),\n    test_data_list AS (\n        SELECT user_id, \n               ARRAY_AGG(anime_id) AS anime_id, \n               ARRAY_AGG(score) AS score \n        FROM test_data \n        GROUP BY user_id\n    )\n    \n        SELECT user_id, ARRAY_TO_STRING(anime_id, '|') AS anime_id, ARRAY_TO_STRING(score, '|') AS score\n        FROM train_data_list\n        "
+                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 10000\n    \n    ),\n    filtered_user_anime_on_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 500\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM filtered_user_anime_on_anime A\n        INNER JOIN list_users B\n        ON A.user_id = B.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    ),\n    train_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order >= 21\n    ),\n    train_data_random_order AS (\n        SELECT user_id, \n               anime_id, \n               CAST(score AS STRING) AS score, \n               ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY RAND()) - 1 AS random_order_anime_per_user\n        FROM train_data\n    ),\n    train_data_list AS (\n        SELECT user_id, \n               ARRAY_AGG(anime_id) AS anime_id, \n               ARRAY_AGG(score) AS score \n        FROM train_data_random_order\n        GROUP BY user_id, DIV(random_order_anime_per_user, 10)\n        HAVING ARRAY_LENGTH(anime_id) = 10\n    ),\n    val_data AS (\n        SELECT user_id, anime_id, CAST(score AS STRING) AS score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 11 AND 20\n    ),\n    val_data_list AS (\n        SELECT user_id, \n               ARRAY_AGG(anime_id) AS anime_id, \n               ARRAY_AGG(score) AS score \n        FROM val_data \n        GROUP BY user_id\n    ),\n    test_data AS (\n        SELECT user_id, anime_id, CAST(score AS STRING) AS score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 1 AND 10\n    ),\n    test_data_list AS (\n        SELECT user_id, \n               ARRAY_AGG(anime_id) AS anime_id, \n               ARRAY_AGG(score) AS score \n        FROM test_data \n        GROUP BY user_id\n    )\n    \n        SELECT user_id, ARRAY_TO_STRING(anime_id, '|') AS anime_id, ARRAY_TO_STRING(score, '|') AS score\n        FROM train_data_list\n        "
                       }
                     }
                   }
@@ -1219,7 +1219,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_list_ranking_val_20220303000011"
+                        "stringValue": "user_anime_list_ranking_val"
                       }
                     }
                   },
@@ -1232,7 +1232,7 @@
                   "query": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 10000\n    \n    ),\n    filtered_user_anime_on_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n    ),\n    list_users AS (\n        \n        WITH \n        list_anime AS (\n            \n        SELECT anime_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 500\n    \n        ),\n        filtered_user_anime_on_anime AS (\n            \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n        )\n        SELECT user_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM filtered_user_anime_on_anime A\n        INNER JOIN list_users B\n        ON A.user_id = B.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    ),\n    train_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order >= 21\n    ),\n    train_data_random_order AS (\n        SELECT user_id, \n               anime_id, \n               CAST(score AS STRING) AS score, \n               ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY RAND()) - 1 AS random_order_anime_per_user\n        FROM train_data\n    ),\n    train_data_list AS (\n        SELECT user_id, \n               ARRAY_AGG(anime_id) AS anime_id, \n               ARRAY_AGG(score) AS score \n        FROM train_data_random_order\n        GROUP BY user_id, DIV(random_order_anime_per_user, 10)\n        HAVING ARRAY_LENGTH(anime_id) = 10\n    ),\n    val_data AS (\n        SELECT user_id, anime_id, CAST(score AS STRING) AS score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 11 AND 20\n    ),\n    val_data_list AS (\n        SELECT user_id, \n               ARRAY_AGG(anime_id) AS anime_id, \n               ARRAY_AGG(score) AS score \n        FROM val_data \n        GROUP BY user_id\n    ),\n    test_data AS (\n        SELECT user_id, anime_id, CAST(score AS STRING) AS score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 1 AND 10\n    ),\n    test_data_list AS (\n        SELECT user_id, \n               ARRAY_AGG(anime_id) AS anime_id, \n               ARRAY_AGG(score) AS score \n        FROM test_data \n        GROUP BY user_id\n    )\n    \n        SELECT user_id, ARRAY_TO_STRING(anime_id, '|') AS anime_id, ARRAY_TO_STRING(score, '|') AS score\n        FROM val_data_list\n        "
+                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 10000\n    \n    ),\n    filtered_user_anime_on_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 500\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM filtered_user_anime_on_anime A\n        INNER JOIN list_users B\n        ON A.user_id = B.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    ),\n    train_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order >= 21\n    ),\n    train_data_random_order AS (\n        SELECT user_id, \n               anime_id, \n               CAST(score AS STRING) AS score, \n               ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY RAND()) - 1 AS random_order_anime_per_user\n        FROM train_data\n    ),\n    train_data_list AS (\n        SELECT user_id, \n               ARRAY_AGG(anime_id) AS anime_id, \n               ARRAY_AGG(score) AS score \n        FROM train_data_random_order\n        GROUP BY user_id, DIV(random_order_anime_per_user, 10)\n        HAVING ARRAY_LENGTH(anime_id) = 10\n    ),\n    val_data AS (\n        SELECT user_id, anime_id, CAST(score AS STRING) AS score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 11 AND 20\n    ),\n    val_data_list AS (\n        SELECT user_id, \n               ARRAY_AGG(anime_id) AS anime_id, \n               ARRAY_AGG(score) AS score \n        FROM val_data \n        GROUP BY user_id\n    ),\n    test_data AS (\n        SELECT user_id, anime_id, CAST(score AS STRING) AS score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 1 AND 10\n    ),\n    test_data_list AS (\n        SELECT user_id, \n               ARRAY_AGG(anime_id) AS anime_id, \n               ARRAY_AGG(score) AS score \n        FROM test_data \n        GROUP BY user_id\n    )\n    \n        SELECT user_id, ARRAY_TO_STRING(anime_id, '|') AS anime_id, ARRAY_TO_STRING(score, '|') AS score\n        FROM val_data_list\n        "
                       }
                     }
                   }
@@ -1257,7 +1257,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_list_ranking_test_20220303000011"
+                        "stringValue": "user_anime_list_ranking_test"
                       }
                     }
                   },
@@ -1270,7 +1270,7 @@
                   "query": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 10000\n    \n    ),\n    filtered_user_anime_on_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n    ),\n    list_users AS (\n        \n        WITH \n        list_anime AS (\n            \n        SELECT anime_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 500\n    \n        ),\n        filtered_user_anime_on_anime AS (\n            \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n        )\n        SELECT user_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM filtered_user_anime_on_anime A\n        INNER JOIN list_users B\n        ON A.user_id = B.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    ),\n    train_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order >= 21\n    ),\n    train_data_random_order AS (\n        SELECT user_id, \n               anime_id, \n               CAST(score AS STRING) AS score, \n               ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY RAND()) - 1 AS random_order_anime_per_user\n        FROM train_data\n    ),\n    train_data_list AS (\n        SELECT user_id, \n               ARRAY_AGG(anime_id) AS anime_id, \n               ARRAY_AGG(score) AS score \n        FROM train_data_random_order\n        GROUP BY user_id, DIV(random_order_anime_per_user, 10)\n        HAVING ARRAY_LENGTH(anime_id) = 10\n    ),\n    val_data AS (\n        SELECT user_id, anime_id, CAST(score AS STRING) AS score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 11 AND 20\n    ),\n    val_data_list AS (\n        SELECT user_id, \n               ARRAY_AGG(anime_id) AS anime_id, \n               ARRAY_AGG(score) AS score \n        FROM val_data \n        GROUP BY user_id\n    ),\n    test_data AS (\n        SELECT user_id, anime_id, CAST(score AS STRING) AS score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 1 AND 10\n    ),\n    test_data_list AS (\n        SELECT user_id, \n               ARRAY_AGG(anime_id) AS anime_id, \n               ARRAY_AGG(score) AS score \n        FROM test_data \n        GROUP BY user_id\n    )\n    \n        SELECT user_id, ARRAY_TO_STRING(anime_id, '|') AS anime_id, ARRAY_TO_STRING(score, '|') AS score\n        FROM test_data_list\n        "
+                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 10000\n    \n    ),\n    filtered_user_anime_on_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 500\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM filtered_user_anime_on_anime A\n        INNER JOIN list_users B\n        ON A.user_id = B.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    ),\n    train_data AS (\n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order >= 21\n    ),\n    train_data_random_order AS (\n        SELECT user_id, \n               anime_id, \n               CAST(score AS STRING) AS score, \n               ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY RAND()) - 1 AS random_order_anime_per_user\n        FROM train_data\n    ),\n    train_data_list AS (\n        SELECT user_id, \n               ARRAY_AGG(anime_id) AS anime_id, \n               ARRAY_AGG(score) AS score \n        FROM train_data_random_order\n        GROUP BY user_id, DIV(random_order_anime_per_user, 10)\n        HAVING ARRAY_LENGTH(anime_id) = 10\n    ),\n    val_data AS (\n        SELECT user_id, anime_id, CAST(score AS STRING) AS score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 11 AND 20\n    ),\n    val_data_list AS (\n        SELECT user_id, \n               ARRAY_AGG(anime_id) AS anime_id, \n               ARRAY_AGG(score) AS score \n        FROM val_data \n        GROUP BY user_id\n    ),\n    test_data AS (\n        SELECT user_id, anime_id, CAST(score AS STRING) AS score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 1 AND 10\n    ),\n    test_data_list AS (\n        SELECT user_id, \n               ARRAY_AGG(anime_id) AS anime_id, \n               ARRAY_AGG(score) AS score \n        FROM test_data \n        GROUP BY user_id\n    )\n    \n        SELECT user_id, ARRAY_TO_STRING(anime_id, '|') AS anime_id, ARRAY_TO_STRING(score, '|') AS score\n        FROM test_data_list\n        "
                       }
                     }
                   }
@@ -1464,7 +1464,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_cross_anime_20220303000011"
+                        "stringValue": "user_cross_anime"
                       }
                     }
                   },
@@ -1477,7 +1477,7 @@
                   "query": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "\n        WITH \n        list_anime AS (\n            \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 10000\n    \n        ),\n        filtered_user_anime_on_anime AS (\n            \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n        ),\n        list_users AS (\n            \n        WITH \n        list_anime AS (\n            \n        SELECT anime_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 500\n    \n        ),\n        filtered_user_anime_on_anime AS (\n            \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n        )\n        SELECT user_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n        )\n        SELECT A.user_id, B.anime_id\n        FROM list_users A\n        CROSS JOIN list_anime B  \n    "
+                        "stringValue": "\n        WITH \n        list_anime AS (\n            \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 10000\n    \n        ),\n        filtered_user_anime_on_anime AS (\n            \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n        ),\n        list_users AS (\n            \n        SELECT user_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 500\n    \n        )\n        SELECT A.user_id, B.anime_id\n        FROM list_users A\n        CROSS JOIN list_anime B  \n    "
                       }
                     }
                   }
@@ -1505,12 +1505,18 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_cross_anime_to_rank_20220303000011"
+                        "stringValue": "user_cross_anime_to_rank"
                       }
                     }
                   },
                   "gcs_output_format": {
                     "componentInputParameter": "pipelineparam--data_format"
+                  },
+                  "pipelineparam--dataset_id": {
+                    "componentInputParameter": "pipelineparam--dataset_id"
+                  },
+                  "pipelineparam--project_id": {
+                    "componentInputParameter": "pipelineparam--project_id"
                   },
                   "project_id": {
                     "componentInputParameter": "pipelineparam--project_id"
@@ -1518,7 +1524,7 @@
                   "query": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "\n        WITH \n        list_anime AS (\n            \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 10000\n    \n        ),\n        filtered_user_anime_on_anime AS (\n            \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n        ),\n        list_users AS (\n            \n        WITH \n        list_anime AS (\n            \n        SELECT anime_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 500\n    \n        ),\n        filtered_user_anime_on_anime AS (\n            \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n        )\n        SELECT user_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n        ),\n        filtered_user_anime AS (\n            \n        SELECT A.*\n        FROM filtered_user_anime_on_anime A\n        INNER JOIN list_users B\n        ON A.user_id = B.user_id\n    \n        )\n        SELECT A.user_id, A.anime_id\n        FROM user_cross_anime_20220303000011 A\n        LEFT JOIN filtered_user_anime B\n        ON A.user_id = B.user_id AND A.anime_id = B.anime_id\n        WHERE B.status IS NULL\n    "
+                        "stringValue": "\n        WITH \n        list_anime AS (\n            \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 10000\n    \n        ),\n        filtered_user_anime_on_anime AS (\n            \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n        ),\n        list_users AS (\n            \n        SELECT user_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 500\n    \n        ),\n        filtered_user_anime AS (\n            \n        SELECT A.*\n        FROM filtered_user_anime_on_anime A\n        INNER JOIN list_users B\n        ON A.user_id = B.user_id\n    \n        )\n        SELECT A.user_id, A.anime_id\n        FROM {{$.inputs.parameters['pipelineparam--project_id']}}.{{$.inputs.parameters['pipelineparam--dataset_id']}}.user_cross_anime A\n        LEFT JOIN filtered_user_anime B\n        ON A.user_id = B.user_id AND A.anime_id = B.anime_id\n        WHERE B.status IS NULL\n    "
                       }
                     }
                   }
@@ -1765,7 +1771,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_ranking_infer_20220303000011"
+                        "stringValue": "user_anime_ranking_infer"
                       }
                     }
                   },
@@ -1803,7 +1809,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_ranking_train_20220303000011"
+                        "stringValue": "user_anime_ranking_train"
                       }
                     }
                   },
@@ -1816,7 +1822,7 @@
                   "query": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 10000\n    \n    ),\n    filtered_user_anime_on_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n    ),\n    list_users AS (\n        \n        WITH \n        list_anime AS (\n            \n        SELECT anime_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 500\n    \n        ),\n        filtered_user_anime_on_anime AS (\n            \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n        )\n        SELECT user_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM filtered_user_anime_on_anime A\n        INNER JOIN list_users B\n        ON A.user_id = B.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    )\n    \n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order >= 21\n        "
+                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 10000\n    \n    ),\n    filtered_user_anime_on_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 500\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM filtered_user_anime_on_anime A\n        INNER JOIN list_users B\n        ON A.user_id = B.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    )\n    \n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order >= 21\n        "
                       }
                     }
                   }
@@ -1841,7 +1847,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_ranking_val_20220303000011"
+                        "stringValue": "user_anime_ranking_val"
                       }
                     }
                   },
@@ -1854,7 +1860,7 @@
                   "query": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 10000\n    \n    ),\n    filtered_user_anime_on_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n    ),\n    list_users AS (\n        \n        WITH \n        list_anime AS (\n            \n        SELECT anime_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 500\n    \n        ),\n        filtered_user_anime_on_anime AS (\n            \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n        )\n        SELECT user_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM filtered_user_anime_on_anime A\n        INNER JOIN list_users B\n        ON A.user_id = B.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    )\n    \n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 11 AND 20\n        "
+                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 10000\n    \n    ),\n    filtered_user_anime_on_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 500\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM filtered_user_anime_on_anime A\n        INNER JOIN list_users B\n        ON A.user_id = B.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    )\n    \n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 11 AND 20\n        "
                       }
                     }
                   }
@@ -1879,7 +1885,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_ranking_test_20220303000011"
+                        "stringValue": "user_anime_ranking_test"
                       }
                     }
                   },
@@ -1892,7 +1898,7 @@
                   "query": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 10000\n    \n    ),\n    filtered_user_anime_on_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n    ),\n    list_users AS (\n        \n        WITH \n        list_anime AS (\n            \n        SELECT anime_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 500\n    \n        ),\n        filtered_user_anime_on_anime AS (\n            \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n        )\n        SELECT user_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM filtered_user_anime_on_anime A\n        INNER JOIN list_users B\n        ON A.user_id = B.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    )\n    \n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 1 AND 10\n        "
+                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 10000\n    \n    ),\n    filtered_user_anime_on_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 500\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM filtered_user_anime_on_anime A\n        INNER JOIN list_users B\n        ON A.user_id = B.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    )\n    \n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 1 AND 10\n        "
                       }
                     }
                   }
@@ -2139,7 +2145,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_ranking_infer_20220303000011"
+                        "stringValue": "user_anime_ranking_infer"
                       }
                     }
                   },
@@ -2177,7 +2183,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_ranking_train_20220303000011"
+                        "stringValue": "user_anime_ranking_train"
                       }
                     }
                   },
@@ -2190,7 +2196,7 @@
                   "query": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 10000\n    \n    ),\n    filtered_user_anime_on_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n    ),\n    list_users AS (\n        \n        WITH \n        list_anime AS (\n            \n        SELECT anime_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 500\n    \n        ),\n        filtered_user_anime_on_anime AS (\n            \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n        )\n        SELECT user_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM filtered_user_anime_on_anime A\n        INNER JOIN list_users B\n        ON A.user_id = B.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    )\n    \n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order >= 21\n        "
+                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 10000\n    \n    ),\n    filtered_user_anime_on_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 500\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM filtered_user_anime_on_anime A\n        INNER JOIN list_users B\n        ON A.user_id = B.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    )\n    \n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order >= 21\n        "
                       }
                     }
                   }
@@ -2215,7 +2221,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_ranking_val_20220303000011"
+                        "stringValue": "user_anime_ranking_val"
                       }
                     }
                   },
@@ -2228,7 +2234,7 @@
                   "query": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 10000\n    \n    ),\n    filtered_user_anime_on_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n    ),\n    list_users AS (\n        \n        WITH \n        list_anime AS (\n            \n        SELECT anime_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 500\n    \n        ),\n        filtered_user_anime_on_anime AS (\n            \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n        )\n        SELECT user_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM filtered_user_anime_on_anime A\n        INNER JOIN list_users B\n        ON A.user_id = B.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    )\n    \n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 11 AND 20\n        "
+                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 10000\n    \n    ),\n    filtered_user_anime_on_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 500\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM filtered_user_anime_on_anime A\n        INNER JOIN list_users B\n        ON A.user_id = B.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    )\n    \n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 11 AND 20\n        "
                       }
                     }
                   }
@@ -2253,7 +2259,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_ranking_test_20220303000011"
+                        "stringValue": "user_anime_ranking_test"
                       }
                     }
                   },
@@ -2266,7 +2272,7 @@
                   "query": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 10000\n    \n    ),\n    filtered_user_anime_on_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n    ),\n    list_users AS (\n        \n        WITH \n        list_anime AS (\n            \n        SELECT anime_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 500\n    \n        ),\n        filtered_user_anime_on_anime AS (\n            \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n        )\n        SELECT user_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM filtered_user_anime_on_anime A\n        INNER JOIN list_users B\n        ON A.user_id = B.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    )\n    \n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 1 AND 10\n        "
+                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 10000\n    \n    ),\n    filtered_user_anime_on_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 500\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM filtered_user_anime_on_anime A\n        INNER JOIN list_users B\n        ON A.user_id = B.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n    \n    )\n    \n        SELECT user_id, anime_id, score\n        FROM filtered_ordered_user_anime\n        WHERE user_anime_order BETWEEN 1 AND 10\n        "
                       }
                     }
                   }
@@ -2595,7 +2601,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_retrieval_infer_20220303000011"
+                        "stringValue": "user_anime_retrieval_infer"
                       }
                     }
                   },
@@ -2633,7 +2639,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_retrieval_train_20220303000011"
+                        "stringValue": "user_anime_retrieval_train"
                       }
                     }
                   },
@@ -2646,7 +2652,7 @@
                   "query": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 10000\n    \n    ),\n    filtered_user_anime_on_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n    ),\n    list_users AS (\n        \n        WITH \n        list_anime AS (\n            \n        SELECT anime_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 500\n    \n        ),\n        filtered_user_anime_on_anime AS (\n            \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n        )\n        SELECT user_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM filtered_user_anime_on_anime A\n        INNER JOIN list_users B\n        ON A.user_id = B.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed'\n    \n    )\n    \n        SELECT user_id, anime_id \n        FROM filtered_ordered_user_anime \n        WHERE user_anime_order >= 21\n        "
+                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 10000\n    \n    ),\n    filtered_user_anime_on_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 500\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM filtered_user_anime_on_anime A\n        INNER JOIN list_users B\n        ON A.user_id = B.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed'\n    \n    )\n    \n        SELECT user_id, anime_id \n        FROM filtered_ordered_user_anime \n        WHERE user_anime_order >= 21\n        "
                       }
                     }
                   }
@@ -2671,7 +2677,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_retrieval_val_20220303000011"
+                        "stringValue": "user_anime_retrieval_val"
                       }
                     }
                   },
@@ -2684,7 +2690,7 @@
                   "query": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 10000\n    \n    ),\n    filtered_user_anime_on_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n    ),\n    list_users AS (\n        \n        WITH \n        list_anime AS (\n            \n        SELECT anime_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 500\n    \n        ),\n        filtered_user_anime_on_anime AS (\n            \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n        )\n        SELECT user_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM filtered_user_anime_on_anime A\n        INNER JOIN list_users B\n        ON A.user_id = B.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed'\n    \n    )\n    \n        SELECT user_id, anime_id \n        FROM filtered_ordered_user_anime \n        WHERE user_anime_order BETWEEN 11 AND 20\n        "
+                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 10000\n    \n    ),\n    filtered_user_anime_on_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 500\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM filtered_user_anime_on_anime A\n        INNER JOIN list_users B\n        ON A.user_id = B.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed'\n    \n    )\n    \n        SELECT user_id, anime_id \n        FROM filtered_ordered_user_anime \n        WHERE user_anime_order BETWEEN 11 AND 20\n        "
                       }
                     }
                   }
@@ -2709,7 +2715,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_retrieval_test_20220303000011"
+                        "stringValue": "user_anime_retrieval_test"
                       }
                     }
                   },
@@ -2722,7 +2728,7 @@
                   "query": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 10000\n    \n    ),\n    filtered_user_anime_on_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n    ),\n    list_users AS (\n        \n        WITH \n        list_anime AS (\n            \n        SELECT anime_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 500\n    \n        ),\n        filtered_user_anime_on_anime AS (\n            \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n        )\n        SELECT user_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM filtered_user_anime_on_anime A\n        INNER JOIN list_users B\n        ON A.user_id = B.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed'\n    \n    )\n    \n        SELECT user_id, anime_id \n        FROM filtered_ordered_user_anime \n        WHERE user_anime_order BETWEEN 1 AND 10\n        "
+                        "stringValue": "\n    WITH \n    list_anime AS (\n        \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 10000\n    \n    ),\n    filtered_user_anime_on_anime AS (\n        \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n    ),\n    list_users AS (\n        \n        SELECT user_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 500\n    \n    ),\n    filtered_user_anime AS (\n        \n        SELECT A.*\n        FROM filtered_user_anime_on_anime A\n        INNER JOIN list_users B\n        ON A.user_id = B.user_id\n    \n    ),\n    filtered_ordered_user_anime AS (\n        \n        SELECT user_id, anime_id, score, ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY (last_interaction_date IS NOT NULL) DESC, last_interaction_date DESC) AS user_anime_order\n        FROM filtered_user_anime\n        WHERE status = 'completed'\n    \n    )\n    \n        SELECT user_id, anime_id \n        FROM filtered_ordered_user_anime \n        WHERE user_anime_order BETWEEN 1 AND 10\n        "
                       }
                     }
                   }
@@ -2750,12 +2756,18 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_retrieval_to_rank_20220303000011"
+                        "stringValue": "user_anime_retrieval_to_rank"
                       }
                     }
                   },
                   "gcs_output_format": {
                     "componentInputParameter": "pipelineparam--data_format"
+                  },
+                  "pipelineparam--dataset_id": {
+                    "componentInputParameter": "pipelineparam--dataset_id"
+                  },
+                  "pipelineparam--project_id": {
+                    "componentInputParameter": "pipelineparam--project_id"
                   },
                   "project_id": {
                     "componentInputParameter": "pipelineparam--project_id"
@@ -2763,7 +2775,7 @@
                   "query": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "\n        WITH \n        list_anime AS (\n            \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 10000\n    \n        ),\n        filtered_user_anime_on_anime AS (\n            \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n        ),\n        list_users AS (\n            \n        WITH \n        list_anime AS (\n            \n        SELECT anime_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 500\n    \n        ),\n        filtered_user_anime_on_anime AS (\n            \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n        )\n        SELECT user_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 50\n    \n        ),\n        filtered_user_anime AS (\n            \n        SELECT A.*\n        FROM filtered_user_anime_on_anime A\n        INNER JOIN list_users B\n        ON A.user_id = B.user_id\n    \n        )\n        SELECT A.user_id, A.anime_id\n        FROM {project_id}.{dataset_id}.user_anime_retrieval_infer_{current_time} A\n        LEFT JOIN filtered_user_anime B\n        ON A.user_id = B.user_id AND A.anime_id = B.anime_id\n        WHERE B.status IS NULL\n    "
+                        "stringValue": "\n        WITH \n        list_anime AS (\n            \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 10000\n    \n        ),\n        filtered_user_anime_on_anime AS (\n            \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n        ),\n        list_users AS (\n            \n        SELECT user_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 500\n    \n        ),\n        filtered_user_anime AS (\n            \n        SELECT A.*\n        FROM filtered_user_anime_on_anime A\n        INNER JOIN list_users B\n        ON A.user_id = B.user_id\n    \n        )\n        SELECT A.user_id, A.anime_id\n        FROM {{$.inputs.parameters['pipelineparam--project_id']}}.{{$.inputs.parameters['pipelineparam--dataset_id']}}.user_anime_retrieval_infer A\n        LEFT JOIN filtered_user_anime B\n        ON A.user_id = B.user_id AND A.anime_id = B.anime_id\n        WHERE B.status IS NULL\n    "
                       }
                     }
                   }
@@ -3679,7 +3691,11 @@
               "--output-data-path",
               "{{$.outputs.artifacts['output_data_path'].path}}"
             ],
-            "image": "gcr.io/anime-rec-dev/user_anime_infer_ranking:latest"
+            "image": "gcr.io/anime-rec-dev/user_anime_infer_ranking:latest",
+            "resources": {
+              "cpuLimit": 16.0,
+              "memoryLimit": 32.0
+            }
           }
         },
         "exec-component-2": {
@@ -3743,7 +3759,7 @@
             ],
             "image": "gcr.io/anime-rec-dev/user_anime_train_ranking:latest",
             "resources": {
-              "cpuLimit": 8.0,
+              "cpuLimit": 16.0,
               "memoryLimit": 32.0
             }
           }
@@ -3764,7 +3780,11 @@
               "--output-data-path",
               "{{$.outputs.artifacts['output_data_path'].path}}"
             ],
-            "image": "gcr.io/anime-rec-dev/user_anime_infer_ranking:latest"
+            "image": "gcr.io/anime-rec-dev/user_anime_infer_ranking:latest",
+            "resources": {
+              "cpuLimit": 16.0,
+              "memoryLimit": 32.0
+            }
           }
         },
         "exec-component-5": {
@@ -3807,7 +3827,7 @@
             ],
             "image": "gcr.io/anime-rec-dev/user_anime_train_ranking:latest",
             "resources": {
-              "cpuLimit": 8.0,
+              "cpuLimit": 16.0,
               "memoryLimit": 32.0
             }
           }
@@ -3828,7 +3848,11 @@
               "--output-data-path",
               "{{$.outputs.artifacts['output_data_path'].path}}"
             ],
-            "image": "gcr.io/anime-rec-dev/user_anime_infer_ranking:latest"
+            "image": "gcr.io/anime-rec-dev/user_anime_infer_ranking:latest",
+            "resources": {
+              "cpuLimit": 16.0,
+              "memoryLimit": 32.0
+            }
           }
         },
         "exec-component-7": {
@@ -3871,7 +3895,7 @@
             ],
             "image": "gcr.io/anime-rec-dev/user_anime_train_ranking:latest",
             "resources": {
-              "cpuLimit": 8.0,
+              "cpuLimit": 16.0,
               "memoryLimit": 32.0
             }
           }
@@ -3892,7 +3916,11 @@
               "--output-data-path",
               "{{$.outputs.artifacts['output_data_path'].path}}"
             ],
-            "image": "gcr.io/anime-rec-dev/user_anime_infer_ranking:latest"
+            "image": "gcr.io/anime-rec-dev/user_anime_infer_ranking:latest",
+            "resources": {
+              "cpuLimit": 16.0,
+              "memoryLimit": 32.0
+            }
           }
         },
         "exec-component-9": {
@@ -3935,7 +3963,7 @@
             ],
             "image": "gcr.io/anime-rec-dev/user_anime_train_ranking:latest",
             "resources": {
-              "cpuLimit": 8.0,
+              "cpuLimit": 16.0,
               "memoryLimit": 32.0
             }
           }
@@ -4603,7 +4631,7 @@
                 "destination_table_id": {
                   "runtimeValue": {
                     "constantValue": {
-                      "stringValue": "list_anime_20220303000011"
+                      "stringValue": "list_anime"
                     }
                   }
                 },
@@ -4641,7 +4669,7 @@
                 "destination_table_id": {
                   "runtimeValue": {
                     "constantValue": {
-                      "stringValue": "list_user_20220303000011"
+                      "stringValue": "list_user"
                     }
                   }
                 },

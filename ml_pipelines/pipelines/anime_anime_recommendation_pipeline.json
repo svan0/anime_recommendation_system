@@ -446,7 +446,7 @@
                 }
               },
               "taskInfo": {
-                "name": "INFER: user anime ranking"
+                "name": "INFER: anime anime ranking"
               }
             },
             "gcs-to-bq-table-3": {
@@ -475,7 +475,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "anime_anime_ranking_infer_20220303004603"
+                        "stringValue": "anime_anime_ranking_infer"
                       }
                     }
                   },
@@ -513,7 +513,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "anime_cross_anime_20220303004603"
+                        "stringValue": "anime_cross_anime"
                       }
                     }
                   },
@@ -526,7 +526,7 @@
                   "query": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "\n        WITH \n        list_anime AS (\n            \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 10000\n    \n        ),\n        SELECT A.anime_id, B.anime_id AS retrieved_anime_id\n        FROM list_anime A\n        CROSS JOIN list_anime B\n    "
+                        "stringValue": "\n        WITH \n        list_anime AS (\n            \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 10000\n    \n        )\n        SELECT A.anime_id, B.anime_id AS retrieved_anime_id\n        FROM list_anime A\n        CROSS JOIN list_anime B\n    "
                       }
                     }
                   }
@@ -551,7 +551,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "anime_anime_ranking_train_20220303004603"
+                        "stringValue": "anime_anime_ranking_train"
                       }
                     }
                   },
@@ -589,7 +589,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "anime_anime_ranking_val_20220303004603"
+                        "stringValue": "anime_anime_ranking_val"
                       }
                     }
                   },
@@ -627,7 +627,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "anime_anime_ranking_test_20220303004603"
+                        "stringValue": "anime_anime_ranking_test"
                       }
                     }
                   },
@@ -665,7 +665,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "anime_anime_user_last_watched_20220303004603"
+                        "stringValue": "anime_anime_user_last_watched"
                       }
                     }
                   },
@@ -696,6 +696,7 @@
                 "name": "comp-run-query-save-to-bq-table-and-gcs-15"
               },
               "dependentTasks": [
+                "gcs-to-bq-table-3",
                 "run-query-save-to-bq-table-and-gcs-14"
               ],
               "inputs": {
@@ -706,12 +707,18 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "anime_anime_user_anime_ranked_20220303004603"
+                        "stringValue": "anime_anime_user_anime_ranked"
                       }
                     }
                   },
                   "gcs_output_format": {
                     "componentInputParameter": "pipelineparam--data_format"
+                  },
+                  "pipelineparam--dataset_id": {
+                    "componentInputParameter": "pipelineparam--dataset_id"
+                  },
+                  "pipelineparam--project_id": {
+                    "componentInputParameter": "pipelineparam--project_id"
                   },
                   "project_id": {
                     "componentInputParameter": "pipelineparam--project_id"
@@ -719,7 +726,7 @@
                   "query": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "\n        WITH \n        list_anime AS (\n            \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 10000\n    \n        ),\n        filtered_user_anime_on_anime AS (\n            \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n        ),\n        list_users AS (\n            \n        SELECT user_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 500\n    \n        ),\n        filtered_user_anime AS (\n            \n        SELECT A.*\n        FROM filtered_user_anime_on_anime A\n        INNER JOIN list_users B\n        ON A.user_id = B.user_id\n    \n        )\n        SELECT A.user_id, A.anime_id AS last_watched, B.retrieved_anime_id, B.score\n        FROM anime_anime_user_last_watched_20220303004603 A\n        LEFT JOIN anime_anime_ranking_infer_20220303004603 B\n        ON A.anime_id = B.retrieved_anime_id\n        LEFT JOIN filtered_user_anime C\n        ON A.user_id = C.user_id AND B.retrieved_anime_id = C.anime_id\n        WHERE C.status IS NULL\n    "
+                        "stringValue": "\n        WITH \n        list_anime AS (\n            \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 10000\n    \n        ),\n        filtered_user_anime_on_anime AS (\n            \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n        ),\n        list_users AS (\n            \n        SELECT user_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 500\n    \n        ),\n        filtered_user_anime AS (\n            \n        SELECT A.*\n        FROM filtered_user_anime_on_anime A\n        INNER JOIN list_users B\n        ON A.user_id = B.user_id\n    \n        )\n        SELECT A.user_id, A.anime_id AS last_watched, B.retrieved_anime_id, B.score\n        FROM {{$.inputs.parameters['pipelineparam--project_id']}}.{{$.inputs.parameters['pipelineparam--dataset_id']}}.anime_anime_user_last_watched A\n        LEFT JOIN {{$.inputs.parameters['pipelineparam--project_id']}}.{{$.inputs.parameters['pipelineparam--dataset_id']}}.anime_anime_ranking_infer B\n        ON A.anime_id = B.retrieved_anime_id\n        LEFT JOIN filtered_user_anime C\n        ON A.user_id = C.user_id AND B.retrieved_anime_id = C.anime_id\n        WHERE C.status IS NULL\n    "
                       }
                     }
                   }
@@ -1023,7 +1030,7 @@
                 }
               },
               "taskInfo": {
-                "name": "INFER: user anime ranking"
+                "name": "INFER: anime anime ranking"
               }
             },
             "gcs-to-bq-table": {
@@ -1052,7 +1059,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "anime_anime_retrieval_infer_20220303004603"
+                        "stringValue": "anime_anime_retrieval_infer"
                       }
                     }
                   },
@@ -1101,7 +1108,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "anime_anime_ranking_infer_20220303004603"
+                        "stringValue": "anime_anime_ranking_infer"
                       }
                     }
                   },
@@ -1139,7 +1146,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "anime_anime_retrieval_train_20220303004603"
+                        "stringValue": "anime_anime_retrieval_train"
                       }
                     }
                   },
@@ -1177,7 +1184,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "anime_anime_retrieval_val_20220303004603"
+                        "stringValue": "anime_anime_retrieval_val"
                       }
                     }
                   },
@@ -1215,7 +1222,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "anime_anime_retrieval_test_20220303004603"
+                        "stringValue": "anime_anime_retrieval_test"
                       }
                     }
                   },
@@ -1253,7 +1260,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "anime_anime_ranking_train_20220303004603"
+                        "stringValue": "anime_anime_ranking_train"
                       }
                     }
                   },
@@ -1291,7 +1298,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "anime_anime_ranking_val_20220303004603"
+                        "stringValue": "anime_anime_ranking_val"
                       }
                     }
                   },
@@ -1329,7 +1336,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "anime_anime_ranking_test_20220303004603"
+                        "stringValue": "anime_anime_ranking_test"
                       }
                     }
                   },
@@ -1367,7 +1374,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "anime_anime_user_last_watched_20220303004603"
+                        "stringValue": "anime_anime_user_last_watched"
                       }
                     }
                   },
@@ -1398,6 +1405,7 @@
                 "name": "comp-run-query-save-to-bq-table-and-gcs-9"
               },
               "dependentTasks": [
+                "gcs-to-bq-table-2",
                 "run-query-save-to-bq-table-and-gcs-8"
               ],
               "inputs": {
@@ -1408,12 +1416,18 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "anime_anime_user_anime_ranked_20220303004603"
+                        "stringValue": "anime_anime_user_anime_ranked"
                       }
                     }
                   },
                   "gcs_output_format": {
                     "componentInputParameter": "pipelineparam--data_format"
+                  },
+                  "pipelineparam--dataset_id": {
+                    "componentInputParameter": "pipelineparam--dataset_id"
+                  },
+                  "pipelineparam--project_id": {
+                    "componentInputParameter": "pipelineparam--project_id"
                   },
                   "project_id": {
                     "componentInputParameter": "pipelineparam--project_id"
@@ -1421,7 +1435,7 @@
                   "query": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "\n        WITH \n        list_anime AS (\n            \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 10000\n    \n        ),\n        filtered_user_anime_on_anime AS (\n            \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n        ),\n        list_users AS (\n            \n        SELECT user_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 500\n    \n        ),\n        filtered_user_anime AS (\n            \n        SELECT A.*\n        FROM filtered_user_anime_on_anime A\n        INNER JOIN list_users B\n        ON A.user_id = B.user_id\n    \n        )\n        SELECT A.user_id, A.anime_id AS last_watched, B.retrieved_anime_id, B.score\n        FROM anime_anime_user_last_watched_20220303004603 A\n        LEFT JOIN anime_anime_ranking_infer_20220303004603 B\n        ON A.anime_id = B.retrieved_anime_id\n        LEFT JOIN filtered_user_anime C\n        ON A.user_id = C.user_id AND B.retrieved_anime_id = C.anime_id\n        WHERE C.status IS NULL\n    "
+                        "stringValue": "\n        WITH \n        list_anime AS (\n            \n        SELECT anime_id\n        FROM `anime-rec-dev.processed_area.user_anime`\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY anime_id\n        HAVING COUNT(*) >= 10000\n    \n        ),\n        filtered_user_anime_on_anime AS (\n            \n        SELECT A.*\n        FROM `anime-rec-dev.processed_area.user_anime` A\n        INNER JOIN list_anime B\n        ON A.anime_id = B.anime_id\n    \n        ),\n        list_users AS (\n            \n        SELECT user_id\n        FROM filtered_user_anime_on_anime\n        WHERE status = 'completed' AND score IS NOT NULL\n        GROUP BY user_id\n        HAVING COUNT(*) >= 500\n    \n        ),\n        filtered_user_anime AS (\n            \n        SELECT A.*\n        FROM filtered_user_anime_on_anime A\n        INNER JOIN list_users B\n        ON A.user_id = B.user_id\n    \n        )\n        SELECT A.user_id, A.anime_id AS last_watched, B.retrieved_anime_id, B.score\n        FROM {{$.inputs.parameters['pipelineparam--project_id']}}.{{$.inputs.parameters['pipelineparam--dataset_id']}}.anime_anime_user_last_watched A\n        LEFT JOIN {{$.inputs.parameters['pipelineparam--project_id']}}.{{$.inputs.parameters['pipelineparam--dataset_id']}}.anime_anime_ranking_infer B\n        ON A.anime_id = B.retrieved_anime_id\n        LEFT JOIN filtered_user_anime C\n        ON A.user_id = C.user_id AND B.retrieved_anime_id = C.anime_id\n        WHERE C.status IS NULL\n    "
                       }
                     }
                   }
@@ -2712,7 +2726,7 @@
                 "destination_table_id": {
                   "runtimeValue": {
                     "constantValue": {
-                      "stringValue": "list_anime_20220303004603"
+                      "stringValue": "list_anime"
                     }
                   }
                 },

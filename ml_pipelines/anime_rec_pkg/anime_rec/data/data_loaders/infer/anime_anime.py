@@ -91,8 +91,10 @@ def _load_anime_anime_ranking_to_tfds(data_path, file_format='csv'):
     
     anime_anime_ranking = anime_anime_ranking.map(lambda x : 
         {
-            'anime_id' : tf.expand_dims(tf.strings.as_string(x['anime_id']), -1),
-            'retrieved_anime_id' : tf.expand_dims(tf.strings.as_string(x['retrieved_anime_id']), -1)
+            #'anime_id' : tf.expand_dims(tf.strings.as_string(x['anime_id']), -1),
+            #'retrieved_anime_id' : tf.expand_dims(tf.strings.as_string(x['retrieved_anime_id']), -1)
+            'anime_id' : tf.strings.as_string(x['anime_id']),
+            'retrieved_anime_id' : tf.strings.as_string(x['retrieved_anime_id'])
         }
     )
     return anime_anime_ranking
