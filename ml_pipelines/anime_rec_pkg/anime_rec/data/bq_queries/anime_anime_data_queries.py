@@ -134,7 +134,7 @@ def user_last_anime_ranked_animes_query(
         SELECT A.user_id, A.anime_id AS last_watched, B.retrieved_anime_id, B.score
         FROM {user_last_watched_relation} A
         LEFT JOIN {anime_anime_scored_relation} B
-        ON A.anime_id = B.retrieved_anime_id
+        ON A.anime_id = B.anime_id
         LEFT JOIN filtered_user_anime C
         ON A.user_id = C.user_id AND B.retrieved_anime_id = C.anime_id
         WHERE C.status IS NULL

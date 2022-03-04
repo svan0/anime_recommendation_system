@@ -6,9 +6,9 @@ from kfp.v2.dsl import (
 )
 
 @component(
-    packages_to_install=['google-cloud-bigquery==2.31.0']
+    packages_to_install=['google-cloud-bigquery==2.31.0', 'google-cloud-aiplatform==1.11.0']
 )
-def gcs_to_bq_table(
+def gcs_to_bq_table_and_vertexai(
     gcs_input_data:Input[Dataset],
     gcs_input_data_format: str,
     gcs_input_data_schema:list,
@@ -67,10 +67,24 @@ def gcs_to_bq_table(
 
     client.close()
 
+    from google.cloud import aiplatform
+    dataset_name = "_".join(destination_dataset_id.split("_")[:-1])
+    dataset_name = f"{dataset_name}_{destination_table_id}"
+
+    aiplatform.init(
+        project=project_id, 
+        location='us-central1',
+        staging_bucket='gs://anime-rec-dev-ml-pipelines'
+    )
+    _ = aiplatform.TabularDataset.create(
+        display_name=dataset_name, 
+        gcs_source=[gcs_input_data[:-1]]
+    )
+
 @component(
-    packages_to_install=['google-cloud-bigquery==2.31.0']
+    packages_to_install=['google-cloud-bigquery==2.31.0', 'google-cloud-aiplatform==1.11.0']
 )
-def run_query_save_to_bq_table_and_gcs(
+def run_query_save_to_bq_table_and_gcs_and_vertexai(
     query: str,
     project_id: str, 
     destination_dataset_id: str, 
@@ -141,3 +155,18 @@ def run_query_save_to_bq_table_and_gcs(
     logging.info(f"Finished exporting BQ table {destination_table_ref.path} to {gcs_output_path}")
 
     client.close()
+
+    from google.cloud import aiplatform
+    dataset_name = "_".join(destination_dataset_id.split("_")[:-1])
+    dataset_name = f"{dataset_name}_{destination_table_id}"
+
+    aiplatform.init(
+        project=project_id, 
+        location='us-central1',
+        staging_bucket='gs://anime-rec-dev-ml-pipelines'
+    )
+    
+    _ = aiplatform.TabularDataset.create(
+        display_name=dataset_name, 
+        gcs_source=[gcs_output_path[:-1]]
+    )
