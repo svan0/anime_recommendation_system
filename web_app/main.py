@@ -10,25 +10,9 @@ import json
 from random import sample
 from datetime import datetime
 from dotenv import load_dotenv
-
-load_dotenv()
-
+import logging
 
 app = Flask(__name__)
-
-with open('data/anime_info.json') as f:
-    anime_info = json.load(f)
-
-with open('data/anime_anime.json') as f:
-    anime_anime = json.load(f)
-
-with open('data/user_anime.json') as f:
-    user_anime = json.load(f)
-
-publish_client = pubsub.PublisherClient()
-project = os.getenv('PROJECT_ID')
-ingestion_topic = os.getenv('PUBSUB_TOPIC')
-topic_path = publish_client.topic_path(project, ingestion_topic)
 
 def push_message_to_pub_sub(
     datetime = None,
@@ -69,7 +53,7 @@ def like():
     push_message_to_pub_sub(
         datetime = current_time,
         user_id = user_id, 
-        event_type = 'like'
+        event_type = f"like_{flask.request.args.get('rec_type')}"
     )
     return redirect(f"/recs?user_id={user_id}")
 
@@ -80,7 +64,7 @@ def dislike():
     push_message_to_pub_sub(
         datetime = current_time,
         user_id = user_id, 
-        event_type = 'dislike'
+        event_type = f"dislike_{flask.request.args.get('rec_type')}"
     )
     return redirect(f"/recs?user_id={user_id}")
 
@@ -154,6 +138,31 @@ def recommendations():
     )
 
 if __name__ == '__main__':
+    load_dotenv()
+
+    logging.basicConfig(
+        format='%(levelname)s: %(asctime)s: %(message)s',
+        level=logging.INFO
+    )
+
+    with open('data/anime_info.json') as f:
+        anime_info = json.load(f)
+    logging.info("Anime info loaded")
+    
+    with open('data/anime_anime.json') as f:
+        anime_anime = json.load(f)
+    logging.info("Anime Anime recommendations loaded")
+    
+    with open('data/user_anime.json') as f:
+        user_anime = json.load(f)
+    logging.info("User Anime recommendations loaded")
+
+
+    publish_client = pubsub.PublisherClient()
+    project = os.getenv('PROJECT_ID')
+    ingestion_topic = os.getenv('PUBSUB_TOPIC')
+    topic_path = publish_client.topic_path(project, ingestion_topic)
+    
     app.run(debug=True)
     
 
