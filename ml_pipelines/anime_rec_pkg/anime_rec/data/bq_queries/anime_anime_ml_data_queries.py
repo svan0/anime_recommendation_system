@@ -2,7 +2,7 @@
     SQL queries used in the pipeline that recommends animes
     based on the last anime the user watched
 '''
-from anime_rec.data.bq_queries.anime_anime_data_queries import anime_anime_co_occurance_query, anime_anime_recommended_query, anime_anime_related_query
+from anime_rec.data.bq_queries.anime_anime_data_queries import anime_anime_co_occurance_query, anime_anime_recommended_query, anime_anime_related_query, anime_anime_genres_cosine_query
 from anime_rec.data.bq_queries.anime_anime_data_queries import anime_anime_all_query, anime_anime_all_order_query
 from anime_rec.data.bq_queries.user_anime_data_queries import user_anime_filter_user
 from anime_rec.data.bq_queries.user_anime_data_queries import user_anime_completed_and_strict_ordered_query 
@@ -16,8 +16,6 @@ def anime_anime_retrieval_query(
         anime_min_completed_and_rated=1000,
         user_min_completed_and_rated=50,
         max_co_completed_distance=10,
-        min_co_completed_count=10,
-        min_num_recommenders=5,
         max_rank=100
 ):
     '''
@@ -33,6 +31,9 @@ def anime_anime_retrieval_query(
     list_anime AS (
         {anime_list_query("`anime-rec-dev.processed_area.user_anime`", anime_min_completed_and_rated)}
     ),
+    anime_info AS(
+        SELECT A.* FROM `anime-rec-dev.processed_area.anime` A INNER JOIN list_anime B ON A.anime_id = B.anime_id
+    ),
     filtered_user_anime_on_anime AS (
         {user_anime_filter_anime("`anime-rec-dev.processed_area.user_anime`", "list_anime")}
     ),
@@ -46,16 +47,19 @@ def anime_anime_retrieval_query(
         {user_anime_completed_and_strict_ordered_query("filtered_user_anime")}
     ),
     anime_co_completed_anime AS (
-        {anime_anime_co_occurance_query('user_anime', max_co_completed_distance, min_co_completed_count)}
+        {anime_anime_co_occurance_query('user_anime', max_co_completed_distance)}
     ),
     anime_related_anime AS (
         {anime_anime_related_query("`anime-rec-dev.processed_area.anime_anime`")}
     ),
     anime_recommended_anime AS (
-        {anime_anime_recommended_query("`anime-rec-dev.processed_area.anime_anime`", min_num_recommenders)}
+        {anime_anime_recommended_query("`anime-rec-dev.processed_area.anime_anime`")}
+    ),
+    anime_genre_sim_anime AS (
+        {anime_anime_genres_cosine_query("anime_info")}
     ),
     anime_anime AS (
-        {anime_anime_all_query("anime_related_anime", "anime_recommended_anime", "anime_co_completed_anime")}
+        {anime_anime_all_query("anime_related_anime", "anime_recommended_anime", "anime_co_completed_anime", "anime_genre_sim_anime")}
     ),
     anime_anime_ordered AS (
         {anime_anime_all_order_query("anime_anime")}
@@ -91,8 +95,7 @@ def anime_anime_pair_ranking_query(
         mode='TRAIN',
         anime_min_completed_and_rated=1000,
         user_min_completed_and_rated=50,
-        max_co_completed_distance=10,
-        min_co_completed_count=10,
+        max_co_completed_distance=10
 ):
     '''
         SQL query that return train, validation or test data
@@ -108,6 +111,9 @@ def anime_anime_pair_ranking_query(
     list_anime AS (
         {anime_list_query("`anime-rec-dev.processed_area.user_anime`", anime_min_completed_and_rated)}
     ),
+    anime_info AS(
+        SELECT A.* FROM `anime-rec-dev.processed_area.anime` A INNER JOIN list_anime B ON A.anime_id = B.anime_id
+    ),
     filtered_user_anime_on_anime AS (
         {user_anime_filter_anime("`anime-rec-dev.processed_area.user_anime`", "list_anime")}
     ),
@@ -118,29 +124,62 @@ def anime_anime_pair_ranking_query(
         {user_anime_filter_user("filtered_user_anime_on_anime", "list_users")}
     ),
     user_anime AS (
-        {user_anime_completed_and_scored_and_strict_ordered_query("filtered_user_anime")}
+        {user_anime_completed_and_strict_ordered_query("filtered_user_anime")}
     ),
     anime_co_completed_anime AS (
-        {anime_anime_co_occurance_query('user_anime', max_co_completed_distance, min_co_completed_count)}
+        {anime_anime_co_occurance_query('user_anime', max_co_completed_distance)}
     ),
-    positive_pairs AS (
+    anime_related_anime AS (
+        {anime_anime_related_query("`anime-rec-dev.processed_area.anime_anime`")}
+    ),
+    anime_recommended_anime AS (
+        {anime_anime_recommended_query("`anime-rec-dev.processed_area.anime_anime`")}
+    ),
+    anime_genre_sim_anime AS (
+        {anime_anime_genres_cosine_query("anime_info")}
+    ),
+    anime_anime AS (
+        {anime_anime_all_query("anime_related_anime", "anime_recommended_anime", "anime_co_completed_anime", "anime_genre_sim_anime")}
+    ),
+    anime_anime_ordered AS (
+        {anime_anime_all_order_query("anime_anime")}
+    ),
+    easy_positive_pairs AS (
         SELECT A.animeA AS anime_id, A.animeB AS retrieved_anime_id_1, B.animeB AS retrieved_anime_id_2, 1 AS label
-        FROM anime_co_completed_anime A
-        LEFT JOIN anime_co_completed_anime B
+        FROM anime_anime_ordered A
+        LEFT JOIN anime_anime_ordered B
         ON A.animeA = B.animeA
-        WHERE A.avg_score_diff > B.avg_score_diff + 3.0
+        WHERE A.animeB_rank + 500 < B.animeB_rank AND A.animeB_rank + 600 > B.animeB_rank
     ),
-    negative_pairs AS (
-        SELECT A.animeA AS anime_id, A.animeB AS retrieved_anime_id_1, B.animeB AS retrieved_anime_id_2, 0 AS label
-        FROM anime_co_completed_anime A
-        LEFT JOIN anime_co_completed_anime B
+    hard_positive_pairs AS (
+        SELECT A.animeA AS anime_id, A.animeB AS retrieved_anime_id_1, B.animeB AS retrieved_anime_id_2, 1 AS label
+        FROM anime_anime_ordered A
+        LEFT JOIN anime_anime_ordered B
         ON A.animeA = B.animeA
-        WHERE B.avg_score_diff > A.avg_score_diff + 3.0
+        WHERE A.animeB_rank < B.animeB_rank AND A.animeB_rank + 100 > B.animeB_rank
+    ),
+    easy_negative_pairs AS (
+        SELECT A.animeA AS anime_id, A.animeB AS retrieved_anime_id_1, B.animeB AS retrieved_anime_id_2, 0 AS label
+        FROM anime_anime_ordered A
+        LEFT JOIN anime_anime_ordered B
+        ON A.animeA = B.animeA
+        WHERE A.animeB_rank + 500 > B.animeB_rank AND A.animeB_rank + 600 < B.animeB_rank
+    ),
+    hard_negative_pairs AS (
+        SELECT A.animeA AS anime_id, A.animeB AS retrieved_anime_id_1, B.animeB AS retrieved_anime_id_2, 0 AS label
+        FROM anime_anime_ordered A
+        LEFT JOIN anime_anime_ordered B
+        ON A.animeA = B.animeA
+        WHERE A.animeB_rank > B.animeB_rank AND A.animeB_rank + 100 < B.animeB_rank
     ),
     all_pairs AS (
-        SELECT anime_id, retrieved_anime_id_1, retrieved_anime_id_2, label FROM positive_pairs
+        SELECT anime_id, retrieved_anime_id_1, retrieved_anime_id_2, label FROM easy_positive_pairs
         UNION DISTINCT
-        SELECT anime_id, retrieved_anime_id_1, retrieved_anime_id_2, label FROM negative_pairs
+        SELECT anime_id, retrieved_anime_id_1, retrieved_anime_id_2, label FROM hard_positive_pairs
+        UNION DISTINCT
+        SELECT anime_id, retrieved_anime_id_1, retrieved_anime_id_2, label FROM easy_negative_pairs
+        UNION DISTINCT
+        SELECT anime_id, retrieved_anime_id_1, retrieved_anime_id_2, label FROM hard_negative_pairs
     )
     """
     if mode == 'TRAIN':
