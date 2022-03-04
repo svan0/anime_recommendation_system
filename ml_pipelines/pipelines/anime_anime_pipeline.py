@@ -18,7 +18,7 @@ from anime_rec.data.bq_queries.anime_anime_data_queries import user_last_anime_w
 from anime_rec.data.bq_queries.anime_anime_ml_data_queries import anime_anime_retrieval_query
 from anime_rec.data.bq_queries.anime_anime_ml_data_queries import anime_anime_pair_ranking_query
 
-ANIME_AT_LEAST_RATED = 1000
+ANIME_AT_LEAST_RATED = 5000
 USER_AT_LEAST_RATED = 50
 
 train_anime_anime_retrieval_op = kfp.components.load_component_from_file(
