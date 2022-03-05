@@ -120,6 +120,11 @@ def recommendations():
     user_anime_recs = redis_client.lrange(f"{user_id}_user_anime_recs", 0, -1)
     user_anime_recs = list(map(lambda x : x.decode("utf8"), user_anime_recs))
     user_anime_recs = sample_recommendations(user_anime_recs)
+    user_anime_recs = list(map(lambda anime_id: {
+        'name' : redis_client.get(f"{anime_id}_name").decode("utf8"),
+        'url' : redis_client.get(f"{anime_id}_url").decode("utf8"),
+        'img_url': redis_client.get(f"{anime_id}_img_url").decode("utf8")
+    }, user_anime_recs))
 
     for rec in user_anime_recs:
         push_message_to_pub_sub(
@@ -132,11 +137,21 @@ def recommendations():
     recent_watch = redis_client.get(f"{user_id}_recent_watch")
     if recent_watch is not None:
         recent_watch = recent_watch.decode("utf8")
+        recent_watch = {
+            'name' : redis_client.get(f"{recent_watch}_name").decode("utf8"),
+            'url' : redis_client.get(f"{recent_watch}_url").decode("utf8"),
+            'img_url': redis_client.get(f"{recent_watch}_img_url").decode("utf8")
+        }
     
     anime_anime_recs = redis_client.lrange(f"{user_id}_anime_anime_recs", 0, -1)
     anime_anime_recs = list(map(lambda x : x.decode("utf8"), anime_anime_recs))
     anime_anime_recs = sample_recommendations(anime_anime_recs)
-    
+    anime_anime_recs = list(map(lambda anime_id: {
+        'name' : redis_client.get(f"{anime_id}_name").decode("utf8"),
+        'url' : redis_client.get(f"{anime_id}_url").decode("utf8"),
+        'img_url': redis_client.get(f"{anime_id}_img_url").decode("utf8")
+    }, anime_anime_recs))
+
     for rec in anime_anime_recs:
         push_message_to_pub_sub(
             datetime=current_time,
