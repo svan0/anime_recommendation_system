@@ -4,15 +4,35 @@ from flask import render_template
 from flask import redirect
 
 from google.cloud import pubsub
+import redis
 
 import os
 import json
 from random import sample
 from datetime import datetime
 from dotenv import load_dotenv
-import logging
 
 app = Flask(__name__)
+
+@app.before_first_request
+def startup_and_load_data():
+
+    load_dotenv()
+
+    global redis_client
+    redis_host = os.getenv('REDIS_INSTANCE_HOST')
+    redis_port = int(os.getenv('REDIS_INSTANCE_PORT'))
+    redis_client = redis.Redis(
+        host=redis_host,
+        port=redis_port
+    )
+
+    global publish_client
+    global topic_path
+    publish_client = pubsub.PublisherClient()
+    project = os.getenv('PROJECT_ID')
+    ingestion_topic = os.getenv('PUBSUB_TOPIC')
+    topic_path = publish_client.topic_path(project, ingestion_topic)
 
 def push_message_to_pub_sub(
     datetime = None,
@@ -97,11 +117,8 @@ def recommendations():
         event_type = 'enter_rec'
     )
 
-    user_anime_recs = []
-    if user_id in user_anime:
-        for rec in user_anime[user_id]:
-            user_anime_recs.append(anime_info[rec])
-    
+    user_anime_recs = redis_client.lrange(f"{user_id}_user_anime_recs", 0, -1)
+    user_anime_recs = list(map(lambda x : x.decode("utf8"), user_anime_recs))
     user_anime_recs = sample_recommendations(user_anime_recs)
 
     for rec in user_anime_recs:
@@ -112,13 +129,12 @@ def recommendations():
             event_on = rec['url']
         )
     
-    recent_watch = None
-    anime_anime_recs = []
-    if user_id in anime_anime:
-        for rec in anime_anime[user_id]["recommendations"]:
-            anime_anime_recs.append(anime_info[rec])
-        recent_watch = anime_info[anime_anime[user_id]["recent_watch"]]
-
+    recent_watch = redis_client.get(f"{user_id}_recent_watch")
+    if recent_watch is not None:
+        recent_watch = recent_watch.decode("utf8")
+    
+    anime_anime_recs = redis_client.lrange(f"{user_id}_anime_anime_recs", 0, -1)
+    anime_anime_recs = list(map(lambda x : x.decode("utf8"), anime_anime_recs))
     anime_anime_recs = sample_recommendations(anime_anime_recs)
     
     for rec in anime_anime_recs:
@@ -138,31 +154,6 @@ def recommendations():
     )
 
 if __name__ == '__main__':
-    load_dotenv()
-
-    logging.basicConfig(
-        format='%(levelname)s: %(asctime)s: %(message)s',
-        level=logging.INFO
-    )
-
-    with open('data/anime_info.json') as f:
-        anime_info = json.load(f)
-    logging.info("Anime info loaded")
-    
-    with open('data/anime_anime.json') as f:
-        anime_anime = json.load(f)
-    logging.info("Anime Anime recommendations loaded")
-    
-    with open('data/user_anime.json') as f:
-        user_anime = json.load(f)
-    logging.info("User Anime recommendations loaded")
-
-
-    publish_client = pubsub.PublisherClient()
-    project = os.getenv('PROJECT_ID')
-    ingestion_topic = os.getenv('PUBSUB_TOPIC')
-    topic_path = publish_client.topic_path(project, ingestion_topic)
-    
     app.run(debug=True)
     
 
