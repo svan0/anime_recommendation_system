@@ -1,0 +1,48 @@
+<html>
+    <head>
+        <title>MyAnimeList Recommendation System</title>
+    </head>
+    <body>
+        <h1> ようこそ {{user_id}}</h1>
+        {% if user_anime_recs|length > 0 %}
+        <div>
+            <h1>Top Pics For You</h1>
+            <table>
+                <tr>
+                {% for rec in user_anime_recs %}
+                <td><a href="/go_to?user_id={{user_id}}&url={{rec.url}}"><img src="{{rec.img_url}}" height="288" width="192"></a></td>
+                {% endfor %}
+                </tr>
+            </table>
+            <h2>
+                {{user_id}} we care about your opinion. Please help us improve by telling us if you
+                <a href="/like?user_id={{user_id}}&rec_type=anime_anime"> Like </a> or <a href="/dislike?user_id={{user_id}}&rec_type=anime_anime"> Dislike </a>
+                the above recommendations
+            </h2>
+        </div>
+        {% endif %}
+
+        {% if anime_anime_recs|length > 0 %}
+        <div>
+            <h1>Because you recently watched <a href="{{recent_watch.url}}">{{recent_watch.name}}</a></h1>
+            <table>
+                <tr>
+                {% for rec in anime_anime_recs %}
+                <td><a href="/go_to?user_id={{user_id}}&url={{rec.url}}"><img src="{{rec.img_url}}" height="288" width="192"></a></td>
+                {% endfor %}
+                </tr>
+            </table>
+            <h2>
+                {{user_id}} we care about your opinion. Please help us improve by telling us if you
+                <a href="/like?user_id={{user_id}}&rec_type=user_anime"> Like </a> or <a href="/dislike?user_id={{user_id}}&rec_type=user_anime"> Dislike </a>
+                the above recommendations
+            </h2>
+        </div>
+        {% endif %}
+
+        {% if anime_anime_recs|length == 0 and user_anime_recs|length == 0 %}
+        <h1>Apologies {{user_id}} we do not have any recommendations for you at the moment.</h1>
+        {% endif %}
+        
+    </body>
+</html>

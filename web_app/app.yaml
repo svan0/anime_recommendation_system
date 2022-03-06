@@ -1,0 +1,9 @@
+runtime: python37
+instance_class: F2
+vpc_access_connector:
+  name: projects/anime-rec-dev/locations/us-central1/connectors/redis-vpc-connector
+env_variables:
+  PROJECT_ID: "anime-rec-dev"
+  PUBSUB_TOPIC: "web_app_click_stream_topic"
+  REDIS_INSTANCE_HOST: "10.69.144.99"
+  REDIS_INSTANCE_PORT: "6379"
