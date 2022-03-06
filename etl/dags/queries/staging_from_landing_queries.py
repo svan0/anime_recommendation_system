@@ -52,9 +52,9 @@ staging_anime_query = f"""
     SELECT  
         uid AS anime_id,
         url	AS anime_url,
-        title
+        title,
         synopsis,
-        main_pic
+        main_pic,
         type,
         source_type,
         num_episodes,
