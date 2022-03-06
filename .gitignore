@@ -108,8 +108,8 @@ venv.bak/
 
 .DS_Store
 
-/local_output/*.html
-/local_output/*.json
+local_output/*.html
+local_output/*.json
 
 # sqlite
 *.db

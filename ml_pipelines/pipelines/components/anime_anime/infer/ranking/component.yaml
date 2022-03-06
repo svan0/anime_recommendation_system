@@ -1,0 +1,23 @@
+inputs:
+- {name: data_format, type: String, description: 'Input Data Format'}
+- {name: model_path, type: Model, description: 'Anime Anime Ranking Model'}
+- {name: input_data_path, type: Dataset, description: 'Anime retrieved Anime data path'}
+
+outputs:
+- {name: output_data_path, type: Dataset, description: 'Anime ranked anime'}
+
+implementation:
+  container:
+    image: gcr.io/anime-rec-dev/anime_anime_infer_ranking:latest
+    command: [
+      python3,
+      task.py,
+      --data-format,
+      {inputValue: data_format},
+      --model-path,
+      {inputPath: model_path},
+      --input-data-path,
+      {inputPath: input_data_path},
+      --output-data-path,
+      {outputPath: output_data_path},
+    ]
