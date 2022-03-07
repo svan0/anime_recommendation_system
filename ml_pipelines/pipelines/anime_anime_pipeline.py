@@ -18,7 +18,7 @@ from anime_rec.data.bq_queries.anime_anime_data_queries import user_last_anime_w
 from anime_rec.data.bq_queries.anime_anime_ml_data_queries import anime_anime_retrieval_query
 from anime_rec.data.bq_queries.anime_anime_ml_data_queries import anime_anime_pair_ranking_query
 
-ANIME_AT_LEAST_RATED = 5000
+ANIME_AT_LEAST_RATED = 1000
 USER_AT_LEAST_RATED = 50
 
 train_anime_anime_retrieval_op = kfp.components.load_component_from_file(
@@ -34,7 +34,7 @@ infer_anime_anime_ranking_op = kfp.components.load_component_from_file(
     os.path.join(os.path.abspath(__file__ + "/../"), "components/anime_anime/infer/ranking/component.yaml")
 )
 
-def anime_anime_retrieval_steps(list_anime_data, project_id, dataset_id, data_format):
+def anime_anime_train_retrieval_steps(list_anime_data, project_id, dataset_id, data_format):
     """
         Data Load
     """
@@ -42,7 +42,7 @@ def anime_anime_retrieval_steps(list_anime_data, project_id, dataset_id, data_fo
         query = anime_anime_retrieval_query('TRAIN', anime_min_completed_and_rated = ANIME_AT_LEAST_RATED, user_min_completed_and_rated = USER_AT_LEAST_RATED),
         project_id=project_id,
         destination_dataset_id=dataset_id,
-        destination_table_id=f"anime_anime_retrieval_train",
+        destination_table_id=f"retrieval_train",
         gcs_output_format=data_format
     )
     train_retrieval_data.set_display_name("DATA: train anime anime retrieval")
@@ -51,7 +51,7 @@ def anime_anime_retrieval_steps(list_anime_data, project_id, dataset_id, data_fo
         query = anime_anime_retrieval_query('VAL', anime_min_completed_and_rated = ANIME_AT_LEAST_RATED, user_min_completed_and_rated = USER_AT_LEAST_RATED),
         project_id=project_id,
         destination_dataset_id=dataset_id,
-        destination_table_id=f"anime_anime_retrieval_val",
+        destination_table_id=f"retrieval_val",
         gcs_output_format=data_format
     )
     val_retrieval_data.set_display_name("DATA: val anime anime retrieval")
@@ -60,7 +60,7 @@ def anime_anime_retrieval_steps(list_anime_data, project_id, dataset_id, data_fo
         query = anime_anime_retrieval_query('TEST', anime_min_completed_and_rated = ANIME_AT_LEAST_RATED, user_min_completed_and_rated = USER_AT_LEAST_RATED),
         project_id=project_id,
         destination_dataset_id=dataset_id,
-        destination_table_id=f"anime_anime_retrieval_test",
+        destination_table_id=f"retrieval_test",
         gcs_output_format=data_format
     )
     test_retrieval_data.set_display_name("DATA: test anime anime retrieval")
@@ -97,6 +97,10 @@ def anime_anime_retrieval_steps(list_anime_data, project_id, dataset_id, data_fo
         input_metrics=train_retrieval_model.outputs['metrics_path']
     )
     train_retrieval_model_details.set_display_name("TRAIN: anime anime retrieval display")
+
+    return train_retrieval_model
+
+def anime_anime_infer_retrieval_steps(list_anime_data, train_retrieval_model, project_id, dataset_id, data_format):
     
     """
         Batch Inference
@@ -117,13 +121,13 @@ def anime_anime_retrieval_steps(list_anime_data, project_id, dataset_id, data_fo
         gcs_input_data_schema=[('anime_id', 'STRING'), ('retrieved_anime_id', 'STRING')],
         project_id=project_id,
         destination_dataset_id=dataset_id,
-        destination_table_id=f"anime_anime_retrieval_infer"
+        destination_table_id=f"retrieval_infer"
     )
     infer_retrieval_to_bq.set_display_name("INFER: anime anime retrieval to BQ")
     
     return infer_retrieval_model
 
-def anime_anime_ranking_steps(list_anime_data, anime_anime_to_rank, project_id, dataset_id, data_format):
+def anime_anime_train_ranking_steps(list_anime_data, project_id, dataset_id, data_format):
     """
         Data Loading
     """
@@ -131,7 +135,7 @@ def anime_anime_ranking_steps(list_anime_data, anime_anime_to_rank, project_id, 
         query = anime_anime_pair_ranking_query('TRAIN', anime_min_completed_and_rated = ANIME_AT_LEAST_RATED, user_min_completed_and_rated = USER_AT_LEAST_RATED),
         project_id=project_id,
         destination_dataset_id=dataset_id,
-        destination_table_id=f"anime_anime_ranking_train",
+        destination_table_id=f"ranking_train",
         gcs_output_format=data_format
     )
     train_ranking_data.set_display_name("DATA: train anime anime ranking")
@@ -140,7 +144,7 @@ def anime_anime_ranking_steps(list_anime_data, anime_anime_to_rank, project_id, 
         query = anime_anime_pair_ranking_query('VAL', anime_min_completed_and_rated = ANIME_AT_LEAST_RATED, user_min_completed_and_rated = USER_AT_LEAST_RATED),
         project_id=project_id,
         destination_dataset_id=dataset_id,
-        destination_table_id=f"anime_anime_ranking_val",
+        destination_table_id=f"ranking_val",
         gcs_output_format=data_format
     )
     val_ranking_data.set_display_name("DATA: validation anime anime ranking")
@@ -149,7 +153,7 @@ def anime_anime_ranking_steps(list_anime_data, anime_anime_to_rank, project_id, 
         query = anime_anime_pair_ranking_query('TEST', anime_min_completed_and_rated = ANIME_AT_LEAST_RATED, user_min_completed_and_rated = USER_AT_LEAST_RATED),
         project_id=project_id,
         destination_dataset_id=dataset_id,
-        destination_table_id=f"anime_anime_ranking_test",
+        destination_table_id=f"ranking_test",
         gcs_output_format=data_format
     )
     test_ranking_data.set_display_name("DATA: test anime anime ranking")
@@ -189,6 +193,9 @@ def anime_anime_ranking_steps(list_anime_data, anime_anime_to_rank, project_id, 
     )
     train_ranking_model_details.set_display_name("TRAIN: anime anime ranking display")
     
+    return train_ranking_model
+
+def anime_anime_infer_ranking_steps(train_ranking_model, anime_anime_to_rank, project_id, dataset_id, data_format):
     """
         Batch Inference
     """
@@ -208,7 +215,7 @@ def anime_anime_ranking_steps(list_anime_data, anime_anime_to_rank, project_id, 
         gcs_input_data_schema=[('anime_id', 'STRING'), ('retrieved_anime_id', 'STRING'), ("score", 'FLOAT')],
         project_id=project_id,
         destination_dataset_id=dataset_id,
-        destination_table_id=f"anime_anime_ranking_infer"
+        destination_table_id=f"ranking_infer"
     )
     infer_ranking_to_bq.set_display_name("INFER: anime anime ranking to BQ")
 
@@ -217,10 +224,10 @@ def anime_anime_ranking_steps(list_anime_data, anime_anime_to_rank, project_id, 
     '''
     # Outputs user_id, anime_id to GCS and BQ
     user_last_watched = run_query_save_to_bq_table_and_gcs_and_vertexai(
-        query = user_last_anime_watched_query(anime_min_completed_and_rated = ANIME_AT_LEAST_RATED, user_min_completed_and_rated = USER_AT_LEAST_RATED),
+        query = user_last_anime_watched_query(anime_min_completed_and_rated = ANIME_AT_LEAST_RATED),
         project_id=project_id,
         destination_dataset_id=dataset_id,
-        destination_table_id=f"anime_anime_user_last_watched",
+        destination_table_id=f"user_last_watched",
         gcs_output_format=data_format
     )
     user_last_watched.set_display_name("INFER: user last watched")
@@ -228,14 +235,12 @@ def anime_anime_ranking_steps(list_anime_data, anime_anime_to_rank, project_id, 
     # Outputs user_id, anime_id, retrieved_anime_id, score to GCS and BQ
     user_ranked_recs = run_query_save_to_bq_table_and_gcs_and_vertexai(
         query = user_last_anime_ranked_animes_query(
-            f"`{project_id}.{dataset_id}.anime_anime_user_last_watched`", 
-            f"`{project_id}.{dataset_id}.anime_anime_ranking_infer`", 
-            anime_min_completed_and_rated = ANIME_AT_LEAST_RATED, 
-            user_min_completed_and_rated = USER_AT_LEAST_RATED
+            f"`{project_id}.{dataset_id}.user_last_watched`", 
+            f"`{project_id}.{dataset_id}.ranking_infer`"
         ),
         project_id=project_id,
         destination_dataset_id=dataset_id,
-        destination_table_id=f"anime_anime_user_anime_ranked",
+        destination_table_id=f"user_anime_ranked",
         gcs_output_format=data_format
     )
     user_ranked_recs.after(user_last_watched)
@@ -264,17 +269,32 @@ def anime_anime_recommendation_pipeline(
 
     with dsl.Condition(run_retrieval=='true', name='yes-run-retrieval'):
         
-        # Outputs anime_id, retrieved_anime_id to GCS and BQ
-        anime_anime_to_rank = anime_anime_retrieval_steps(
+        train_retrieval_model = anime_anime_train_retrieval_steps(
             list_anime_data,
             project_id, 
             dataset_id, 
             data_format
         )
+
+        train_ranking_model = anime_anime_train_ranking_steps(
+            list_anime_data,
+            project_id, 
+            dataset_id, 
+            data_format
+        )
+
+        # Outputs anime_id, retrieved_anime_id to GCS and BQ
+        anime_anime_to_rank = anime_anime_infer_retrieval_steps(
+            list_anime_data,
+            train_retrieval_model,
+            project_id, 
+            dataset_id, 
+            data_format
+        )
         
-        # Outputs user_id, anime_id, retrieved_anime_id, score to GCS and BQ
-        _ = anime_anime_ranking_steps(
-            list_anime_data, 
+        # Outputs user_id, anime_id, score to GCS and BQ
+        _ = anime_anime_infer_ranking_steps(
+            train_ranking_model, 
             anime_anime_to_rank,
             project_id, 
             dataset_id, 
@@ -293,9 +313,16 @@ def anime_anime_recommendation_pipeline(
         )
         anime_anime_to_rank.set_display_name("DATA: anime cross anime")
 
-        # Outputs user_id, anime_id, retrieved_anime_id, score to GCS and BQ
-        _ = anime_anime_ranking_steps(
+        train_ranking_model = anime_anime_train_ranking_steps(
             list_anime_data,
+            project_id, 
+            dataset_id, 
+            data_format
+        )
+
+        # Outputs user_id, anime_id, score to GCS and BQ
+        _ = anime_anime_infer_ranking_steps(
+            train_ranking_model, 
             anime_anime_to_rank,
             project_id, 
             dataset_id, 
@@ -310,7 +337,7 @@ if __name__ == '__main__':
     PROJECT_ID = 'anime-rec-dev'
     DATA_FORMAT = 'csv'
     RUN_RETRIEVAL = 'true'
-    DATASET_ID = f"final_ml_pipelines_anime_anime_retrieval_{RUN_RETRIEVAL}_{current_time}"
+    DATASET_ID = f"big_ml_pipelines_anime_anime_retrieval_{RUN_RETRIEVAL}_{current_time}"
     DISPLAY_NAME = "anime_anime_recommendation"
     JOB_ID = f"anime-anime-retrieval-{RUN_RETRIEVAL}-{current_time}"
 

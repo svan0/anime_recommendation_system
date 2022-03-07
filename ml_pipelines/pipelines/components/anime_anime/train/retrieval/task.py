@@ -63,7 +63,7 @@ if __name__ == '__main__':
     
     model = train_anime_anime_retrieval_model(anime_data, train_data, validation_data, hyperparameters)
     
-    retrieval_model_index = get_anime_anime_retrieval_index(anime_data, model)
+    retrieval_model_index = get_anime_anime_retrieval_index(anime_data, model, k = 300)
      
     _ = retrieval_model_index(tf.constant([anime_data[0]]))
     

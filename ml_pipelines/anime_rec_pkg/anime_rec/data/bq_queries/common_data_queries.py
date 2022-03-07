@@ -57,4 +57,23 @@ def user_list_sub_query(
     """
     return query
 
+def filter_recommendations(user_anime_recommendations_table = "user_anime_recs"):
+    query = f"""
+        SELECT user_id, anime_id, MAX(score) AS score
+        FROM (
+            SELECT A.user_id,
+                   B.animeB AS anime_id,
+                   A.score,  
+                   ROW_NUMBER() OVER (PARTITION BY A.user_id, A.anime_id ORDER BY B.related_order ASC) AS new_related_order
+            FROM {user_anime_recommendations_table} A
+            LEFT JOIN `anime-rec-dev.processed_area.related_priority` B
+            ON A.anime_id = B.animeA
+            LEFT JOIN `anime-rec-dev.processed_area.user_anime` C
+            ON A.user_id = C.user_id AND B.animeB = C.anime_id
+            WHERE C.status IS NULL OR C.status = 'plan_to_watch'
+        )
+        WHERE new_related_order = 1
+        GROUP BY user_id, anime_id
+    """
+    return query
 

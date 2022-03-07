@@ -186,18 +186,18 @@ def anime_anime_pair_ranking_query(
         anime_anime_query += """
         SELECT *
         FROM all_pairs 
-        WHERE ABS(MOD(FARM_FINGERPRINT(CONCAT(anime_id, retrieved_anime_id_1)), 10)) BETWEEN 0 AND 7
+        WHERE ABS(MOD(FARM_FINGERPRINT(CONCAT(anime_id, retrieved_anime_id_1)), 10)) BETWEEN 0 AND 7 #AND ABS(MOD(FARM_FINGERPRINT(retrieved_anime_id_2), 10)) = 0
         """
     elif mode == 'VAL':
         anime_anime_query += """
         SELECT *
         FROM all_pairs 
-        WHERE ABS(MOD(FARM_FINGERPRINT(CONCAT(anime_id, retrieved_anime_id_1)), 10)) = 8
+        WHERE ABS(MOD(FARM_FINGERPRINT(CONCAT(anime_id, retrieved_anime_id_1)), 10)) = 8 #AND ABS(MOD(FARM_FINGERPRINT(retrieved_anime_id_2), 10)) = 0
         """
     else:
         anime_anime_query += """
         SELECT *
         FROM all_pairs 
-        WHERE ABS(MOD(FARM_FINGERPRINT(CONCAT(anime_id, retrieved_anime_id_1)), 10)) = 9
+        WHERE ABS(MOD(FARM_FINGERPRINT(CONCAT(anime_id, retrieved_anime_id_1)), 10)) = 9 #AND ABS(MOD(FARM_FINGERPRINT(retrieved_anime_id_2), 10)) = 0
         """
     return anime_anime_query
