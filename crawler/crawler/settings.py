@@ -105,4 +105,5 @@ ITEM_PIPELINES = {
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 LOG_LEVEL = 'INFO'
 
-ROTATING_PROXY_LIST_PATH = os.path.join(CURRENT_DIR, '..', 'proxy_list.txt')
+if os.path.exists(os.path.join(CURRENT_DIR, '..', 'proxy_list.txt')):
+    ROTATING_PROXY_LIST_PATH = os.path.join(CURRENT_DIR, '..', 'proxy_list.txt')

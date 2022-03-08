@@ -20,6 +20,7 @@ class JikanAnimeSpider(scrapy.Spider):
     name = 'jikan_anime'
 
     def __init__(self, *args, **kwargs):
+        self.stats = None
         super().__init__(*args, **kwargs)
         self.crawl_date = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
 
@@ -65,13 +66,15 @@ class JikanAnimeSpider(scrapy.Spider):
             review_loader.add_value('character_score', review['scores']['character'])
             review_loader.add_value('enjoyment_score', review['scores']['enjoyment'])
             yield review_loader.load_item()
-            self.stats.inc_value(f'{self.__class__.__name__}_processed_{review_loader.load_item().__class__.__name__}', count = 1)
+            if self.stats:
+                self.stats.inc_value(f'{self.__class__.__name__}_processed_{review_loader.load_item().__class__.__name__}', count = 1)
 
             profile_schedule_loader = ItemLoader(item=ProfileSchedulerItem())
             profile_schedule_loader.add_value('last_inspect_date', self.crawl_date)
             profile_schedule_loader.add_value('url', review['user']['url'])
             yield profile_schedule_loader.load_item()
-            self.stats.inc_value(f'{self.__class__.__name__}_processed_{profile_schedule_loader.load_item().__class__.__name__}', count = 1)
+            if self.stats:
+                self.stats.inc_value(f'{self.__class__.__name__}_processed_{profile_schedule_loader.load_item().__class__.__name__}', count = 1)
         
         if len(api_result['data']) == 20:
             yield Request(url = next_page_url, callback = self.parse_anime_reviews)
@@ -92,13 +95,15 @@ class JikanAnimeSpider(scrapy.Spider):
                 related_anime_loader.add_value('src_anime', anime_id)
                 related_anime_loader.add_value('dest_anime', str(related_anime['mal_id']))
                 yield related_anime_loader.load_item()
-                self.stats.inc_value(f'{self.__class__.__name__}_processed_{related_anime_loader.load_item().__class__.__name__}', count = 1)
+                if self.stats:
+                    self.stats.inc_value(f'{self.__class__.__name__}_processed_{related_anime_loader.load_item().__class__.__name__}', count = 1)
 
                 anime_schedule_loader = ItemLoader(item=AnimeSchedulerItem())
                 anime_schedule_loader.add_value('url', related_anime['url'])
                 anime_schedule_loader.add_value('last_inspect_date', self.crawl_date)
                 yield anime_schedule_loader.load_item()
-                self.stats.inc_value(f'{self.__class__.__name__}_processed_{anime_schedule_loader.load_item().__class__.__name__}', count = 1)
+                if self.stats:
+                    self.stats.inc_value(f'{self.__class__.__name__}_processed_{anime_schedule_loader.load_item().__class__.__name__}', count = 1)
 
 
     def parse_anime_recommendations(self, response):
@@ -118,13 +123,15 @@ class JikanAnimeSpider(scrapy.Spider):
             rec_loader.add_value('dest_anime', str(recommended_anime['entry']['mal_id']))
             rec_loader.add_value('num_recs', recommended_anime['votes'])
             yield rec_loader.load_item()
-            self.stats.inc_value(f'{self.__class__.__name__}_processed_{rec_loader.load_item().__class__.__name__}', count = 1)
+            if self.stats:
+                self.stats.inc_value(f'{self.__class__.__name__}_processed_{rec_loader.load_item().__class__.__name__}', count = 1)
 
             anime_schedule_loader = ItemLoader(item=AnimeSchedulerItem())
             anime_schedule_loader.add_value('url', recommended_anime['entry']['url'])
             anime_schedule_loader.add_value('last_inspect_date', self.crawl_date)
             yield anime_schedule_loader.load_item()
-            self.stats.inc_value(f'{self.__class__.__name__}_processed_{anime_schedule_loader.load_item().__class__.__name__}', count = 1)
+            if self.stats:
+                self.stats.inc_value(f'{self.__class__.__name__}_processed_{anime_schedule_loader.load_item().__class__.__name__}', count = 1)
 
     def parse_anime_statistics(self, response):
         """

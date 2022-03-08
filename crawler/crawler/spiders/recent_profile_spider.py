@@ -16,6 +16,7 @@ class RecentProfileSpider(scrapy.Spider):
     ]
 
     def __init__(self, *args, **kwargs):
+        self.stats = None
         super().__init__(*args, **kwargs)
         self.crawl_date = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
     
@@ -36,4 +37,5 @@ class RecentProfileSpider(scrapy.Spider):
             profile_schedule_loader.add_value('url', link)
             profile_schedule_loader.add_value('last_inspect_date', self.crawl_date)
             yield profile_schedule_loader.load_item()
-            self.stats.inc_value(f'{self.__class__.__name__}_processed_{profile_schedule_loader.load_item().__class__.__name__}', count = 1)
+            if self.stats:
+                self.stats.inc_value(f'{self.__class__.__name__}_processed_{profile_schedule_loader.load_item().__class__.__name__}', count = 1)

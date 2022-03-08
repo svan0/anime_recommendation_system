@@ -20,6 +20,7 @@ class AnimeSpider(scrapy.Spider):
     allowed_domains = ['myanimelist.net']
     
     def __init__(self, *args, **kwargs):
+        self.stats = None
         super().__init__(*args, **kwargs)
         self.crawl_date = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
 
@@ -69,7 +70,8 @@ class AnimeSpider(scrapy.Spider):
                 related_anime_loader.add_value('src_anime', response.url)
                 related_anime_loader.add_value('dest_anime', related_anime)
                 yield related_anime_loader.load_item()
-                self.stats.inc_value(f'{self.__class__.__name__}_processed_{related_anime_loader.load_item().__class__.__name__}', count = 1)
+                if self.stats:
+                    self.stats.inc_value(f'{self.__class__.__name__}_processed_{related_anime_loader.load_item().__class__.__name__}', count = 1)
         else:
             for related_anime in response.xpath('//table[@class="anime_detail_related_anime"]/tbody/tr/td/a[contains(@href, "/anime/")]/@href').getall():
                 related_anime_loader = ItemLoader(item=RelatedAnimeItem(), response=response)
@@ -77,7 +79,8 @@ class AnimeSpider(scrapy.Spider):
                 related_anime_loader.add_value('src_anime', response.url)
                 related_anime_loader.add_value('dest_anime', related_anime)
                 yield related_anime_loader.load_item()
-                self.stats.inc_value(f'{self.__class__.__name__}_processed_{related_anime_loader.load_item().__class__.__name__}', count = 1)
+                if self.stats:
+                    self.stats.inc_value(f'{self.__class__.__name__}_processed_{related_anime_loader.load_item().__class__.__name__}', count = 1)
 
     def parse_anime_main_page_for_schedule_anime(self, response, local_file_response = False):
         """
@@ -89,7 +92,8 @@ class AnimeSpider(scrapy.Spider):
                 anime_schedule_loader.add_value('url', related_anime)
                 anime_schedule_loader.add_value('last_inspect_date', self.crawl_date)
                 yield anime_schedule_loader.load_item()
-                self.stats.inc_value(f'{self.__class__.__name__}_processed_{anime_schedule_loader.load_item().__class__.__name__}', count = 1)
+                if self.stats:
+                    self.stats.inc_value(f'{self.__class__.__name__}_processed_{anime_schedule_loader.load_item().__class__.__name__}', count = 1)
         
         else:
             for related_anime in response.xpath('//table[@class="anime_detail_related_anime"]/tbody/tr/td/a[contains(@href, "/anime/")]/@href').getall():
@@ -97,7 +101,8 @@ class AnimeSpider(scrapy.Spider):
                 anime_schedule_loader.add_value('url', related_anime)
                 anime_schedule_loader.add_value('last_inspect_date', self.crawl_date)
                 yield anime_schedule_loader.load_item()
-                self.stats.inc_value(f'{self.__class__.__name__}_processed_{anime_schedule_loader.load_item().__class__.__name__}', count = 1)
+                if self.stats:
+                    self.stats.inc_value(f'{self.__class__.__name__}_processed_{anime_schedule_loader.load_item().__class__.__name__}', count = 1)
         
     def parse_review_page_for_reviews(self, response, local_file_response = False):
         """
@@ -120,7 +125,8 @@ class AnimeSpider(scrapy.Spider):
                 review_loader.add_xpath('character_score', './/table/tr[contains(string(./td), "Character")]/td[2]/text()')
                 review_loader.add_xpath('enjoyment_score', './/table/tr[contains(string(./td), "Enjoyment")]/td[2]/text()')
                 yield review_loader.load_item()
-                self.stats.inc_value(f'{self.__class__.__name__}_processed_{review_loader.load_item().__class__.__name__}', count = 1)
+                if self.stats:
+                    self.stats.inc_value(f'{self.__class__.__name__}_processed_{review_loader.load_item().__class__.__name__}', count = 1)
         else:
             for review in response.xpath('//div[@class="borderDark"]'):
                 review_loader = ItemLoader(item=ReviewItem(), selector=review)
@@ -138,7 +144,8 @@ class AnimeSpider(scrapy.Spider):
                 review_loader.add_xpath('character_score', './/table/tbody/tr[contains(string(./td), "Character")]/td[2]/text()')
                 review_loader.add_xpath('enjoyment_score', './/table/tbody/tr[contains(string(./td), "Enjoyment")]/td[2]/text()')
                 yield review_loader.load_item()
-                self.stats.inc_value(f'{self.__class__.__name__}_processed_{review_loader.load_item().__class__.__name__}', count = 1)
+                if self.stats:
+                    self.stats.inc_value(f'{self.__class__.__name__}_processed_{review_loader.load_item().__class__.__name__}', count = 1)
     
     def parse_review_page_for_schedule_profiles(self, response, local_file_response = False):
         """
@@ -150,7 +157,8 @@ class AnimeSpider(scrapy.Spider):
             profile_schedule_loader.add_xpath('url', './/a[contains(@href, "profile")]/@href')
             profile_schedule_loader.add_value('last_inspect_date', self.crawl_date)
             yield profile_schedule_loader.load_item()
-            self.stats.inc_value(f'{self.__class__.__name__}_processed_{profile_schedule_loader.load_item().__class__.__name__}', count = 1)
+            if self.stats:
+                self.stats.inc_value(f'{self.__class__.__name__}_processed_{profile_schedule_loader.load_item().__class__.__name__}', count = 1)
     
     def parse_recommendation_page_for_recommendations(self, response, local_file_response = False):
         """
@@ -167,7 +175,8 @@ class AnimeSpider(scrapy.Spider):
                 rec_loader.add_xpath('dest_anime', './/div[@style="margin-bottom: 2px;"]/a[contains(@href, "/anime/")]/@href')
                 rec_loader.add_xpath('num_recs', './/div[@class="spaceit"]/a[contains(@href, "javascript")]/strong/text()')
                 yield rec_loader.load_item()
-                self.stats.inc_value(f'{self.__class__.__name__}_processed_{rec_loader.load_item().__class__.__name__}', count = 1)
+                if self.stats:
+                    self.stats.inc_value(f'{self.__class__.__name__}_processed_{rec_loader.load_item().__class__.__name__}', count = 1)
         else:
             current_anime = response.url.split('/')[4]
             recommendations = response.xpath('//div[@class="borderClass"]/table/tbody/tr/td[2]')
@@ -179,7 +188,8 @@ class AnimeSpider(scrapy.Spider):
                 rec_loader.add_xpath('dest_anime', './/div[@style="margin-bottom: 2px;"]/a[contains(@href, "/anime/")]/@href')
                 rec_loader.add_xpath('num_recs', './/div[@class="spaceit"]/a[contains(@href, "javascript")]/strong/text()')
                 yield rec_loader.load_item()
-                self.stats.inc_value(f'{self.__class__.__name__}_processed_{rec_loader.load_item().__class__.__name__}', count = 1)
+                if self.stats:
+                    self.stats.inc_value(f'{self.__class__.__name__}_processed_{rec_loader.load_item().__class__.__name__}', count = 1)
     
     def parse_recommendation_page_for_schedule_anime(self, response, local_file_response = False):
         """
@@ -192,7 +202,8 @@ class AnimeSpider(scrapy.Spider):
                 anime_schedule_loader.add_xpath('url', './/div[@style="margin-bottom: 2px;"]/a[contains(@href, "/anime/")]/@href')
                 anime_schedule_loader.add_value('last_inspect_date', self.crawl_date)
                 yield anime_schedule_loader.load_item()
-                self.stats.inc_value(f'{self.__class__.__name__}_processed_{anime_schedule_loader.load_item().__class__.__name__}', count = 1)
+                if self.stats:
+                    self.stats.inc_value(f'{self.__class__.__name__}_processed_{anime_schedule_loader.load_item().__class__.__name__}', count = 1)
         else:
             recommendations = response.xpath('//div[@class="borderClass"]/table/tbody/tr/td[2]')
             for recommendation in recommendations:
@@ -200,7 +211,8 @@ class AnimeSpider(scrapy.Spider):
                 anime_schedule_loader.add_xpath('url', './/div[@style="margin-bottom: 2px;"]/a[contains(@href, "/anime/")]/@href')
                 anime_schedule_loader.add_value('last_inspect_date', self.crawl_date)
                 yield anime_schedule_loader.load_item()
-                self.stats.inc_value(f'{self.__class__.__name__}_processed_{anime_schedule_loader.load_item().__class__.__name__}', count = 1)
+                if self.stats:
+                    self.stats.inc_value(f'{self.__class__.__name__}_processed_{anime_schedule_loader.load_item().__class__.__name__}', count = 1)
 
     def parse_stats_page_for_stats(self, response, local_file_response = False):
         """
@@ -383,4 +395,5 @@ class AnimeSpider(scrapy.Spider):
         anime_item['crawl_date'] = self.crawl_date
 
         yield anime_item
-        self.stats.inc_value(f'{self.__class__.__name__}_processed_{anime_item.__class__.__name__}', count = 1)
+        if self.stats:
+            self.stats.inc_value(f'{self.__class__.__name__}_processed_{anime_item.__class__.__name__}', count = 1)

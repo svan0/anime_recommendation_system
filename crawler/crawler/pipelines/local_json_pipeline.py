@@ -28,7 +28,7 @@ class LocalJSONSavePipeline:
         AnimeSchedule and ProfileSchedule with defined crawl date are also returned
         after processing Anime and Profile item respectively
     """
-    def __init__(self, stats):
+    def __init__(self, stats = None):
         self.stats = stats
     
     @classmethod
@@ -82,7 +82,8 @@ class LocalJSONSavePipeline:
         else:
             return item
         
-        self.stats.inc_value(f'{self.__class__.__name__}_processed_{item.__class__.__name__}', count = 1)
+        if self.stats:
+            self.stats.inc_value(f'{self.__class__.__name__}_processed_{item.__class__.__name__}', count = 1)
 
         item_class = item.__class__.__name__
         time_now = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S:%f")
@@ -101,7 +102,7 @@ class BatchedLocalJSONSavePipeline:
         AnimeSchedule and ProfileSchedule with defined crawl date are also returned
         after processing Anime and Profile item respectively
     """
-    def __init__(self, stats):
+    def __init__(self, stats = None):
         self.batched_data = defaultdict(list)
         self.stats = stats
     
@@ -131,7 +132,10 @@ class BatchedLocalJSONSavePipeline:
             return item
         
         self.batched_data[item.__class__.__name__].append(dict(item))
-        self.stats.inc_value(f'{self.__class__.__name__}_processed_{item.__class__.__name__}', count = 1)
+        
+        if self.stats:
+            self.stats.inc_value(f'{self.__class__.__name__}_processed_{item.__class__.__name__}', count = 1)
+        
         return item
     
     @crawler_stats_timing

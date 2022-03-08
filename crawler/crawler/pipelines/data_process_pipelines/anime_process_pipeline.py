@@ -10,7 +10,7 @@ class AnimeProcessPipeline:
     """
         Drop anime items that do not statisy integrity constraints
     """
-    def __init__(self, stats):
+    def __init__(self, stats = None):
         self.stats = stats
     
     @classmethod
@@ -128,7 +128,8 @@ class AnimeProcessPipeline:
                 logging.debug(f"{item['url']} xx * 'score_xx_count' do not average up to 'score' count. Changing 'score' to the average")
 
         logging.debug(f"AnimeItem {item['url']} processed")
-        self.stats.inc_value(f'{self.__class__.__name__}_processed_{item.__class__.__name__}', count = 1)
+        if self.stats:
+            self.stats.inc_value(f'{self.__class__.__name__}_processed_{item.__class__.__name__}', count = 1)
         return item
 
         

@@ -21,7 +21,6 @@ class SchedulerDBPipeline:
         last_inspectted_date/inspected_count or last_crawled_date/crawled_counts
     """
     def __init__(self, db_conn):
-        self.last_commit_time = time.time()
         self.db_conn = db_conn
         self.cursor = self.db_conn.cursor()
         
@@ -146,15 +145,14 @@ class SchedulerDBPipeline:
         assert((inspected_date is not None) or (crawled_date is not None))
         assert(not ((inspected_date is not None) and (crawled_date is not None)))
         
-        query = self.update_inspected_query(table_name, url, inspected_date)
+        if inspected_date:
+            query = self.update_inspected_query(table_name, url, inspected_date)
+        else:
+            query = self.update_crawled_query(table_name, url, crawled_date)
         try:
             self.cursor.execute(query)
         except:
             self.db_conn.rollback()
-        
-        if time.time() - self.last_commit_time > 600:
-            self.last_commit_time = time.time()
-            self.db_conn.commit()
         
         logging.debug(f"insert {table_name} {url} for scheduling")
 
@@ -164,18 +162,22 @@ class SchedulerDBPipeline:
         if isinstance(item, AnimeSchedulerItem):
             if 'last_crawl_date' in item:
                 self.update(ANIME_SCHEDULE_TABLE_NAME, item['url'], crawled_date=item['last_crawl_date'])
-                self.stats.inc_value(f'{self.__class__.__name__}_processed_{item.__class__.__name__}_crawled', count = 1)
+                if self.stats:
+                    self.stats.inc_value(f'{self.__class__.__name__}_processed_{item.__class__.__name__}_crawled', count = 1)
             else:
                 self.update(ANIME_SCHEDULE_TABLE_NAME, item['url'], inspected_date=item['last_inspect_date'])
-                self.stats.inc_value(f'{self.__class__.__name__}_processed_{item.__class__.__name__}_inspected', count = 1)
+                if self.stats:
+                    self.stats.inc_value(f'{self.__class__.__name__}_processed_{item.__class__.__name__}_inspected', count = 1)
         
         if isinstance(item, ProfileSchedulerItem):
             if 'last_crawl_date' in item:
                 self.update(PROFILE_SCHEDULE_TABLE_NAME, item['url'], crawled_date=item['last_crawl_date'])
-                self.stats.inc_value(f'{self.__class__.__name__}_processed_{item.__class__.__name__}_crawled', count = 1)
+                if self.stats:
+                    self.stats.inc_value(f'{self.__class__.__name__}_processed_{item.__class__.__name__}_crawled', count = 1)
             else:
                 self.update(PROFILE_SCHEDULE_TABLE_NAME, item['url'], inspected_date=item['last_inspect_date'])
-                self.stats.inc_value(f'{self.__class__.__name__}_processed_{item.__class__.__name__}_inspected', count = 1)
+                if self.stats:
+                    self.stats.inc_value(f'{self.__class__.__name__}_processed_{item.__class__.__name__}_inspected', count = 1)
 
         return item
 
@@ -193,7 +195,7 @@ class SchedulerSQLitePipeline(SchedulerDBPipeline):
     """
         SchedulerDBPipeline specific to SQLite
     """
-    def __init__(self, stats):
+    def __init__(self, stats = None):
         db_conn = sqlite3.connect(os.getenv("SCHEDULER_DB_FILE"))
         super().__init__(db_conn=db_conn)
         self.stats = stats
@@ -206,7 +208,7 @@ class SchedulerPostgresPipeline(SchedulerDBPipeline):
     """
         SchedulerDBPipeline specific to Postgres
     """
-    def __init__(self, stats):
+    def __init__(self, stats = None):
         db_conn = psycopg2.connect(
             host = os.getenv("SCHEDULER_DB_HOST"),
             user=os.getenv("SCHEDULER_DB_USER"),

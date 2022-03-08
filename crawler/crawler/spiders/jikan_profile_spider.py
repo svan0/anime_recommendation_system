@@ -22,6 +22,7 @@ class JikanProfileSpider(scrapy.Spider):
     name = 'jikan_profile'
 
     def __init__(self, *args, **kwargs):
+        self.stats = None
         super().__init__(*args, **kwargs)
         self.crawl_date = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
 
@@ -76,7 +77,8 @@ class JikanProfileSpider(scrapy.Spider):
         profile_item = ProfileItem({**profile_item, **profile_loader.load_item()})
         profile_item['crawl_date'] = self.crawl_date
         yield profile_item
-        self.stats.inc_value(f'{self.__class__.__name__}_processed_{profile_item.__class__.__name__}', count = 1)
+        if self.stats:
+            self.stats.inc_value(f'{self.__class__.__name__}_processed_{profile_item.__class__.__name__}', count = 1)
 
     def parse_user_favorites(self, response):
         """
@@ -93,13 +95,15 @@ class JikanProfileSpider(scrapy.Spider):
             favorite_loader.add_value('user_id', user_id)
             favorite_loader.add_value('anime_id', str(favorite['mal_id']))
             yield favorite_loader.load_item()
-            self.stats.inc_value(f'{self.__class__.__name__}_processed_{favorite_loader.load_item().__class__.__name__}', count = 1)
+            if self.stats:
+                self.stats.inc_value(f'{self.__class__.__name__}_processed_{favorite_loader.load_item().__class__.__name__}', count = 1)
 
             anime_schedule_loader = ItemLoader(item=AnimeSchedulerItem())
             anime_schedule_loader.add_value('url', favorite['url'])
             anime_schedule_loader.add_value('last_inspect_date', self.crawl_date)
             yield anime_schedule_loader.load_item()
-            self.stats.inc_value(f'{self.__class__.__name__}_processed_{anime_schedule_loader.load_item().__class__.__name__}', count = 1)
+            if self.stats:
+                self.stats.inc_value(f'{self.__class__.__name__}_processed_{anime_schedule_loader.load_item().__class__.__name__}', count = 1)
 
     def parse_user_friends(self, response):
         """
@@ -117,13 +121,15 @@ class JikanProfileSpider(scrapy.Spider):
             friend_loader.add_value('dest_profile', friend['user']['username'])
             friend_loader.add_value('friendship_date', friend['friends_since'])
             yield friend_loader.load_item()
-            self.stats.inc_value(f'{self.__class__.__name__}_processed_{friend_loader.load_item().__class__.__name__}', count = 1)
+            if self.stats:
+                self.stats.inc_value(f'{self.__class__.__name__}_processed_{friend_loader.load_item().__class__.__name__}', count = 1)
 
             profile_schedule_loader = ItemLoader(item=ProfileSchedulerItem())
             profile_schedule_loader.add_value('last_inspect_date', self.crawl_date)
             profile_schedule_loader.add_value('url', friend['user']['url'])
             yield profile_schedule_loader.load_item()
-            self.stats.inc_value(f'{self.__class__.__name__}_processed_{profile_schedule_loader.load_item().__class__.__name__}', count = 1)
+            if self.stats:
+                self.stats.inc_value(f'{self.__class__.__name__}_processed_{profile_schedule_loader.load_item().__class__.__name__}', count = 1)
 
     def parse_user_history(self, response):
         """
@@ -145,14 +151,16 @@ class JikanProfileSpider(scrapy.Spider):
             activity_loader.add_value('activity_type', 'Watching')
             activity_loader.add_value('date', activity['date'])
             yield activity_loader.load_item()
-            self.stats.inc_value(f'{self.__class__.__name__}_processed_{activity_loader.load_item().__class__.__name__}', count = 1)
+            if self.stats:
+                self.stats.inc_value(f'{self.__class__.__name__}_processed_{activity_loader.load_item().__class__.__name__}', count = 1)
 
             anime_schedule_loader = ItemLoader(item=AnimeSchedulerItem())
             anime_id = activity['entry']['mal_id']
             anime_schedule_loader.add_value('url', f'https://myanimelist.net/anime/{anime_id}')
             anime_schedule_loader.add_value('last_inspect_date', self.crawl_date)
             yield anime_schedule_loader.load_item()
-            self.stats.inc_value(f'{self.__class__.__name__}_processed_{anime_schedule_loader.load_item().__class__.__name__}', count = 1)
+            if self.stats:
+                self.stats.inc_value(f'{self.__class__.__name__}_processed_{anime_schedule_loader.load_item().__class__.__name__}', count = 1)
     
     def parse_user_animelist(self, response):
         """
@@ -195,14 +203,16 @@ class JikanProfileSpider(scrapy.Spider):
             watch_status_loader.add_value('score', str(anime['score']) if anime['score'] > 0 else None)
             watch_status_loader.add_value('progress', str(anime['episodes_watched']))
             yield watch_status_loader.load_item()
-            self.stats.inc_value(f'{self.__class__.__name__}_processed_{watch_status_loader.load_item().__class__.__name__}', count = 1)
+            if self.stats:
+                self.stats.inc_value(f'{self.__class__.__name__}_processed_{watch_status_loader.load_item().__class__.__name__}', count = 1)
 
             anime_schedule_loader = ItemLoader(item=AnimeSchedulerItem())
             anime_id = anime['anime']['mal_id']
             anime_schedule_loader.add_value('url', f'https://myanimelist.net/anime/{anime_id}')
             anime_schedule_loader.add_value('last_inspect_date', self.crawl_date)
             yield anime_schedule_loader.load_item()
-            self.stats.inc_value(f'{self.__class__.__name__}_processed_{anime_schedule_loader.load_item().__class__.__name__}', count = 1)
+            if self.stats:
+                self.stats.inc_value(f'{self.__class__.__name__}_processed_{anime_schedule_loader.load_item().__class__.__name__}', count = 1)
 
 
         if len(api_result['data']) == 300:

@@ -23,7 +23,7 @@ class BigQueryPipeline:
         AnimeSchedule and ProfileSchedule with defined crawl date are also returned
         after processing Anime and Profile item respectively
     """
-    def __init__(self, stats):
+    def __init__(self, stats = None):
         self.publish_client = None
         self.project = os.getenv('PROJECT_ID')
         self.client = bigquery.Client(project=self.project)
@@ -69,7 +69,9 @@ class BigQueryPipeline:
             return item
 
         self.items_to_ingest[item.__class__.__name__].append(dict(item))
-        self.stats.inc_value(f'{self.__class__.__name__}_processed_{item.__class__.__name__}', count = 1)
+        
+        if self.stats:
+            self.stats.inc_value(f'{self.__class__.__name__}_processed_{item.__class__.__name__}', count = 1)
 
         if isinstance(item, AnimeItem):
             logging.debug(f"anime {item['url']} prepare anime schedule")

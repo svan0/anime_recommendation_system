@@ -27,6 +27,7 @@ class ProfileSpider(scrapy.Spider):
     allowed_domains = ['myanimelist.net']
 
     def __init__(self, *args, **kwargs):
+        self.stats = None
         super().__init__(*args, **kwargs)
         self.crawl_date = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
 
@@ -63,13 +64,15 @@ class ProfileSpider(scrapy.Spider):
         profile_loader.add_value('uid', response.url)
         
         profile_loader.add_xpath('last_online_date', '//li[contains(./span, "Last Online")]/span[contains(@class, "user-status-data")]/text()')
-        profile_loader.add_xpath('num_forum_posts', '//a[contains(./span, "Forum Posts")]/span[2]/text()')
-        profile_loader.add_xpath('num_reviews', '//a[contains(./span, "Reviews")]/span[2]/text()')
-        profile_loader.add_xpath('num_recommendations', '//a[contains(./span, "Recommendations")]/span[2]/text()')
-        profile_loader.add_xpath('num_blog_posts', '//a[contains(./span, "Blog Posts")]/span[2]/text()')
 
         profile_loader.add_xpath('num_days', '//div[@class="stats anime"]/div/div[contains(.//span, "Days:")]/text()')
         profile_loader.add_xpath('mean_score', '//div[@class="stats anime"]/div/div[contains(.//span, "Mean Score:")]/span[2]/text()')
+
+        profile_loader.add_xpath('num_watching', '//div[@class="stats anime"]/div/ul/li[contains(.//a, "Watching")]/span/text()')
+        profile_loader.add_xpath('num_completed', '//div[@class="stats anime"]/div/ul/li[contains(.//a, "Completed")]/span/text()')
+        profile_loader.add_xpath('num_on_hold', '//div[@class="stats anime"]/div/ul/li[contains(.//a, "On-Hold")]/span/text()')
+        profile_loader.add_xpath('num_dropped', '//div[@class="stats anime"]/div/ul/li[contains(.//a, "Dropped")]/span/text()')
+        profile_loader.add_xpath('num_plan_to_watch', '//div[@class="stats anime"]/div/ul/li[contains(.//a, "Plan to Watch")]/span/text()')
 
         return profile_loader.load_item()
 
@@ -84,7 +87,8 @@ class ProfileSpider(scrapy.Spider):
             favorite_loader.add_value('user_id', response.url)
             favorite_loader.add_value('anime_id', favorite)
             yield favorite_loader.load_item()
-            self.stats.inc_value(f'{self.__class__.__name__}_processed_{favorite_loader.load_item().__class__.__name__}', count = 1)
+            if self.stats:
+                self.stats.inc_value(f'{self.__class__.__name__}_processed_{favorite_loader.load_item().__class__.__name__}', count = 1)
     
     def parse_profile_main_page_for_favorites_scheduler(self, response, local_file_response = False):
         """
@@ -96,7 +100,8 @@ class ProfileSpider(scrapy.Spider):
             anime_schedule_loader.add_value('url', favorite)
             anime_schedule_loader.add_value('last_inspect_date', self.crawl_date)
             yield anime_schedule_loader.load_item()
-            self.stats.inc_value(f'{self.__class__.__name__}_processed_{anime_schedule_loader.load_item().__class__.__name__}', count = 1)
+            if self.stats:
+                self.stats.inc_value(f'{self.__class__.__name__}_processed_{anime_schedule_loader.load_item().__class__.__name__}', count = 1)
     
     def parse_friend_page_for_friends(self, response, local_file_response = False):
         """
@@ -111,7 +116,8 @@ class ProfileSpider(scrapy.Spider):
             friend_loader.add_xpath('dest_profile', './div[2]/a/@href')
             friend_loader.add_xpath('friendship_date', './div[4]/text()')
             yield friend_loader.load_item()
-            self.stats.inc_value(f'{self.__class__.__name__}_processed_{friend_loader.load_item().__class__.__name__}', count = 1)
+            if self.stats:
+                self.stats.inc_value(f'{self.__class__.__name__}_processed_{friend_loader.load_item().__class__.__name__}', count = 1)
     
     def parse_friend_page_for_schedule_profiles(self, response, local_file_response = False):
         """
@@ -123,7 +129,8 @@ class ProfileSpider(scrapy.Spider):
             profile_schedule_loader.add_value('last_inspect_date', self.crawl_date)
             profile_schedule_loader.add_xpath('url', './div[2]/a/@href')
             yield profile_schedule_loader.load_item()
-            self.stats.inc_value(f'{self.__class__.__name__}_processed_{profile_schedule_loader.load_item().__class__.__name__}', count = 1)
+            if self.stats:
+                self.stats.inc_value(f'{self.__class__.__name__}_processed_{profile_schedule_loader.load_item().__class__.__name__}', count = 1)
     
     def parse_clubs_page_for_clubs(self, response, local_file_response = False):
         """
@@ -151,7 +158,8 @@ class ProfileSpider(scrapy.Spider):
             activity_loader.add_xpath('activity_type', './description/text()')
             activity_loader.add_xpath('date', './pubDate/text()')
             yield activity_loader.load_item()
-            self.stats.inc_value(f'{self.__class__.__name__}_processed_{activity_loader.load_item().__class__.__name__}', count = 1)
+            if self.stats:
+                self.stats.inc_value(f'{self.__class__.__name__}_processed_{activity_loader.load_item().__class__.__name__}', count = 1)
 
     def parse_activity_page_for_scheduler(self, response, local_file_response = False):
         """
@@ -163,7 +171,8 @@ class ProfileSpider(scrapy.Spider):
             anime_schedule_loader.add_xpath('url', './/link/text()')
             anime_schedule_loader.add_value('last_inspect_date', self.crawl_date)
             yield anime_schedule_loader.load_item()
-            self.stats.inc_value(f'{self.__class__.__name__}_processed_{anime_schedule_loader.load_item().__class__.__name__}', count = 1)
+            if self.stats:
+                self.stats.inc_value(f'{self.__class__.__name__}_processed_{anime_schedule_loader.load_item().__class__.__name__}', count = 1)
     
     def parse_status_page_for_anime_status(self, response, local_file_response = False):
         """
@@ -197,7 +206,8 @@ class ProfileSpider(scrapy.Spider):
                 watch_status_loader.add_xpath('progress', './td[contains(@class, "progress")]/div//span/a/text()')
             
             yield watch_status_loader.load_item()
-            self.stats.inc_value(f'{self.__class__.__name__}_processed_{watch_status_loader.load_item().__class__.__name__}', count = 1)
+            if self.stats:
+                self.stats.inc_value(f'{self.__class__.__name__}_processed_{watch_status_loader.load_item().__class__.__name__}', count = 1)
 
         self.logger.debug(f"{response.url} scrapped {len(animes)} from")
     
@@ -211,7 +221,8 @@ class ProfileSpider(scrapy.Spider):
             anime_schedule_loader.add_xpath('url', './td/a[contains(@href, "/anime/")]/@href')
             anime_schedule_loader.add_value('last_inspect_date', self.crawl_date)
             yield anime_schedule_loader.load_item()
-            self.stats.inc_value(f'{self.__class__.__name__}_processed_{anime_schedule_loader.load_item().__class__.__name__}', count = 1)
+            if self.stats:
+                self.stats.inc_value(f'{self.__class__.__name__}_processed_{anime_schedule_loader.load_item().__class__.__name__}', count = 1)
 
     def parse(self, response):
         """
@@ -296,7 +307,8 @@ class ProfileSpider(scrapy.Spider):
         profile_item = ProfileItem({**profile_item, **self.parse_clubs_page_for_clubs(response)})
         profile_item['crawl_date'] = self.crawl_date
         yield profile_item
-        self.stats.inc_value(f'{self.__class__.__name__}_processed_{profile_item.__class__.__name__}', count = 1)
+        if self.stats:
+            self.stats.inc_value(f'{self.__class__.__name__}_processed_{profile_item.__class__.__name__}', count = 1)
 
         profile_schedule_loader = ItemLoader(item=ProfileSchedulerItem())
         profile_schedule_loader.add_value('url', profile_item['url'])
@@ -304,7 +316,8 @@ class ProfileSpider(scrapy.Spider):
         profile_schedule_loader.add_value('last_crawl_date', profile_item['crawl_date'])
         profile_schedule_loader.add_value('last_inspect_date', profile_item['crawl_date'])
         yield profile_schedule_loader.load_item()
-        self.stats.inc_value(f'{self.__class__.__name__}_processed_{profile_schedule_loader.load_item().__class__.__name__}', count = 1)
+        if self.stats:
+            self.stats.inc_value(f'{self.__class__.__name__}_processed_{profile_schedule_loader.load_item().__class__.__name__}', count = 1)
     
     def parse_user_activity(self, response):
         """

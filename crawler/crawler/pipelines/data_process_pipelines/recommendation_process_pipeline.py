@@ -8,7 +8,7 @@ class RecommendationProcessPipeline:
     """
         Drop recommendation items that do not statisy integrity constraints
     """
-    def __init__(self, stats):
+    def __init__(self, stats = None):
         self.stats = stats
     
     @classmethod
@@ -33,7 +33,8 @@ class RecommendationProcessPipeline:
                 raise DropItem(f"RecommendationItem {item['url']} dropped because '{field}' is null")
         
         logging.debug("RecommendationItem processed")
-        self.stats.inc_value(f'{self.__class__.__name__}_processed_{item.__class__.__name__}', count = 1)
+        if self.stats:
+            self.stats.inc_value(f'{self.__class__.__name__}_processed_{item.__class__.__name__}', count = 1)
         return item
 
         

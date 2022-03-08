@@ -18,11 +18,12 @@ class ProfileTest(unittest.TestCase):
 
         expected_results = {
             'mean_score': 4.67,
-            'num_blog_posts': 0,
             'num_days': 246.5,
-            'num_forum_posts': 398,
-            'num_recommendations': 3,
-            'num_reviews': 375,
+            'num_watching' : 4,
+            'num_completed' : 1170,
+            'num_on_hold' : 0,
+            'num_dropped' : 20,
+            'num_plan_to_watch' : 6,
             'uid': 'literaturenerd',
             'url': 'https://myanimelist.net/profile/literaturenerd'
         }
@@ -48,11 +49,12 @@ class ProfileTest(unittest.TestCase):
 
         expected_results = {
             'mean_score': 8.75,
-            'num_blog_posts': 0,
             'num_days': 95.8,
-            'num_forum_posts': 2,
-            'num_recommendations': 0,
-            'num_reviews': 0,
+            'num_watching' : 55,
+            'num_completed' : 298,
+            'num_on_hold' : 4,
+            'num_dropped' : 3,
+            'num_plan_to_watch' : 52,
             'uid': 'svanO',
             'url': 'https://myanimelist.net/profile/svanO'
         }
@@ -79,11 +81,12 @@ class ProfileTest(unittest.TestCase):
 
         expected_results = {
             'mean_score': 7.57,
-            'num_blog_posts': 1,
             'num_days': 91.1,
-            'num_forum_posts': 188,
-            'num_recommendations': 2,
-            'num_reviews': 19,
+            'num_watching' : 19,
+            'num_completed' : 266,
+            'num_on_hold' : 15,
+            'num_dropped' : 13,
+            'num_plan_to_watch' : 69,
             'uid': 'tazillo',
             'url': 'https://myanimelist.net/profile/tazillo'
         }

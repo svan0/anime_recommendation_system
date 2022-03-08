@@ -93,7 +93,8 @@ class PubSubPipeline:
         self.publish_client.publish(topic_path, message)
         logging.debug(f"Published to PubSub {self.ingestion_topic}")
         
-        self.stats.inc_value(f'{self.__class__.__name__}_processed_{item.__class__.__name__}', count = 1)
+        if self.stats:
+            self.stats.inc_value(f'{self.__class__.__name__}_processed_{item.__class__.__name__}', count = 1)
 
         if isinstance(item, AnimeItem):
             logging.debug(f"anime {item['url']} prepare anime schedule")
