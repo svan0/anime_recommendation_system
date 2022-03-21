@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: crawler-profile
-          image: gcr.io/anime-rec-dev/crawler_image:TAG
+          image: gcr.io/anime-rec-dev/crawler_image:latest
           env:
             - name: PROJECT_ID
               value: anime-rec-dev

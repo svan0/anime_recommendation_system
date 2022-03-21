@@ -1,0 +1,6 @@
+runtime: python37
+instance_class: F2
+vpc_access_connector:
+  name: projects/anime-rec-dev/locations/us-central1/connectors/redis-vpc-connector
+includes:
+  - env_variables.yaml

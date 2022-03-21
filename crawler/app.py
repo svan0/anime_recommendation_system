@@ -85,8 +85,8 @@ def jikan_crawl_profile():
 if __name__ == '__main__':
     
     parser = argparse.ArgumentParser()
-    parser.add_argument('--crawled_output', default='pubsub', type=str)
-    parser.add_argument('--scheduler_db_type', default='postgres', type=str)
+    parser.add_argument('--crawled_output', type=str)
+    parser.add_argument('--scheduler_db_type', type=str)
 
     args = parser.parse_args()
     assert(args.crawled_output == 'json' or args.crawled_output == 'pubsub' or args.crawled_output == 'bigquery' or args.crawled_output is None)

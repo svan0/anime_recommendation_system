@@ -12,10 +12,10 @@ class RelatedAnimeTest(unittest.TestCase):
     def test(self):
 
         expected_results = [
-            {'src_anime': '5114', 'dest_anime': '121'}, 
-            {'src_anime': '5114', 'dest_anime': '6421'}, 
-            {'src_anime': '5114', 'dest_anime': '9135'}, 
-            {'src_anime': '5114', 'dest_anime': '7902'}
+            {'src_anime': '5114', 'dest_anime': '121', 'relation_type': 'Alternative version'}, 
+            {'src_anime': '5114', 'dest_anime': '6421', 'relation_type': 'Side story'}, 
+            {'src_anime': '5114', 'dest_anime': '9135', 'relation_type': 'Side story'}, 
+            {'src_anime': '5114', 'dest_anime': '7902', 'relation_type': 'Spin-off'}
         ]
 
         file_path = 'fake_responses/anime/main_page/Fullmetal Alchemist_ Brotherhood - MyAnimeList.net.html'

@@ -1,16 +1,21 @@
-source .env
+PROJECT_PATH=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+PROJECT_PATH=$(dirname "$PROJECT_PATH")
+PROJECT_PATH=$(dirname "$PROJECT_PATH")
 
-gcloud container clusters create $CLUSTER_NAME\
-    --zone $CLUSTER_ZONE\
+source $PROJECT_PATH/.env
+
+gcloud container clusters create $CRAWLER_CLUSTER_NAME\
+    --zone $CRAWLER_CLUSTER_ZONE\
     --machine-type=n1-standard-1\
     --max-nodes=10\
-    --min-nodes=3
+    --min-nodes=3\
+    --spot
 
-gcloud container clusters get-credentials $CLUSTER_NAME\
-    --zone $CLUSTER_ZONE
+gcloud container clusters get-credentials $CRAWLER_CLUSTER_NAME\
+    --zone $CRAWLER_CLUSTER_ZONE
 
 kubectl create secret generic gcp-credentials\
-    --from-file=gcp_credentials.json=$CREDENTIALS_FILE_PATH
+    --from-file=gcp_credentials.json=$GOOGLE_APPLICATION_CREDENTIALS
 
 kubectl create secret generic scheduler-db-credentials\
     --from-literal=dbinstance=$SCHEDULER_DB_INSTANCE\

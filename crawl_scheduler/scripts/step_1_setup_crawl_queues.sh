@@ -4,6 +4,5 @@ PROJECT_PATH=$(dirname "$PROJECT_PATH")
 
 source $PROJECT_PATH/.env
 
-gcloud composer environments run $COMPOSER_ENV_NAME \
-    --location=$COMPOSER_ENV_REGION \
-    dags trigger -- anime_etl_pipeline
+gcloud pubsub topics create $SCHEDULE_ANIME_PUBSUB_TOPIC --message-retention-duration=30d
+gcloud pubsub topics create $SCHEDULE_PROFILE_PUBSUB_TOPIC --message-retention-duration=30d

@@ -175,7 +175,7 @@ def anime_anime_train_ranking_steps(list_anime_data, project_id, dataset_id, dat
         early_stop_num_epochs = 1
     )
     train_ranking_model.set_display_name("TRAIN: anime anime ranking")
-    train_ranking_model.set_cpu_limit('16').set_memory_limit('32G')
+    train_ranking_model.set_cpu_limit('16').set_memory_limit('64G')
 
     train_ranking_model_details = get_model_training_details(
         project_id=project_id,

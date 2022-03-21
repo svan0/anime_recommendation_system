@@ -19,3 +19,6 @@ class RelatedAnimeItem(scrapy.Item):
         input_processor = MapCompose(get_anime_id),
         output_processor = TakeFirst()
     )
+    relation_type = scrapy.Field(
+        output_processor = TakeFirst()
+    )

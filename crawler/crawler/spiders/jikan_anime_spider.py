@@ -90,10 +90,13 @@ class JikanAnimeSpider(scrapy.Spider):
             return
         for relation_type in api_result['data']: 
             for related_anime in relation_type['entry']:
+                if related_anime['type'] == 'manga':
+                    continue
                 related_anime_loader = ItemLoader(item=RelatedAnimeItem())
                 related_anime_loader.add_value('crawl_date', self.crawl_date)
                 related_anime_loader.add_value('src_anime', anime_id)
                 related_anime_loader.add_value('dest_anime', str(related_anime['mal_id']))
+                related_anime_loader.add_value('relation_type', relation_type['relation'])
                 yield related_anime_loader.load_item()
                 if self.stats:
                     self.stats.inc_value(f'{self.__class__.__name__}_processed_{related_anime_loader.load_item().__class__.__name__}', count = 1)

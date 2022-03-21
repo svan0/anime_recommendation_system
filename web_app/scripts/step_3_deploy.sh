@@ -4,6 +4,6 @@ PROJECT_PATH=$(dirname "$PROJECT_PATH")
 
 source $PROJECT_PATH/.env
 
-gcloud composer environments run $COMPOSER_ENV_NAME \
-    --location=$COMPOSER_ENV_REGION \
-    dags trigger -- anime_etl_pipeline
+cd $PROJECT_PATH/web_app/app
+
+gcloud app deploy --quiet

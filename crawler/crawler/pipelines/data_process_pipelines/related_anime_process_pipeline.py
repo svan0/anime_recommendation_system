@@ -20,7 +20,7 @@ class RelatedAnimeProcessPipeline:
         if not isinstance(item, RelatedAnimeItem):
             return item
         
-        for field in ['crawl_date', 'src_anime', 'dest_anime']:
+        for field in ['crawl_date', 'src_anime', 'dest_anime', 'relation_type']:
             if field not in item:
                 raise DropItem(f"RelatedAnimeItem dropped because {field} is null")
         

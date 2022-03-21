@@ -55,6 +55,44 @@ def get_item_pipelines(crawled_output = None, scheduler_db_type = None):
     return item_piplines
 
 
+def clean_url(url, type='anime', source='myanimelist'):
+    if type == 'anime' and source == 'myanimelist':
+        try:
+            url = url.split('/anime/')[1].split('/')[0]
+            return f"https://myanimelist.net/anime/{url}"
+        except:
+            return f"https://myanimelist.net/anime/{url}"
+    
+    if type == 'anime' and source == 'jikan':
+        try:
+            url = url.split('/anime/')[1].split('/')[0]
+            return f"https://api.jikan.moe/v4/anime/{url}"
+        except:
+            return f"https://api.jikan.moe/v4/anime/{url}"
+    
+    if type == 'profile' and source == 'myanimelist':
+        try:
+            url = url.split('/profile/')[1]
+            return f"https://myanimelist.net/profile/{url}"
+        except:
+            try:
+                url = url.split('/users/')[1]
+                return f"https://myanimelist.net/profile/{url}"
+            except:
+                return f"https://myanimelist.net/profile/{url}"
+    
+    if type == 'profile' and source == 'jikan':
+        try:
+            url = url.split('/users/')[1]
+            return f"https://api.jikan.moe/v4/users/{url}"
+        except:
+            try:
+                url = url.split('/profile/')[1]
+                return f"https://api.jikan.moe/v4/users/{url}"
+            except:
+                return f"https://api.jikan.moe/v4/users/{url}"
+    
+
 @crochet.wait_for(timeout = 3600)
 def run_top_anime_crawler(num_pages, crawler_settings):
     """
@@ -86,13 +124,7 @@ def run_anime_crawler(anime_urls, crawler_settings):
     """
         Run AnimeSpider to crawl animes from myanimelist.net
     """
-    try:
-        anime_ids = map(lambda x : x.split('/anime/')[1], anime_urls)
-        anime_ids = map(lambda x : x.split('/')[0], anime_ids)
-        anime_urls = map(lambda x : f"https://myanimelist.net/anime/{x}", anime_ids)
-    except:
-        anime_urls = map(lambda x : f"https://myanimelist.net/anime/{x}", anime_urls)
-
+    anime_urls = list(map(lambda x : clean_url(x, type='anime', source='myanimelist'), anime_urls))
     crawler_settings['start_urls'] = anime_urls
     runner = CrawlerRunner(crawler_settings)
     deferred = runner.crawl(AnimeSpider)
@@ -103,13 +135,7 @@ def run_jikan_anime_crawler(anime_urls, crawler_settings):
     """
         Run JikanAnimeSpider to crawl animes from the Jikan API
     """
-    try:
-        anime_ids = map(lambda x : x.split('/anime/')[1], anime_urls)
-        anime_ids = map(lambda x : x.split('/')[0], anime_ids)
-        anime_urls = map(lambda x : f"https://api.jikan.moe/v4/anime/{x}", anime_ids)
-    except:
-        anime_urls = map(lambda x : f"https://api.jikan.moe/v4/anime/{x}", anime_urls)
-
+    anime_urls = list(map(lambda x : clean_url(x, type='anime', source='jikan'), anime_urls))
     crawler_settings['start_urls'] = anime_urls
     runner = CrawlerRunner(crawler_settings)
     deferred = runner.crawl(JikanAnimeSpider)
@@ -120,16 +146,7 @@ def run_profile_crawler(profile_urls, crawler_settings):
     """
         Run ProfileSpider to crawl profiles from myanimelist.net
     """
-    try:
-        user_ids = map(lambda x : x.split('/profile/')[1], profile_urls)
-        profile_urls = map(lambda x : f"https://myanimelist.net/profile/{x}", user_ids)
-    except:
-        try:
-            user_ids = map(lambda x : x.split('/users/')[1], profile_urls)
-            profile_urls = map(lambda x : f"https://myanimelist.net/profile/{x}", user_ids)
-        except:
-            profile_urls = map(lambda x : f"https://myanimelist.net/profile/{x}", profile_urls)
-
+    profile_urls = list(map(lambda x : clean_url(x, type='profile', source='myanimelist'), profile_urls))
     crawler_settings['start_urls'] = profile_urls
     runner = CrawlerRunner(crawler_settings)
     deferred = runner.crawl(ProfileSpider)
@@ -140,16 +157,7 @@ def run_jikan_profile_crawler(profile_urls, crawler_settings):
     """
         Run JikanProfileSpider to crawl profiles from the Jikan API
     """
-    try:
-        user_ids = map(lambda x : x.split('/profile/')[1], profile_urls)
-        profile_urls = map(lambda x : f"https://api.jikan.moe/v4/users/{x}", user_ids)
-    except:
-        try:
-            user_ids = map(lambda x : x.split('/users/')[1], profile_urls)
-            profile_urls = map(lambda x : f"https://api.jikan.moe/v4/users/{x}", user_ids)
-        except:
-            profile_urls = map(lambda x : f"https://api.jikan.moe/v4/users/{x}", profile_urls)
-
+    profile_urls = list(map(lambda x : clean_url(x, type='profile', source='jikan'), profile_urls))
     crawler_settings['start_urls'] = profile_urls
     runner = CrawlerRunner(crawler_settings)
     deferred = runner.crawl(JikanProfileSpider)

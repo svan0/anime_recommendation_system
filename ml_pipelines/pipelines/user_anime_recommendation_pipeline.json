@@ -1020,7 +1020,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_retrieval_infer"
+                        "stringValue": "retrieval_infer"
                       }
                     }
                   },
@@ -1069,7 +1069,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_list_ranking_infer"
+                        "stringValue": "list_ranking_infer"
                       }
                     }
                   },
@@ -1205,7 +1205,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_retrieval_train"
+                        "stringValue": "retrieval_train"
                       }
                     }
                   },
@@ -1243,7 +1243,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_retrieval_val"
+                        "stringValue": "retrieval_val"
                       }
                     }
                   },
@@ -1281,7 +1281,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_retrieval_test"
+                        "stringValue": "retrieval_test"
                       }
                     }
                   },
@@ -1319,7 +1319,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_list_ranking_train"
+                        "stringValue": "list_ranking_train"
                       }
                     }
                   },
@@ -1357,7 +1357,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_list_ranking_val"
+                        "stringValue": "list_ranking_val"
                       }
                     }
                   },
@@ -1395,7 +1395,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_list_ranking_test"
+                        "stringValue": "list_ranking_test"
                       }
                     }
                   },
@@ -1436,7 +1436,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_list_ranking_infer_filter"
+                        "stringValue": "list_ranking_infer_filter"
                       }
                     }
                   },
@@ -1455,7 +1455,7 @@
                   "query": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "\n        SELECT user_id, anime_id, MAX(score) AS score\n        FROM (\n            SELECT A.user_id,\n                   B.animeB AS anime_id,\n                   A.score,  \n                   ROW_NUMBER() OVER (PARTITION BY A.user_id, A.anime_id ORDER BY B.related_order ASC) AS new_related_order\n            FROM {{$.inputs.parameters['pipelineparam--project_id']}}.{{$.inputs.parameters['pipelineparam--dataset_id']}}.user_anime_list_ranking_infer A\n            LEFT JOIN `anime-rec-dev.processed_area.related_priority` B\n            ON A.anime_id = B.animeA\n            LEFT JOIN `anime-rec-dev.processed_area.user_anime` C\n            ON B.animeB = C.anime_id\n            WHERE C.status IS NULL OR C.status = 'plan_to_watch'\n        )\n        WHERE new_related_order = 1\n        GROUP BY user_id, anime_id\n    "
+                        "stringValue": "\n        SELECT user_id, anime_id, MAX(score) AS score\n        FROM (\n            SELECT A.user_id,\n                   B.animeB AS anime_id,\n                   A.score,  \n                   ROW_NUMBER() OVER (PARTITION BY A.user_id, A.anime_id ORDER BY B.related_order ASC) AS new_related_order\n            FROM {{$.inputs.parameters['pipelineparam--project_id']}}.{{$.inputs.parameters['pipelineparam--dataset_id']}}.list_ranking_infer A\n            LEFT JOIN `anime-rec-dev.processed_area.anime_anime` B\n            ON A.anime_id = B.animeA\n            LEFT JOIN `anime-rec-dev.processed_area.user_anime` C\n            ON A.user_id = C.user_id AND B.animeB = C.anime_id\n            LEFT JOIN `anime-rec-dev.processed_area.anime` D\n            ON B.animeB = D.anime_id\n            WHERE B.related_order IS NOT NULL AND (C.status IS NULL OR C.status = 'plan_to_watch') AND 'Hentai' NOT IN UNNEST(D.genres)\n        )\n        WHERE new_related_order = 1\n        GROUP BY user_id, anime_id\n    "
                       }
                     }
                   }
@@ -1726,7 +1726,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_list_ranking_infer"
+                        "stringValue": "list_ranking_infer"
                       }
                     }
                   },
@@ -1851,7 +1851,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_list_ranking_train"
+                        "stringValue": "list_ranking_train"
                       }
                     }
                   },
@@ -1889,7 +1889,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_list_ranking_val"
+                        "stringValue": "list_ranking_val"
                       }
                     }
                   },
@@ -1927,7 +1927,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_list_ranking_test"
+                        "stringValue": "list_ranking_test"
                       }
                     }
                   },
@@ -1968,7 +1968,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_list_ranking_infer_filter"
+                        "stringValue": "list_ranking_infer_filter"
                       }
                     }
                   },
@@ -1987,7 +1987,7 @@
                   "query": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "\n        SELECT user_id, anime_id, MAX(score) AS score\n        FROM (\n            SELECT A.user_id,\n                   B.animeB AS anime_id,\n                   A.score,  \n                   ROW_NUMBER() OVER (PARTITION BY A.user_id, A.anime_id ORDER BY B.related_order ASC) AS new_related_order\n            FROM {{$.inputs.parameters['pipelineparam--project_id']}}.{{$.inputs.parameters['pipelineparam--dataset_id']}}.user_anime_list_ranking_infer A\n            LEFT JOIN `anime-rec-dev.processed_area.related_priority` B\n            ON A.anime_id = B.animeA\n            LEFT JOIN `anime-rec-dev.processed_area.user_anime` C\n            ON B.animeB = C.anime_id\n            WHERE C.status IS NULL OR C.status = 'plan_to_watch'\n        )\n        WHERE new_related_order = 1\n        GROUP BY user_id, anime_id\n    "
+                        "stringValue": "\n        SELECT user_id, anime_id, MAX(score) AS score\n        FROM (\n            SELECT A.user_id,\n                   B.animeB AS anime_id,\n                   A.score,  \n                   ROW_NUMBER() OVER (PARTITION BY A.user_id, A.anime_id ORDER BY B.related_order ASC) AS new_related_order\n            FROM {{$.inputs.parameters['pipelineparam--project_id']}}.{{$.inputs.parameters['pipelineparam--dataset_id']}}.list_ranking_infer A\n            LEFT JOIN `anime-rec-dev.processed_area.anime_anime` B\n            ON A.anime_id = B.animeA\n            LEFT JOIN `anime-rec-dev.processed_area.user_anime` C\n            ON A.user_id = C.user_id AND B.animeB = C.anime_id\n            LEFT JOIN `anime-rec-dev.processed_area.anime` D\n            ON B.animeB = D.anime_id\n            WHERE B.related_order IS NOT NULL AND (C.status IS NULL OR C.status = 'plan_to_watch') AND 'Hentai' NOT IN UNNEST(D.genres)\n        )\n        WHERE new_related_order = 1\n        GROUP BY user_id, anime_id\n    "
                       }
                     }
                   }
@@ -2557,7 +2557,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_retrieval_infer"
+                        "stringValue": "retrieval_infer"
                       }
                     }
                   },
@@ -2606,7 +2606,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_ranking_infer"
+                        "stringValue": "ranking_infer"
                       }
                     }
                   },
@@ -2742,7 +2742,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_retrieval_train"
+                        "stringValue": "retrieval_train"
                       }
                     }
                   },
@@ -2780,7 +2780,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_retrieval_val"
+                        "stringValue": "retrieval_val"
                       }
                     }
                   },
@@ -2818,7 +2818,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_retrieval_test"
+                        "stringValue": "retrieval_test"
                       }
                     }
                   },
@@ -2856,7 +2856,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_ranking_train"
+                        "stringValue": "ranking_train"
                       }
                     }
                   },
@@ -2894,7 +2894,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_ranking_val"
+                        "stringValue": "ranking_val"
                       }
                     }
                   },
@@ -2932,7 +2932,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_ranking_test"
+                        "stringValue": "ranking_test"
                       }
                     }
                   },
@@ -2973,7 +2973,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_ranking_infer_filter"
+                        "stringValue": "ranking_infer_filter"
                       }
                     }
                   },
@@ -2992,7 +2992,7 @@
                   "query": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "\n        SELECT user_id, anime_id, MAX(score) AS score\n        FROM (\n            SELECT A.user_id,\n                   B.animeB AS anime_id,\n                   A.score,  \n                   ROW_NUMBER() OVER (PARTITION BY A.user_id, A.anime_id ORDER BY B.related_order ASC) AS new_related_order\n            FROM {{$.inputs.parameters['pipelineparam--project_id']}}.{{$.inputs.parameters['pipelineparam--dataset_id']}}.user_anime_ranking_infer A\n            LEFT JOIN `anime-rec-dev.processed_area.related_priority` B\n            ON A.anime_id = B.animeA\n            LEFT JOIN `anime-rec-dev.processed_area.user_anime` C\n            ON B.animeB = C.anime_id\n            WHERE C.status IS NULL OR C.status = 'plan_to_watch'\n        )\n        WHERE new_related_order = 1\n        GROUP BY user_id, anime_id\n    "
+                        "stringValue": "\n        SELECT user_id, anime_id, MAX(score) AS score\n        FROM (\n            SELECT A.user_id,\n                   B.animeB AS anime_id,\n                   A.score,  \n                   ROW_NUMBER() OVER (PARTITION BY A.user_id, A.anime_id ORDER BY B.related_order ASC) AS new_related_order\n            FROM {{$.inputs.parameters['pipelineparam--project_id']}}.{{$.inputs.parameters['pipelineparam--dataset_id']}}.ranking_infer A\n            LEFT JOIN `anime-rec-dev.processed_area.anime_anime` B\n            ON A.anime_id = B.animeA\n            LEFT JOIN `anime-rec-dev.processed_area.user_anime` C\n            ON A.user_id = C.user_id AND B.animeB = C.anime_id\n            LEFT JOIN `anime-rec-dev.processed_area.anime` D\n            ON B.animeB = D.anime_id\n            WHERE B.related_order IS NOT NULL AND (C.status IS NULL OR C.status = 'plan_to_watch') AND 'Hentai' NOT IN UNNEST(D.genres)\n        )\n        WHERE new_related_order = 1\n        GROUP BY user_id, anime_id\n    "
                       }
                     }
                   }
@@ -3263,7 +3263,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_ranking_infer"
+                        "stringValue": "ranking_infer"
                       }
                     }
                   },
@@ -3388,7 +3388,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_ranking_train"
+                        "stringValue": "ranking_train"
                       }
                     }
                   },
@@ -3426,7 +3426,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_ranking_val"
+                        "stringValue": "ranking_val"
                       }
                     }
                   },
@@ -3464,7 +3464,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_ranking_test"
+                        "stringValue": "ranking_test"
                       }
                     }
                   },
@@ -3505,7 +3505,7 @@
                   "destination_table_id": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "user_anime_ranking_infer_filter"
+                        "stringValue": "ranking_infer_filter"
                       }
                     }
                   },
@@ -3524,7 +3524,7 @@
                   "query": {
                     "runtimeValue": {
                       "constantValue": {
-                        "stringValue": "\n        SELECT user_id, anime_id, MAX(score) AS score\n        FROM (\n            SELECT A.user_id,\n                   B.animeB AS anime_id,\n                   A.score,  \n                   ROW_NUMBER() OVER (PARTITION BY A.user_id, A.anime_id ORDER BY B.related_order ASC) AS new_related_order\n            FROM {{$.inputs.parameters['pipelineparam--project_id']}}.{{$.inputs.parameters['pipelineparam--dataset_id']}}.user_anime_ranking_infer A\n            LEFT JOIN `anime-rec-dev.processed_area.related_priority` B\n            ON A.anime_id = B.animeA\n            LEFT JOIN `anime-rec-dev.processed_area.user_anime` C\n            ON B.animeB = C.anime_id\n            WHERE C.status IS NULL OR C.status = 'plan_to_watch'\n        )\n        WHERE new_related_order = 1\n        GROUP BY user_id, anime_id\n    "
+                        "stringValue": "\n        SELECT user_id, anime_id, MAX(score) AS score\n        FROM (\n            SELECT A.user_id,\n                   B.animeB AS anime_id,\n                   A.score,  \n                   ROW_NUMBER() OVER (PARTITION BY A.user_id, A.anime_id ORDER BY B.related_order ASC) AS new_related_order\n            FROM {{$.inputs.parameters['pipelineparam--project_id']}}.{{$.inputs.parameters['pipelineparam--dataset_id']}}.ranking_infer A\n            LEFT JOIN `anime-rec-dev.processed_area.anime_anime` B\n            ON A.anime_id = B.animeA\n            LEFT JOIN `anime-rec-dev.processed_area.user_anime` C\n            ON A.user_id = C.user_id AND B.animeB = C.anime_id\n            LEFT JOIN `anime-rec-dev.processed_area.anime` D\n            ON B.animeB = D.anime_id\n            WHERE B.related_order IS NOT NULL AND (C.status IS NULL OR C.status = 'plan_to_watch') AND 'Hentai' NOT IN UNNEST(D.genres)\n        )\n        WHERE new_related_order = 1\n        GROUP BY user_id, anime_id\n    "
                       }
                     }
                   }

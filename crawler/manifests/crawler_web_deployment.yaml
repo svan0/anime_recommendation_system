@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: crawler-web
-          image: gcr.io/anime-rec-dev/crawler_image:TAG
+          image: gcr.io/anime-rec-dev/crawler_image:latest
           env:
             - name: SCHEDULER_DB
               valueFrom:

@@ -1,0 +1,22 @@
+[
+    {
+      "mode" : "REQUIRED",
+      "name" : "crawl_date",
+      "type" : "DATETIME"
+    },
+    {
+      "mode" : "REQUIRED",
+      "name" : "src_profile",
+      "type" : "STRING"
+    },
+    {
+      "mode" : "REQUIRED",
+      "name" : "dest_profile",
+      "type" : "STRING"
+    },
+    {
+      "mode" : "REQUIRED",
+      "name" : "friendship_date",
+      "type" : "DATETIME"
+    }
+]

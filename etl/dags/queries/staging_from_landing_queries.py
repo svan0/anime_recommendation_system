@@ -179,23 +179,38 @@ staging_user_anime_favorite_query = f"""
 
 #------------- Staging Anime Anime Queries ----------
 staging_anime_anime_related_query = f"""
-    WITH src_anime_last_crawl_date AS (
+    WITH RECURSIVE src_anime_last_crawl_date AS (
         SELECT src_anime, MAX(crawl_date) AS last_crawl_date
         FROM `{PROJECT_ID}.{LANDING_DATASET}.{RELATED_ANIME_ITEM_LANDING_TABLE}`
         GROUP BY src_anime
     ),
     last_crawl_related_anime AS (
-        SELECT A.src_anime, A.dest_anime
+        SELECT A.src_anime, A.dest_anime, A.relation_type
         FROM `{PROJECT_ID}.{LANDING_DATASET}.{RELATED_ANIME_ITEM_LANDING_TABLE}` A
         JOIN src_anime_last_crawl_date B
         ON A.src_anime = B.src_anime AND A.crawl_date = B.last_crawl_date 
+    ),
+    related_level_1 AS (
+        SELECT src_anime AS animeA, dest_anime AS animeB, relation_type
+        FROM last_crawl_related_anime
+        GROUP BY src_anime, dest_anime, relation_type
+    ),
+    related AS (
+        SELECT animeA, animeB, relation_type, 1 AS level FROM related_level_1
+        UNION ALL
+        (
+            SELECT A.animeA, 
+                B.animeB, 
+                COALESCE(IF(A.relation_type='Sequel' AND B.relation_type='Sequel', 'Sequel', NULL),
+                            IF(A.relation_type='Prequel' AND B.relation_type='Prequel', 'Prequel', NULL)) AS relation_type,
+                A.level + 1 AS level
+            FROM related A
+            INNER JOIN related_level_1 B
+            ON A.animeB = B.animeA
+            WHERE A.level + 1 < 50 AND ((A.relation_type='Sequel' AND B.relation_type='Sequel') OR (A.relation_type='Prequel' AND B.relation_type='Prequel'))
+        )
     )
-    SELECT animeA, animeB
-    FROM (
-        (SELECT src_anime AS animeA, dest_anime AS animeB FROM last_crawl_related_anime)
-        UNION DISTINCT
-        (SELECT dest_anime AS animeA, src_anime AS animeB FROM last_crawl_related_anime)
-    )
+    SELECT animeA, animeB, MAX(relation_type) AS relation_type FROM related GROUP BY animeA, animeB
 """
 
 staging_anime_anime_recommendation_query = f"""

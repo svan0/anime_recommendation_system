@@ -1,4 +1,10 @@
-source .env
+PROJECT_PATH=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+PROJECT_PATH=$(dirname "$PROJECT_PATH")
+PROJECT_PATH=$(dirname "$PROJECT_PATH")
+
+source $PROJECT_PATH/.env
+
+cd $PROJECT_PATH/etl
 
 python3 -m dataflow_templates.ingestion \
     --runner DataflowRunner \

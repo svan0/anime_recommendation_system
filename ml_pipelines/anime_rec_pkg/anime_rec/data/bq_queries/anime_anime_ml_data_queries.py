@@ -6,7 +6,6 @@ from anime_rec.data.bq_queries.anime_anime_data_queries import anime_anime_co_oc
 from anime_rec.data.bq_queries.anime_anime_data_queries import anime_anime_all_query, anime_anime_all_order_query
 from anime_rec.data.bq_queries.user_anime_data_queries import user_anime_filter_user
 from anime_rec.data.bq_queries.user_anime_data_queries import user_anime_completed_and_strict_ordered_query 
-from anime_rec.data.bq_queries.user_anime_data_queries import user_anime_completed_and_scored_and_strict_ordered_query
 from anime_rec.data.bq_queries.common_data_queries import user_anime_filter_anime
 from anime_rec.data.bq_queries.common_data_queries import anime_list_query, user_list_sub_query
 
@@ -149,28 +148,28 @@ def anime_anime_pair_ranking_query(
         FROM anime_anime_ordered A
         LEFT JOIN anime_anime_ordered B
         ON A.animeA = B.animeA
-        WHERE A.animeB_rank + 500 < B.animeB_rank AND A.animeB_rank + 600 > B.animeB_rank
+        WHERE A.animeB_rank + 500 < B.animeB_rank AND A.animeB_rank + 510 > B.animeB_rank
     ),
     hard_positive_pairs AS (
         SELECT A.animeA AS anime_id, A.animeB AS retrieved_anime_id_1, B.animeB AS retrieved_anime_id_2, 1 AS label
         FROM anime_anime_ordered A
         LEFT JOIN anime_anime_ordered B
         ON A.animeA = B.animeA
-        WHERE A.animeB_rank < B.animeB_rank AND A.animeB_rank + 100 > B.animeB_rank
+        WHERE A.animeB_rank < B.animeB_rank AND A.animeB_rank + 10 > B.animeB_rank
     ),
     easy_negative_pairs AS (
         SELECT A.animeA AS anime_id, A.animeB AS retrieved_anime_id_1, B.animeB AS retrieved_anime_id_2, 0 AS label
         FROM anime_anime_ordered A
         LEFT JOIN anime_anime_ordered B
         ON A.animeA = B.animeA
-        WHERE A.animeB_rank + 500 > B.animeB_rank AND A.animeB_rank + 600 < B.animeB_rank
+        WHERE A.animeB_rank + 500 > B.animeB_rank AND A.animeB_rank + 510 < B.animeB_rank
     ),
     hard_negative_pairs AS (
         SELECT A.animeA AS anime_id, A.animeB AS retrieved_anime_id_1, B.animeB AS retrieved_anime_id_2, 0 AS label
         FROM anime_anime_ordered A
         LEFT JOIN anime_anime_ordered B
         ON A.animeA = B.animeA
-        WHERE A.animeB_rank > B.animeB_rank AND A.animeB_rank + 100 < B.animeB_rank
+        WHERE A.animeB_rank > B.animeB_rank AND A.animeB_rank + 10 < B.animeB_rank
     ),
     all_pairs AS (
         SELECT anime_id, retrieved_anime_id_1, retrieved_anime_id_2, label FROM easy_positive_pairs
@@ -186,18 +185,18 @@ def anime_anime_pair_ranking_query(
         anime_anime_query += """
         SELECT *
         FROM all_pairs 
-        WHERE ABS(MOD(FARM_FINGERPRINT(CONCAT(anime_id, retrieved_anime_id_1)), 10)) BETWEEN 0 AND 7 #AND ABS(MOD(FARM_FINGERPRINT(retrieved_anime_id_2), 10)) = 0
+        WHERE ABS(MOD(FARM_FINGERPRINT(CONCAT(anime_id, retrieved_anime_id_1)), 10)) BETWEEN 0 AND 7
         """
     elif mode == 'VAL':
         anime_anime_query += """
         SELECT *
         FROM all_pairs 
-        WHERE ABS(MOD(FARM_FINGERPRINT(CONCAT(anime_id, retrieved_anime_id_1)), 10)) = 8 #AND ABS(MOD(FARM_FINGERPRINT(retrieved_anime_id_2), 10)) = 0
+        WHERE ABS(MOD(FARM_FINGERPRINT(CONCAT(anime_id, retrieved_anime_id_1)), 10)) = 8
         """
     else:
         anime_anime_query += """
         SELECT *
         FROM all_pairs 
-        WHERE ABS(MOD(FARM_FINGERPRINT(CONCAT(anime_id, retrieved_anime_id_1)), 10)) = 9 #AND ABS(MOD(FARM_FINGERPRINT(retrieved_anime_id_2), 10)) = 0
+        WHERE ABS(MOD(FARM_FINGERPRINT(CONCAT(anime_id, retrieved_anime_id_1)), 10)) = 9
         """
     return anime_anime_query

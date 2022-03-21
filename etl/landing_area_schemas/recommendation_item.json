@@ -1,0 +1,27 @@
+[
+    {
+      "mode" : "REQUIRED",
+      "name" : "crawl_date",
+      "type" : "DATETIME"
+    },
+    {
+      "mode" : "REQUIRED",
+      "name" : "url",
+      "type" : "STRING"
+    },
+    {
+      "mode" : "REQUIRED",
+      "name" : "src_anime",
+      "type" : "STRING"
+    },
+    {
+      "mode" : "REQUIRED",
+      "name" : "dest_anime",
+      "type" : "STRING"
+    },
+    {
+      "mode" : "REQUIRED",
+      "name" : "num_recs",
+      "type" : "INT64"
+    }
+]

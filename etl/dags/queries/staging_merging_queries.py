@@ -82,18 +82,47 @@ staging_anime_anime_all_query = f"""
         SELECT *, 1 AS recommendation FROM `{PROJECT_ID}.{STAGING_DATASET}.{RECOMMENDED_STAGING_TABLE}`
     ),
     related AS (
-        SELECT *, 1 AS related FROM `{PROJECT_ID}.{STAGING_DATASET}.{RELATED_STAGING_TABLE}`
+        SELECT animeA, animeB, relation_type, 1 AS related FROM `{PROJECT_ID}.{STAGING_DATASET}.{RELATED_STAGING_TABLE}` WHERE animeA <> animeB
+        UNION DISTINCT
+        SELECT anime_id AS animeA, anime_id AS animeB, 'Identity' AS relation_type, 1 AS related FROM `{PROJECT_ID}.{STAGING_DATASET}.{ANIME_STAGING_TABLE}`
+    ),
+    sequel_count AS (
+        SELECT animeA AS anime_id, COUNT(*) AS sequel_count
+        FROM `{PROJECT_ID}.{STAGING_DATASET}.{RELATED_STAGING_TABLE}`
+        WHERE relation_type = 'Sequel'
+        GROUP BY anime_id
+    ),
+    related_sequel_count AS (
+        SELECT A.animeA, A.animeB, B.sequel_count
+        FROM 
+            (   
+                SELECT animeA, animeB FROM `{PROJECT_ID}.{STAGING_DATASET}.{RELATED_STAGING_TABLE}`
+                UNION DISTINCT
+                SELECT anime_id AS animeA, anime_id AS animeB FROM `{PROJECT_ID}.{STAGING_DATASET}.{ANIME_STAGING_TABLE}`
+            ) A
+        LEFT JOIN sequel_count B
+        ON A.animeB = B.anime_id
+    ),
+    related_ordered AS (
+        SELECT A.animeA, A.animeB, ROW_NUMBER() OVER (PARTITION BY animeA ORDER BY A.sequel_count DESC, B.total_count DESC) AS related_order
+        FROM related_sequel_count A
+        LEFT JOIN `{PROJECT_ID}.{STAGING_DATASET}.{ANIME_STAGING_TABLE}` B
+        ON A.animeB = B.anime_id
     )
     SELECT 
-        COALESCE(A.animeA, B.animeA) AS animeA,
-        COALESCE(A.animeB, B.animeB) AS animeB,
+        COALESCE(A.animeA, B.animeA, C.animeA) AS animeA,
+        COALESCE(A.animeB, B.animeB, C.animeB) AS animeB,
         COALESCE(A.recommendation, 0) AS recommendation,
         A.recommendation_url,
         A.num_recommenders,
-        COALESCE(B.related, 0) AS related
+        COALESCE(B.related, 0) AS related,
+        B.relation_type,
+        C.related_order
     FROM recommendation A
     FULL OUTER JOIN related B
     ON A.animeA = B.animeA AND A.animeB = B.animeB
+    FULL OUTER JOIN related_ordered C
+    ON C.animeA = COALESCE(A.animeA, B.animeA) AND C.animeB = COALESCE(A.animeB, B.animeB)
 """
 
 staging_user_user_all_query = f"""

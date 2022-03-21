@@ -1,0 +1,57 @@
+[
+    {
+      "mode" : "REQUIRED",
+      "name" : "crawl_date",
+      "type" : "DATETIME"
+    },
+    {
+      "mode" : "REQUIRED",
+      "name" : "uid",
+      "type" : "STRING"
+    },
+    {
+      "mode" : "REQUIRED",
+      "name" : "url",
+      "type" : "STRING"
+    },
+    {
+      "mode" : "REQUIRED",
+      "name" : "last_online_date",
+      "type" : "DATETIME"
+    },
+    {
+      "mode" : "REQUIRED",
+      "name" : "num_forum_posts",
+      "type" : "INT64"
+    },
+    {
+      "mode" : "REQUIRED",
+      "name" : "num_reviews",
+      "type" : "INT64"
+    },
+    {
+      "mode" : "REQUIRED",
+      "name" : "num_recommendations",
+      "type" : "INT64"
+    },
+    {
+      "mode" : "REQUIRED",
+      "name" : "num_blog_posts",
+      "type" : "INT64"
+    },
+    {
+      "mode" : "REQUIRED",
+      "name" : "num_days",
+      "type" : "FLOAT64"
+    },
+    {
+      "mode" : "REQUIRED",
+      "name" : "mean_score",
+      "type" : "FLOAT64"
+    },
+    {
+      "mode" : "REPEATED",
+      "name" : "clubs",
+      "type" : "STRING"
+    }
+]

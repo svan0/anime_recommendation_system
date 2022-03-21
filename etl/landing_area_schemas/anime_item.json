@@ -1,0 +1,197 @@
+[
+  {
+    "mode" : "REQUIRED",
+    "name" : "crawl_date",
+    "type" : "DATETIME"
+  },
+  {
+    "mode" : "REQUIRED",
+    "name" : "uid",
+    "type" : "STRING"
+  },
+  {
+    "mode" : "REQUIRED",
+    "name" : "url",
+    "type" : "STRING"
+  },
+  {
+    "mode" : "REQUIRED",
+    "name" : "title",
+    "type" : "STRING"
+  },
+  {
+    "mode" : "REQUIRED",
+    "name" : "synopsis",
+    "type" : "STRING"
+  },
+  {
+    "mode" : "REQUIRED",
+    "name" : "main_pic",
+    "type" : "STRING"
+  },
+  {
+    "mode" : "REQUIRED",
+    "name" : "type",
+    "type" : "STRING"
+  },
+  {
+    "mode" : "REQUIRED",
+    "name" : "source_type",
+    "type" : "STRING"
+  },
+  {
+    "mode" : "NULLABLE",
+    "name" : "num_episodes",
+    "type" : "INT64"
+  },
+  {
+    "mode" : "REQUIRED",
+    "name" : "status",
+    "type" : "STRING"
+  },
+  {
+    "mode" : "NULLABLE",
+    "name" : "start_date",
+    "type" : "DATETIME"
+  },
+  {
+    "mode" : "NULLABLE",
+    "name" : "end_date",
+    "type" : "DATETIME"
+  },
+  {
+    "mode" : "NULLABLE",
+    "name" : "season",
+    "type" : "STRING"
+  },
+  {
+    "mode" : "REPEATED",
+    "name" : "studios",
+    "type" : "STRING"
+  },
+  {
+    "mode" : "REPEATED",
+    "name" : "genres",
+    "type" : "STRING"
+  },
+  {
+    "mode" : "NULLABLE",
+    "name" : "score",
+    "type" : "FLOAT64"
+  },
+  {
+    "mode" : "NULLABLE",
+    "name" : "score_count",
+    "type" : "INT64"
+  },
+  {
+    "mode" : "NULLABLE",
+    "name" : "score_rank",
+    "type" : "INT64"
+  },
+  {
+    "mode" : "REQUIRED",
+    "name" : "popularity_rank",
+    "type" : "INT64"
+  },
+  {
+    "mode" : "REQUIRED",
+    "name" : "members_count",
+    "type" : "INT64"
+  },
+  {
+    "mode" : "REQUIRED",
+    "name" : "favorites_count",
+    "type" : "INT64"
+  },
+  {
+    "mode" : "REQUIRED",
+    "name" : "watching_count",
+    "type" : "INT64"
+  },
+  {
+    "mode" : "REQUIRED",
+    "name" : "completed_count",
+    "type" : "INT64"
+  },
+  {
+    "mode" : "REQUIRED",
+    "name" : "on_hold_count",
+    "type" : "INT64"
+  },
+  {
+    "mode" : "REQUIRED",
+    "name" : "dropped_count",
+    "type" : "INT64"
+  },
+  {
+    "mode" : "REQUIRED",
+    "name" : "plan_to_watch_count",
+    "type" : "INT64"
+  },
+  {
+    "mode" : "REQUIRED",
+    "name" : "total_count",
+    "type" : "INT64"
+  },
+  {
+    "mode" : "REQUIRED",
+    "name" : "score_10_count",
+    "type" : "INT64"
+  },
+  {
+    "mode" : "REQUIRED",
+    "name" : "score_09_count",
+    "type" : "INT64"
+  },
+  {
+    "mode" : "REQUIRED",
+    "name" : "score_08_count",
+    "type" : "INT64"
+  },
+  {
+    "mode" : "REQUIRED",
+    "name" : "score_07_count",
+    "type" : "INT64"
+  },
+  {
+    "mode" : "REQUIRED",
+    "name" : "score_06_count",
+    "type" : "INT64"
+  },
+  {
+    "mode" : "REQUIRED",
+    "name" : "score_05_count",
+    "type" : "INT64"
+  },
+  {
+    "mode" : "REQUIRED",
+    "name" : "score_04_count",
+    "type" : "INT64"
+  },
+  {
+    "mode" : "REQUIRED",
+    "name" : "score_03_count",
+    "type" : "INT64"
+  },
+  {
+    "mode" : "REQUIRED",
+    "name" : "score_02_count",
+    "type" : "INT64"
+  },
+  {
+    "mode" : "REQUIRED",
+    "name" : "score_01_count",
+    "type" : "INT64"
+  },
+  {
+    "mode" : "REPEATED",
+    "name" : "clubs",
+    "type" : "STRING"
+  },
+  {
+    "mode" : "REPEATED",
+    "name" : "pics",
+    "type" : "STRING"
+  }
+]

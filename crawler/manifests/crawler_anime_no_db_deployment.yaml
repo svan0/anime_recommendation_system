@@ -5,7 +5,7 @@ metadata:
   labels:
     app: crawler-anime-no-db
 spec:
-  replicas: 5
+  replicas: 30
   selector:
     matchLabels: 
       app: crawler-anime-no-db
@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: crawler-anime
-          image: gcr.io/anime-rec-dev/crawler_image:TAG
+          image: gcr.io/anime-rec-dev/crawler_image:latest
           env:
             - name: PROJECT_ID
               value: anime-rec-dev

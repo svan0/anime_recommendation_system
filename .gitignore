@@ -1,5 +1,11 @@
 # proxy list file
-crawler/proxy_list.txt
+**/proxy_list.txt
+
+# env variable yaml files
+env_variables.yaml
+
+# pipeline json files
+**/ml_pipelines/pipelines/*.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

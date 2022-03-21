@@ -25,6 +25,7 @@ class JikanProfileSpider(scrapy.Spider):
         self.stats = None
         super().__init__(*args, **kwargs)
         self.crawl_date = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+        self.anime_list_error_count = 0
 
     @classmethod
     def from_crawler(cls, crawler, *args, **kwargs):

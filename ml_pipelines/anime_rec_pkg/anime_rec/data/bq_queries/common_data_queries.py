@@ -66,11 +66,13 @@ def filter_recommendations(user_anime_recommendations_table = "user_anime_recs")
                    A.score,  
                    ROW_NUMBER() OVER (PARTITION BY A.user_id, A.anime_id ORDER BY B.related_order ASC) AS new_related_order
             FROM {user_anime_recommendations_table} A
-            LEFT JOIN `anime-rec-dev.processed_area.related_priority` B
+            LEFT JOIN `anime-rec-dev.processed_area.anime_anime` B
             ON A.anime_id = B.animeA
             LEFT JOIN `anime-rec-dev.processed_area.user_anime` C
             ON A.user_id = C.user_id AND B.animeB = C.anime_id
-            WHERE C.status IS NULL OR C.status = 'plan_to_watch'
+            LEFT JOIN `anime-rec-dev.processed_area.anime` D
+            ON B.animeB = D.anime_id
+            WHERE B.related_order IS NOT NULL AND (C.status IS NULL OR C.status = 'plan_to_watch') AND 'Hentai' NOT IN UNNEST(D.genres)
         )
         WHERE new_related_order = 1
         GROUP BY user_id, anime_id

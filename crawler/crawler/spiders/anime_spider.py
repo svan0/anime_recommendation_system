@@ -38,7 +38,7 @@ class AnimeSpider(scrapy.Spider):
         """
         anime_loader = ItemLoader(item=AnimeItem(), response=response)
         anime_loader.add_value('uid', response.url)
-        anime_loader.add_value('url', response.url)
+        anime_loader.add_xpath('url', '//li/a[contains(./text(), "Details")]/@href')
         anime_loader.add_xpath('title', '//h1[@class="title-name h1_bold_none"]/strong/text()')
         anime_loader.add_xpath('main_pic', '//img[@itemprop="image"]/@data-src')
         anime_loader.add_xpath('synopsis', '//p[@itemprop="description"]/text()')
@@ -64,23 +64,29 @@ class AnimeSpider(scrapy.Spider):
             Extract anime related anime information from https://myanimelist.net/anime/{anime_id}
         """
         if local_file_response == False:
-            for related_anime in response.xpath('//table[@class="anime_detail_related_anime"]/tr/td/a[contains(@href, "/anime/")]/@href').getall():
-                related_anime_loader = ItemLoader(item=RelatedAnimeItem(), response=response)
-                related_anime_loader.add_value('crawl_date', self.crawl_date)
-                related_anime_loader.add_value('src_anime', response.url)
-                related_anime_loader.add_value('dest_anime', related_anime)
-                yield related_anime_loader.load_item()
-                if self.stats:
-                    self.stats.inc_value(f'{self.__class__.__name__}_processed_{related_anime_loader.load_item().__class__.__name__}', count = 1)
+            for related_anime_relation in response.xpath('//table[@class="anime_detail_related_anime"]/tr'):
+                relation_type = related_anime_relation.xpath('./td[1]/text()').get()[:-1]
+                for related_anime in related_anime_relation.xpath('./td/a[contains(@href, "/anime/")]/@href').getall():
+                    related_anime_loader = ItemLoader(item=RelatedAnimeItem(), response=response)
+                    related_anime_loader.add_value('crawl_date', self.crawl_date)
+                    related_anime_loader.add_value('src_anime', response.url)
+                    related_anime_loader.add_value('dest_anime', related_anime)
+                    related_anime_loader.add_value('relation_type', relation_type)
+                    yield related_anime_loader.load_item()
+                    if self.stats:
+                        self.stats.inc_value(f'{self.__class__.__name__}_processed_{related_anime_loader.load_item().__class__.__name__}', count = 1)
         else:
-            for related_anime in response.xpath('//table[@class="anime_detail_related_anime"]/tbody/tr/td/a[contains(@href, "/anime/")]/@href').getall():
-                related_anime_loader = ItemLoader(item=RelatedAnimeItem(), response=response)
-                related_anime_loader.add_value('crawl_date', self.crawl_date)
-                related_anime_loader.add_value('src_anime', response.url)
-                related_anime_loader.add_value('dest_anime', related_anime)
-                yield related_anime_loader.load_item()
-                if self.stats:
-                    self.stats.inc_value(f'{self.__class__.__name__}_processed_{related_anime_loader.load_item().__class__.__name__}', count = 1)
+            for related_anime_relation in response.xpath('//table[@class="anime_detail_related_anime"]/tbody/tr'):
+                relation_type = related_anime_relation.xpath('./td[1]/text()').get()[:-1]
+                for related_anime in related_anime_relation.xpath('./td/a[contains(@href, "/anime/")]/@href').getall():
+                    related_anime_loader = ItemLoader(item=RelatedAnimeItem(), response=response)
+                    related_anime_loader.add_value('crawl_date', self.crawl_date)
+                    related_anime_loader.add_value('src_anime', response.url)
+                    related_anime_loader.add_value('dest_anime', related_anime)
+                    related_anime_loader.add_value('relation_type', relation_type)
+                    yield related_anime_loader.load_item()
+                    if self.stats:
+                        self.stats.inc_value(f'{self.__class__.__name__}_processed_{related_anime_loader.load_item().__class__.__name__}', count = 1)
 
     def parse_anime_main_page_for_schedule_anime(self, response, local_file_response = False):
         """
@@ -294,15 +300,17 @@ class AnimeSpider(scrapy.Spider):
         for x in self.parse_anime_main_page_for_schedule_anime(response):
             yield x
 
-        yield Request(url = f"{response.url}/reviews?p=1", 
+        long_url = response.xpath('//li/a[contains(./text(), "Details")]/@href').get()
+        
+        yield Request(url = f"{long_url}/reviews?p=1", 
                       callback = self.parse_list_reviews,
         )
         
-        yield Request(url = f"{response.url}/userrecs", 
+        yield Request(url = f"{long_url}/userrecs", 
                       callback = self.parse_recommendations
         ) 
 
-        yield Request(url = f"{response.url}/stats", 
+        yield Request(url = f"{long_url}/stats", 
                       callback = self.parse_stats,
                       meta = {"anime_item" : anime_item}
         )       
