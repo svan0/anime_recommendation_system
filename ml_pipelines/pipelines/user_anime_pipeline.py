@@ -499,7 +499,7 @@ if __name__ == '__main__':
     DATA_FORMAT = 'csv'
     RUN_RETRIEVAL = 'true'
     LIST_RANKING = 'true'
-    DATASET_ID = f"big_ml_pipelines_user_anime_retrieval_{RUN_RETRIEVAL}_list_ranking_{LIST_RANKING}_{current_time}"
+    DATASET_ID = f"ml_user_anime_retrieval_{RUN_RETRIEVAL}_list_ranking_{LIST_RANKING}_{current_time}"
     DISPLAY_NAME = "user_anime_recommendation"
     JOB_ID = f"user-anime-retrieval-{RUN_RETRIEVAL}-list-ranking-{LIST_RANKING}-{current_time}"
 

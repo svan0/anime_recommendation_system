@@ -337,7 +337,7 @@ if __name__ == '__main__':
     PROJECT_ID = 'anime-rec-dev'
     DATA_FORMAT = 'csv'
     RUN_RETRIEVAL = 'true'
-    DATASET_ID = f"big_ml_pipelines_anime_anime_retrieval_{RUN_RETRIEVAL}_{current_time}"
+    DATASET_ID = f"ml_anime_anime_retrieval_{RUN_RETRIEVAL}_{current_time}"
     DISPLAY_NAME = "anime_anime_recommendation"
     JOB_ID = f"anime-anime-retrieval-{RUN_RETRIEVAL}-{current_time}"
 
