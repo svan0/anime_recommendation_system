@@ -59,7 +59,7 @@ class AnimeProcessPipeline:
         if item['type'] not in {"TV", "Movie", "Special", "OVA", "ONA", "Special"}:
             raise DropItem(f"AnimeItem {item['url']} dropped because 'type' {item['type']} is not known")
         
-        if item['source_type'] not in {"Manga", "Book", "4-koma manga", "Music", "Other", "One-shot", "Doujinshi", "Light novel", "Novel", "Manhwa", "Manhua", "Original", "Visual novel", "Game", "Card game", "Web manga"}:
+        if item['source_type'] not in {"Web novel", "Mixed media", "Manga", "Book", "4-koma manga", "Music", "Other", "One-shot", "Doujinshi", "Light novel", "Novel", "Manhwa", "Manhua", "Original", "Visual novel", "Game", "Card game", "Web manga"}:
             raise DropItem(f"AnimeItem {item['url']} dropped because 'source_type' {item['source_type']} is not known")
         
         if item['status'] not in {"Not yet aired", "Currently Airing", "Finished Airing"}:
@@ -115,13 +115,13 @@ class AnimeProcessPipeline:
         if item['total_count'] != (item['watching_count'] + item['completed_count'] + item['on_hold_count'] + item['dropped_count'] + item['plan_to_watch_count']):
             raise DropItem(f"AnimeItem {item['url']} dropped because watch 'status_count' do not sum up to 'total_count'")
         
-        sum_score_voters = sum([item['score_{:02d}_count'.format(score)] for score in range(1, 11)])
+        sum_score_voters = sum([item['score_{:02d}_count'.format(score)] if 'score_{:02d}_count'.format(score) in item else 0 for score in range(1, 11)])
         if ('score_count' in item) and (item['score_count'] != sum_score_voters):
             item['score_count'] = sum_score_voters
             logging.debug(f"{item['url']} 'score_xx_count' do not sum up to 'score_count' count. Changing 'score_count' to the sum")
 
         if ('score' in item):
-            average_score = sum([score * item['score_{:02d}_count'.format(score)] for score in range(1, 11)]) / sum_score_voters
+            average_score = sum([score * item['score_{:02d}_count'.format(score)] if 'score_{:02d}_count'.format(score) in item else 0 for score in range(1, 11)]) / sum_score_voters
             average_score = int(100 * average_score) / 100
             if not isclose(item['score'] , average_score):
                 item['score'] = average_score

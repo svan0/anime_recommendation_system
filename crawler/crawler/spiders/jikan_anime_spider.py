@@ -210,7 +210,8 @@ class JikanAnimeSpider(scrapy.Spider):
         anime_loader.add_value('status', api_result['data']['status'])
         anime_loader.add_value('start_date', api_result['data']['aired']['from'])
         anime_loader.add_value('end_date', api_result['data']['aired']['to'])
-        anime_loader.add_value('season', f"{api_result['data']['season']} {api_result['data']['year']}")
+        if api_result['data']['season'] is not None and api_result['data']['year'] is not None:
+            anime_loader.add_value('season', f"{api_result['data']['season']} {api_result['data']['year']}")
         
         for studio in api_result['data']['studios']:
             anime_loader.add_value('studios', studio['name'])
