@@ -72,7 +72,7 @@ def filter_recommendations(user_anime_recommendations_table = "user_anime_recs")
             ON A.user_id = C.user_id AND B.animeB = C.anime_id
             LEFT JOIN `anime-rec-dev.processed_area.anime` D
             ON B.animeB = D.anime_id
-            WHERE B.related_order IS NOT NULL AND (C.status IS NULL OR C.status = 'plan_to_watch') AND 'Hentai' NOT IN UNNEST(D.genres)
+            WHERE B.related_order IS NOT NULL AND (C.status IS NULL OR C.status = 'plan_to_watch') AND 'Hentai' NOT IN UNNEST(D.genres) AND D.type <> 'Special'
         )
         WHERE new_related_order = 1
         GROUP BY user_id, anime_id
