@@ -201,16 +201,31 @@ staging_anime_anime_related_query = f"""
         (
             SELECT A.animeA, 
                 B.animeB, 
-                COALESCE(IF(A.relation_type='Sequel' AND B.relation_type='Sequel', 'Sequel', NULL),
-                            IF(A.relation_type='Prequel' AND B.relation_type='Prequel', 'Prequel', NULL)) AS relation_type,
-                A.level + 1 AS level
-            FROM related A
-            INNER JOIN related_level_1 B
+                COALESCE(IF(A.relation_type='Sequel' AND B.relation_type IS NOT NULL AND B.relation_type='Sequel', 'Sequel', NULL),
+                        IF(A.relation_type='Prequel' AND B.relation_type IS NOT NULL AND B.relation_type='Prequel', 'Prequel', NULL),
+                        IF(B.level < 5 AND (A.relation_type='Parent story' OR (B.relation_type IS NOT NULL AND B.relation_type='Parent story')), 'Parent story', NULL),
+                        IF(B.level < 5 AND (A.relation_type='Side story' OR (B.relation_type IS NOT NULL AND B.relation_type='Side story')), 'Side story', NULL),
+                        IF(B.level < 5 AND (A.relation_type='Other' OR (B.relation_type IS NOT NULL AND B.relation_type='Other')), 'Other', NULL),
+                        IF(B.level < 5 AND (A.relation_type='Spin-off' OR (B.relation_type IS NOT NULL AND B.relation_type='Spin-off')), 'Spin-off', NULL),
+                        IF(B.level < 5 AND (A.relation_type='Alternative setting' OR (B.relation_type IS NOT NULL AND B.relation_type='Alternative setting')), 'Alternative setting', NULL),
+                        IF(B.level < 5 AND (A.relation_type='Alternative version' OR (B.relation_type IS NOT NULL AND B.relation_type='Alternative version')), 'Alternative version', NULL),
+                        IF(B.level < 5 AND (A.relation_type='Full story' OR (B.relation_type IS NOT NULL AND B.relation_type='Full story')), 'Full story', NULL),
+                        IF(B.level < 5 AND (A.relation_type='Summary' OR (B.relation_type IS NOT NULL AND B.relation_type='Summary')), 'Summary', NULL),
+                        IF(B.level < 5 AND (A.relation_type='Character' OR (B.relation_type IS NOT NULL AND B.relation_type='Character')), 'Character', NULL)
+                ) AS relation_type,
+                B.level + 1 AS level
+            FROM related_level_1 A
+            INNER JOIN related B
             ON A.animeB = B.animeA
-            WHERE A.level + 1 < 50 AND ((A.relation_type='Sequel' AND B.relation_type='Sequel') OR (A.relation_type='Prequel' AND B.relation_type='Prequel'))
+            WHERE B.level + 1 <= 50 AND (B.level < 5 OR (A.relation_type='Sequel' AND B.relation_type IS NOT NULL AND B.relation_type='Sequel') OR (A.relation_type='Prequel' AND B.relation_type IS NOT NULL AND B.relation_type='Prequel'))
         )
+    ),
+    order_rem_duplicates AS (
+        SELECT animeA, animeB, relation_type, ROW_NUMBER() OVER (PARTITION BY animeA, animeB ORDER BY level ASC) AS row_number 
+        FROM related 
+        WHERE relation_type IS NOT NULL
     )
-    SELECT animeA, animeB, MAX(relation_type) AS relation_type FROM related GROUP BY animeA, animeB
+    SELECT animeA, animeB, relation_type FROM order_rem_duplicates WHERE row_number = 1
 """
 
 staging_anime_anime_recommendation_query = f"""
