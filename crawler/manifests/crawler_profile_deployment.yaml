@@ -5,7 +5,7 @@ metadata:
   labels:
     app: crawler-profile
 spec:
-  replicas: 10
+  replicas: 5
   selector:
     matchLabels: 
       app: crawler-profile
