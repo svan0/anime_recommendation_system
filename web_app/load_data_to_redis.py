@@ -88,7 +88,7 @@ if __name__ == '__main__':
 
     for row in tqdm(user_last_watched):
         r.set(f"{row['user_id']}_recent_watch", row['recent_watch'])
-    logging.info(f"---Adina---_recent_watch : {r.get('---Adina---_recent_watch')}")
+    logging.info(f"---Adina---_recent_watch : {r.get('---adina---_recent_watch')}")
 
     """
         Load anime anime recommendations
@@ -99,7 +99,7 @@ if __name__ == '__main__':
 
     for row in tqdm(anime_anime):
         r.rpush(f"{row['user_id']}_anime_anime_recs", row['anime_id'])
-    logging.info(f"---Adina---_anime_anime_recs : {r.lrange('---Adina---_anime_anime_recs', 0, -1)}")
+    logging.info(f"---Adina---_anime_anime_recs : {r.lrange('---adina---_anime_anime_recs', 0, -1)}")
 
     """
         Load user anime recommendations
@@ -110,4 +110,4 @@ if __name__ == '__main__':
 
     for row in tqdm(user_anime):
         r.rpush(f"{row['user_id']}_user_anime_recs", row['anime_id'])
-    logging.info(f"---Adina---_user_anime_recs : {r.lrange('---Adina---_user_anime_recs', 0, -1)}")
+    logging.info(f"---Adina---_user_anime_recs : {r.lrange('---adina---_user_anime_recs', 0, -1)}")
