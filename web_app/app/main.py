@@ -111,6 +111,8 @@ def recommendations():
     else:
         user_id = flask.request.args.get('user_id')
 
+    user_id = user_id.lower()
+    
     push_message_to_pub_sub(
         datetime=current_time,
         user_id = user_id, 

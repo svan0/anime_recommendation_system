@@ -95,11 +95,11 @@ staging_anime_query = f"""
 #------------- Staging User Queries ----------------
 staging_user_query = f"""
     WITH ranked_profile_by_crawl_date AS (
-        SELECT *, ROW_NUMBER() OVER (PARTITION BY uid ORDER BY crawl_date DESC) AS row_number
+        SELECT *, ROW_NUMBER() OVER (PARTITION BY LOWER(uid) ORDER BY crawl_date DESC) AS row_number
         FROM `{PROJECT_ID}.{LANDING_DATASET}.{PROFILE_ITEM_LANDING_TABLE}`
     )
     SELECT 
-        uid AS user_id, 
+        LOWER(uid) AS user_id, 
         url AS user_url, 
         last_online_date, 
         num_watching,
@@ -117,11 +117,11 @@ staging_user_query = f"""
 #------------- Staging User Anime Queries ----------
 staging_user_anime_activity_query = f"""
     WITH latest_activity_user_item AS (
-        SELECT *, ROW_NUMBER() OVER (PARTITION BY user_id, anime_id ORDER BY date DESC, crawl_date DESC) AS row_number
+        SELECT *, ROW_NUMBER() OVER (PARTITION BY LOWER(user_id), anime_id ORDER BY date DESC, crawl_date DESC) AS row_number
         FROM `{PROJECT_ID}.{LANDING_DATASET}.{ACTIVITY_ITEM_LANDING_TABLE}`
     )
     SELECT 
-        user_id, 
+        LOWER(user_id) AS user_id, 
         anime_id, 
         activity_type, 
         date AS activity_date
@@ -131,11 +131,11 @@ staging_user_anime_activity_query = f"""
 
 staging_user_anime_watch_status_query = f"""
     WITH ranked_watch_status_by_crawl_date AS (
-        SELECT *, ROW_NUMBER() OVER (PARTITION BY user_id, anime_id ORDER BY crawl_date DESC) AS row_number
+        SELECT *, ROW_NUMBER() OVER (PARTITION BY LOWER(user_id), anime_id ORDER BY crawl_date DESC) AS row_number
         FROM `{PROJECT_ID}.{LANDING_DATASET}.{WATCH_STATUS_ITEM_LANDING_TABLE}`
     )
     SELECT 
-        user_id, 
+        LOWER(user_id) AS user_id, 
         anime_id, 
         status, 
         score, 
@@ -146,11 +146,11 @@ staging_user_anime_watch_status_query = f"""
 
 staging_user_anime_review_query = f"""
     WITH ranked_review_by_crawl_date AS (
-        SELECT *, ROW_NUMBER() OVER (PARTITION BY user_id, anime_id ORDER BY crawl_date DESC) AS row_number
+        SELECT *, ROW_NUMBER() OVER (PARTITION BY LOWER(user_id), anime_id ORDER BY crawl_date DESC) AS row_number
         FROM `{PROJECT_ID}.{LANDING_DATASET}.{REVIEW_ITEM_LANDING_TABLE}`
     )
     SELECT 
-        user_id, 
+        LOWER(user_id) AS user_id, 
         anime_id, 
         uid AS review_id, 
         review_date, 
@@ -167,14 +167,14 @@ staging_user_anime_review_query = f"""
 
 staging_user_anime_favorite_query = f"""
     WITH user_last_crawl_date AS (
-        SELECT user_id, MAX(crawl_date) AS last_crawl_date
+        SELECT LOWER(user_id) AS user_id, MAX(crawl_date) AS last_crawl_date
         FROM `{PROJECT_ID}.{LANDING_DATASET}.{FAVORITE_ITEM_LANDING_TABLE}`
-        GROUP BY user_id
+        GROUP BY LOWER(user_id)
     )
-    SELECT DISTINCT A.user_id, A.anime_id
+    SELECT DISTINCT LOWER(A.user_id) AS user_id, A.anime_id
     FROM `{PROJECT_ID}.{LANDING_DATASET}.{FAVORITE_ITEM_LANDING_TABLE}` A
     JOIN user_last_crawl_date B
-    ON A.user_id = B.user_id AND A.crawl_date = B.last_crawl_date
+    ON LOWER(A.user_id) = B.user_id AND A.crawl_date = B.last_crawl_date
 """
 
 #------------- Staging Anime Anime Queries ----------
@@ -255,15 +255,15 @@ staging_anime_anime_recommendation_query = f"""
 #------------- Staging User User Queries ----------
 staging_user_user_friends_query = f"""
     WITH src_profile_last_crawl_date AS (
-        SELECT src_profile, MAX(crawl_date) AS last_crawl_date
+        SELECT LOWER(src_profile) AS src_profile, MAX(crawl_date) AS last_crawl_date
         FROM `{PROJECT_ID}.{LANDING_DATASET}.{FRIENDS_ITEM_LANDING_TABLE}`
-        GROUP BY src_profile
+        GROUP BY LOWER(src_profile)
     ),
     last_crawl_friendship AS (
-        SELECT A.src_profile AS userA, A.dest_profile AS userB, A.friendship_date, A.crawl_date
+        SELECT LOWER(A.src_profile) AS userA, LOWER(A.dest_profile) AS userB, A.friendship_date, A.crawl_date
         FROM `{PROJECT_ID}.{LANDING_DATASET}.{FRIENDS_ITEM_LANDING_TABLE}` A
         JOIN src_profile_last_crawl_date B
-        ON A.src_profile = B.src_profile AND A.crawl_date = B.last_crawl_date
+        ON LOWER(A.src_profile) = B.src_profile AND A.crawl_date = B.last_crawl_date
     ),
     fixed_both_directions AS (
         SELECT userA, userB, friendship_date, crawl_date, ROW_NUMBER() OVER (PARTITION BY userA, userB ORDER BY crawl_date DESC) AS row_number
