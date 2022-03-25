@@ -26,7 +26,7 @@ ANIME_ANIME_RECS_QUERY = f"""
     )
     SELECT user_id, anime_id
     FROM ranked_recs
-    WHERE rnk <= 10
+    WHERE rnk <= 20
     ORDER BY user_id, rnk
 """
 
@@ -59,7 +59,6 @@ if __name__ == '__main__':
         host=REDIS_INSTANCE_HOST,
         port=REDIS_INSTANCE_PORT,
         ssl=False
-        #ssl=True, ssl_cert_reqs=None
     )
     r.flushdb()
 
