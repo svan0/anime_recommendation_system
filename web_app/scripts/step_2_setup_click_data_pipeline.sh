@@ -4,6 +4,9 @@ PROJECT_PATH=$(dirname "$PROJECT_PATH")
 
 source $PROJECT_PATH/.env
 
+bq --location us-central1 mk --dataset $PROJECT_ID:$WEB_APP_BQ_DATASET_ID
+bq mk --table $PROJECT_ID:$WEB_APP_BQ_DATASET_ID.$WEB_APP_BQ_TABLE_ID click_stream_table_schema.json
+
 gcloud pubsub topics create $WEB_APP_PUBSUB_TOPIC \
     --message-retention-duration=30d
 

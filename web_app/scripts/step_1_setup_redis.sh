@@ -17,7 +17,7 @@ echo "****** Start connecting and loading to Redis instance ******"
 # Approach 1 (run script on VM instance)
 WEB_APP_REDIS_INSTANCE_HOST=$(gcloud redis instances describe $WEB_APP_REDIS_INSTANCE_ID --region=$WEB_APP_REGION | grep host: | awk '{print $2}')
 COMPUTE_NAME="redis-upload-compute"
-gcloud compute instances create $COMPUTE_NAME --machine-type=e2-standard-2 --zone=$WEB_APP_REGION-a --scopes=bigquery #--service-account $SERVICE_ACCOUNT
+gcloud compute instances create $COMPUTE_NAME --machine-type=e2-standard-2 --zone=$WEB_APP_REGION-a --scopes=bigquery
 sleep 180
 gcloud compute scp load_data_to_redis.py $COMPUTE_NAME:~
 gcloud compute ssh $COMPUTE_NAME --zone=$WEB_APP_REGION-a -- 'export REDIS_HOST='$WEB_APP_REDIS_INSTANCE_HOST' && sudo apt-get -y install python3-pip && pip3 install redis==4.1.4 google-cloud-bigquery==2.31.0 tqdm==4.63.0 && python3 load_data_to_redis.py'

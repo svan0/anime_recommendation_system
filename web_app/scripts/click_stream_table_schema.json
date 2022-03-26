@@ -1,0 +1,22 @@
+[
+    {
+      "mode" : "NULLABLE",
+      "name" : "datetime",
+      "type" : "DATETIME"
+    },
+    {
+      "mode" : "NULLABLE",
+      "name" : "user_id",
+      "type" : "STRING"
+    },
+    {
+      "mode" : "NULLABLE",
+      "name" : "event_type",
+      "type" : "STRING"
+    },
+    {
+      "mode" : "NULLABLE",
+      "name" : "event_on",
+      "type" : "STRING"
+    }
+]
