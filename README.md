@@ -23,6 +23,7 @@ When I started this project I had a couple of ambitious goals:
 - This could change with the help of the Kaggle community. Kagglers can experiment with the dataset and open PRs to integrate their ML algorithms to the ML pipelines and serve them on the web app.
 
 ## Architecture Design and components
+### System design overview
 ![System Design Pic](system_design.png)
 The project is composed of 5 main parts:
 - Crawl scheduler: A job that when called will fetch a list of anime or profile urls from a database and push them to a message queue.
@@ -33,6 +34,21 @@ The ingestion beam job is deployed as a Dataflow job and the Apache Airflow ETL 
 - Machine Learning Pipelines: Each pipeline handles both retrieval and ranking steps. For retrieval step, the pipeline starts by generating the train/val/test data for retrieval, then trains a retrieval model and finally runs batch inference for retrieval and saves the results. For ranking step, the pipeline starts by generating the train/val/test data for ranking, then trains a ranking model and finally runs batch inference for ranking on the retrieved results and saves the final results. 
 The pipelines are Kubeflow pipelines and they run on Google VertexAI pipelines. Data is fetched from and saved to both BigQuery and Storage.
 - Web App: The generated recommendations are ingested into a Redis database and a small flask web application fetches the recommendations from Redis for each user recommendation request. 
+
+The number steps in the above diagram are:
+- 1: A Cloud Scheduler cron job triggers the crawl scheduler Cloud Functions
+- 2: The crawl scheduler Cloud Function fetches the urls to schedule from the Scheduler Cloud SQL database.
+- 3: The crawl scheduler Cloud Function pushes the urls to crawl to the PubSub schedule queue.
+- 4: The crawl workers running on Google Kubernetes Engine pull the urls from the PubSub schedule queue.
+- 5: The craw workers crawl the urls, update the scheduler database and push the crawled data to the PubSub data ingestion queue.
+- 6: The Dataflow ingestion job pulls the data from the data ingestion queue.
+- 7: The Dataflow ingestion job pushes the data to BigQuery landing area.
+- 8: Cloud Composer ETL pipeline aggregates, merges, cleans and validates the data from the landing area.
+- 9: Cloud Composer ETL pipeline saves the cleaned datasets to BigQuery processed area.
+- 10: Vertex AI ML pipelines use the data in the BigQuery processed area to train ML models and generate batch recommendations.
+- 11: Batch recommendations are duplicated in Cloud Memorystore Redis instance for low latency access.
+- 12: The web application access the Cloud Memorystore Redis instance to fetch the recommendations for each user.
+- 13: User sends a request to the web app and knows which anime to watch.
 
 ### Crawl scheduler
 The scheduler database contains two tables `anime_schedule` and `profile_schedule`. 
@@ -218,7 +234,160 @@ Once that is the app will show the user 5 random animes from the top 20 animes t
 ![Web app 2](web_app_2.png)
 
 ## Steps to run
+### Step 1: Setup local .env file
+First step is to create at the root of this project a .env file and fill it as follows:
+```
+PROJECT_ID=<your-gcp-project-id>
+GOOGLE_APPLICATION_CREDENTIALS=<your-local-gcp-credentials-file>
+SERVICE_ACCOUNT=<here-I-use-the-name-of-project-owner-service-account>
+
+# [CRAWLER]
+CRAWLER_REGION=<gcp-region-you-want-to-run-crawler-on>
+
+ANIME_SCHEDULE_CRON_JOB_NAME=<name-of-anime-scheduler-cron-job>
+ANIME_SCHEDULE_CLOUD_FUNCTION_NAME=<name-of-anime-scheduler-cloud-function>
+PROFILE_SCHEDULE_CRON_JOB_NAME=<name-of-profile-scheduler-cron-job>
+PROFILE_SCHEDULE_CLOUD_FUNCTION_NAME=<name-of-profile-scheduler-cloud-function>
+
+CRAWLER_CLUSTER_ZONE="${CRAWLER_REGION}-a"
+CRAWLER_CLUSTER_NAME="crawler-cluster-${CRAWLER_REGION}"
+
+SCHEDULER_DB_INSTANCE_NAME=<name-of-scheduler-db-instance> 
+SCHEDULER_DB_INSTANCE="${PROJECT_ID}:${CRAWLER_REGION}:${SCHEDULER_DB_INSTANCE_NAME}"
+SCHEDULER_DB_HOST="127.0.0.1" #We use a proxy to connect to the db from the crawler so host is localhost
+SCHEDULER_DB=<name-of-scheduler-database>
+SCHEDULER_DB_USER=<name-of-scheduler-database-user>
+SCHEDULER_DB_PASSWORD=<scheduler-database-user-password>
+
+SCHEDULE_ANIME_PUBSUB_TOPIC=<name-of-anime-schedule-pubsub-topic>
+SCHEDULE_ANIME_PUBSUB_SUBSCRIPTION=<name-of-anime-schedule-pubsub-subscription>
+SCHEDULE_PROFILE_PUBSUB_TOPIC=<name-of-profile-schedule-pubsub-topic>
+SCHEDULE_PROFILE_PUBSUB_SUBSCRIPTION=<name-of-profile-schedule-pubsub-subscription>
+
+# [ETL]
+ETL_REGION=<gcp-region-you-want-to-run-ingestion-and-etl-on>
+DATA_INGESTION_PUBSUB_TOPIC=<name-of-data-ingestion-pubsub-topic>
+DATAFLOW_GCS_BUCKET=<gcs-bucket-path-to-save-dataflow-temp-data>
+DATA_INGESTON_JOB_ID=<dataflow-job-name>
+COMPOSER_ENV_NAME=<composer-environment-name>
+
+# [WEB APP]
+WEB_APP_REGION=<gcp-region-you-want-to-run-web-app-on>
+WEB_APP_REDIS_INSTANCE_ID=<web-app-redis-instance-name>
+WEB_APP_REDIS_VPC_CONNECTOR=<web-app-redis-vpc-connector-name>
+WEB_APP_DATAFLOW_JOB_ID=<click-stream-data-dataflow-ingestion-name>
+WEB_APP_PUBSUB_TOPIC=<click-stream-data-pubsub-topic>
+WEB_APP_BQ_DATASET_ID=<name-of-bigquery-dataset-to-save-click-stream-data>
+WEB_APP_BQ_TABLE_ID=<name-of-bigquery-table-to-save-click-stream-data>
+```
+Here's the example of what I have (for quick copy paste)
+```
+PROJECT_ID=<your gcp project id>
+GOOGLE_APPLICATION_CREDENTIALS=<your-local-gcp-credentials-file>
+SERVICE_ACCOUNT=<here-I-use-the-name-of-project-owner-service-account>
+
+# [CRAWLER]
+CRAWLER_REGION="us-west1"
+
+ANIME_SCHEDULE_CRON_JOB_NAME="anime_crawl_scheduler"
+ANIME_SCHEDULE_CLOUD_FUNCTION_NAME="anime_crawl_scheduler"
+PROFILE_SCHEDULE_CRON_JOB_NAME="profile_crawl_scheduler"
+PROFILE_SCHEDULE_CLOUD_FUNCTION_NAME="profile_crawl_scheduler"
+
+CRAWLER_CLUSTER_ZONE="${CRAWLER_REGION}-a"
+CRAWLER_CLUSTER_NAME="crawler-cluster-${CRAWLER_REGION}"
+
+SCHEDULER_DB_INSTANCE_NAME="scheduler-db-instance-dev"
+SCHEDULER_DB_INSTANCE="${PROJECT_ID}:${CRAWLER_REGION}:${SCHEDULER_DB_INSTANCE_NAME}"
+SCHEDULER_DB_HOST="127.0.0.1"
+SCHEDULER_DB="scheduler_db"
+SCHEDULER_DB_USER="postgres"
+SCHEDULER_DB_PASSWORD="password"
+
+SCHEDULE_ANIME_PUBSUB_TOPIC="anime_crawl_queue"
+SCHEDULE_ANIME_PUBSUB_SUBSCRIPTION="anime_crawl_subscription"
+SCHEDULE_PROFILE_PUBSUB_TOPIC="profile_crawl_queue"
+SCHEDULE_PROFILE_PUBSUB_SUBSCRIPTION="profile_crawl_subscription"
+
+# [ETL]
+ETL_REGION="us-west1"
+DATA_INGESTION_PUBSUB_TOPIC="data_ingestion_queue"
+DATAFLOW_GCS_BUCKET="gs://${PROJECT_ID}-dataflow-temp"
+DATA_INGESTON_JOB_ID="data_ingestion"
+COMPOSER_ENV_NAME="anime-etl-composer-env"
+
+# [WEB APP]
+WEB_APP_REGION="us-central1"
+WEB_APP_REDIS_INSTANCE_ID="anime-rec-dev-web-app-redis"
+WEB_APP_REDIS_VPC_CONNECTOR="redis-vpc-connector"
+WEB_APP_DATAFLOW_JOB_ID="web_app_click_stream_ingest"
+WEB_APP_PUBSUB_TOPIC="web_app_click_stream_topic"
+WEB_APP_BQ_DATASET_ID="web_app"
+WEB_APP_BQ_TABLE_ID="click_data"
+```
+### Step 2: Setup cloud function and web app env_variables.yaml files
+Create the file crawl_scheduler/env_variables.yaml and fill it as follows with the same values defined in the .env file:
+```
+PROJECT_ID: <your-value>
+SCHEDULER_DB_INSTANCE: <your-value>
+SCHEDULER_DB: <your-value>
+SCHEDULER_DB_USER: <your-value>
+SCHEDULER_DB_PASSWORD: <your-value>
+SCHEDULE_ANIME_PUBSUB_TOPIC: <your-value>
+SCHEDULE_PROFILE_PUBSUB_TOPIC: <your-value>
+```
+Create the file web_app/app/env_variables.yaml and fill it as follows with the same values defined in the .env file:
+```
+env_variables:
+    PROJECT_ID: <your-value>
+    PUBSUB_TOPIC: <your-value>
+    REDIS_INSTANCE_HOST: <you-can-find-it-in-the-gcp-console>
+    REDIS_INSTANCE_PORT: "6379"
+```
+### Step 3: Update kubernetes and kubeflow manifest files
+Change the docker image URI in the files in this folder crawler/manifests. Changing the project name is enough.
+Change the docker image URI in the files in ml_pipelines/pipelines/components/*/*/component.yaml. Changing the project name is enough.
+### Step 4: Run the scripts
+#### Crawler
+Run these scripts in order:
+- crawler/scripts/step_1_setup_pubsub.sh
+- crawler/scripts/step_2_setup_cloud_sql_instance.sh
+- crawler/scripts/step_3_setup_crawler_cluster.sh
+- crawler/scripts/step_4_build_docker.sh
+- crawler/scripts/step_5_deploy_crawler.sh
+You should have a service running in Kubernetes engine. Trigger the service with a POST and empty payload at this route /crawl/anime/top.
+This will seed the scheduler DB, which is currently empty.
+
+#### Crawl scheduler
+Run these scripts in order:
+- crawl_scheduler/scripts/step_1_setup_crawl_queues.sh
+- crawl_scheduler/scripts/step_2_deploy_cloud_functions.sh
+- crawl_scheduler/scripts/step_3_setup_cloud_scheduler.sh
+
+#### ETL
+Run these scripts in order:
+- etl/scripts/step_0_setup_bq.sh
+- etl/scripts/step_1a_prepare_dataflow_ingestion_template.sh
+- etl/scripts/step_1b_start_dataflow_ingestion_job.sh
+- etl/scripts/step_2a_create_composer_env.sh
+- etl/scripts/step_2b_import_dag_composer.sh
+- etl/scripts/step_2c_trigger_etl_dag.sh (also whenever you want to rerun the ETL pipeline)
+
+#### ML Pipelines
+Run these scripts in order:
+- ml_pipelines/scripts/step_1_build_docker.sh
+- ml_pipelines/scripts/step_2_run_pipelines.sh (also whenever you want to rerun the ML pipelines)
+
+#### Web app:
+Run these scripts in order:
+- web_app/scripts/step_1_setup_redis.sh
+- web_app/scripts/step_2_setup_click_data_pipeline.sh
+- web_app/scripts/step_3_deploy.sh
 
 ## Future work
+- Create a good looking UI for the web app
+- Change infrasture scripts to terraform
+- Set up CI/CD and CT workflows
 
 ## Acknowledgements
+I would like to appreciate MyAnimeList.net for the great platform and JikanAPI for the great anime API they provide.
