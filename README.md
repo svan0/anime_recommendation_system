@@ -22,6 +22,13 @@ When I started this project I had a couple of ambitious goals:
 - Extensive experiementation with various machine learning algorithms and feature engineering techniques in order to get the best possible recommendations is not a goal of this project. 
 - This could change with the help of the Kaggle community. Kagglers can experiment with the dataset and open PRs to integrate their ML algorithms to the ML pipelines and serve them on the web app.
 
+## Where can I try it out
+You can try the Anime Recommendation System at this link https://anime-rec-dev.uc.r.appspot.com/
+When a user enters the web app, it will be asked to enter its MAL id
+![Web app 1](images/web_app_1.png)
+Once that is done the app will show the user 5 random animes from the top 20 animes that we recommend for that user.
+![Web app 2](images/web_app_2.png)
+
 ## Architecture Design and components
 ### System design overview
 ![System Design Pic](images/system_design.png)
