@@ -2,7 +2,7 @@
 ## Motivation
 I have enjoyed watching anime ever since I was kid and I'll probably keep on enjoying anime for the rest of my life. <br /> However as I am going through the animes on my TODO list, it is becoming harder and harder to find what to watch next. <br />I am sure there are lots of undiscovered gems that I would love to watch but how should I go about discovering them? <br /> One day I spent about an hour going through myanimelist.net searching for something to watch. Looking at how time consuming it was for me and probably for others, I decided to create an anime recommendation system that would recommend what to watch next for as many myanimelist.net users as possible.
 <br /> <br />
-At the time I was also preparing for the Google Cloud Professional Machine Learning Certifcation, so I decided that it would make sense to use as many different GCP services as possible for learning purposes. (I passed the certification BTW, thank you for asking :P ).
+At the time I was also preparing for the Google Cloud Professional Machine Learning Certification, so I decided that it would make sense to use as many different GCP services as possible for learning purposes. (I passed the certification BTW, thank you for asking :P ).
 
 ## Goals
 When I started this project I had a couple of ambitious goals:
@@ -24,10 +24,20 @@ When I started this project I had a couple of ambitious goals:
 
 ## Where can I try it out ?
 You can try the Anime Recommendation System at this link https://anime-rec-dev.uc.r.appspot.com/ <br />
+It has recommendations for over 900K myanimelist users <br />
 When a user enters the web app, it will be asked to enter its myanimelist id
 ![Web app 1](images/web_app_1.png)
 Once that is done the app will show the user 5 random animes from the top 20 animes that we recommend for that user.
 ![Web app 2](images/web_app_2.png)
+
+## Generated Dataset
+The dataset can be found on Kaggle here https://www.kaggle.com/datasets/svanoo/myanimelist-dataset <br />
+The dataset contains:
+- anime information for 13,379 animes
+- user information for 1,123,284 myanimelist users
+- 214,271 interactions between anime pairs (recommended and related animes)
+- 5,048,994 interactions between user pairs (friendship)
+- 223,812,614 interactions between users and animes
 
 ## Architecture Design and components
 ### System design overview
@@ -42,7 +52,7 @@ The ingestion beam job is deployed as a Dataflow job and the Apache Airflow ETL 
 The pipelines are Kubeflow pipelines and they run on Google VertexAI pipelines. Data is fetched from and saved to both BigQuery and Storage.
 - Web App: The generated recommendations are ingested into a Redis database and a small Flask web application fetches the recommendations from Redis for each user recommendation request. 
 
-The number steps in the above diagram are:
+The numbered steps in the above diagram are:
 - 1: A Cloud Scheduler cron job triggers the crawl scheduler Cloud Functions
 - 2: The crawl scheduler Cloud Function fetches the urls to schedule from the Scheduler Cloud SQL database.
 - 3: The crawl scheduler Cloud Function pushes the urls to crawl to the PubSub schedule queue.
