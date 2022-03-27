@@ -489,7 +489,7 @@ def staging_to_processed_subdag(parent_dag_name, args):
 default_args = {
     'owner': 'default_user',
     'start_date': days_ago(1),
-    #'schedule_interval'=timedelta(hours=1),
+    'schedule_interval' : timedelta(hours=1),
     'depends_on_past': False,
     'retries' : 1
 }
