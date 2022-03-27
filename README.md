@@ -1,6 +1,6 @@
 # Anime Recommendation System 
 ## Motivation
-I have enjoyed watching anime ever since I was kid and I'll probably keep on enjoying anime for the rest of my life. <br /> However as I am going through the animes on my todo list, it is becoming harder and harder to find what to watch next. I am sure there are lots of gems that I would love to watch but how should I go about discovering them? <br /> One day I spent about an hour going through myanimelist.net searching for something to watch. Looking at how time consuming it was for me and probably for others, I decided to create an anime recommendation system that would recommend what to watch next for as many myanimelist users as possible.
+I have enjoyed watching anime ever since I was kid and I'll probably keep on enjoying anime for the rest of my life. <br /> However as I am going through the animes on my todo list, it is becoming harder and harder to find what to watch next. <br />I am sure there are lots of undiscovered gems that I would love to watch but how should I go about discovering them? <br /> One day I spent about an hour going through myanimelist.net searching for something to watch. Looking at how time consuming it was for me and probably for others, I decided to create an anime recommendation system that would recommend what to watch next for as many myanimelist users as possible.
 <br /> <br />
 At the time I was also preparing for the Google Cloud Professional Machine Learning Certifcation, so I decided that it would make sense to use as many different GCP services as possible for learning purposes. (I passed the certification BTW, thank you for asking :P )
 
@@ -23,7 +23,7 @@ When I started this project I had a couple of ambitious goals:
 - This could change with the help of the Kaggle community. Kagglers can experiment with the dataset and open PRs to integrate their ML algorithms to the ML pipelines and serve them on the web app.
 
 ## Where can I try it out
-You can try the Anime Recommendation System at this link https://anime-rec-dev.uc.r.appspot.com/
+You can try the Anime Recommendation System at this link https://anime-rec-dev.uc.r.appspot.com/ <br />
 When a user enters the web app, it will be asked to enter its MAL id
 ![Web app 1](images/web_app_1.png)
 Once that is done the app will show the user 5 random animes from the top 20 animes that we recommend for that user.
@@ -38,7 +38,7 @@ The crawl schedulers are deployed as Cloud Functions, the database as postgres C
 - Crawler: Scrapy jobs that that fetch message urls from the scheduler message queue and crawl them. The crawled data items are pushed to a data ingestion message queue and the crawler jobs also connect to the schedule database to update it. The crawler is deployed to Google Kubernetes Engine and the data ingestion queue is a Pub/Sub topic.
 - Data Ingestion and ETL: An Apache Beam streaming job pulls data items from the ingestion queue and pushes them to BigQuery in a landing area. An Apache Airflow pipeline is run to aggregate, clean and validate the crawled data into well structured datasets. The new data is saved in BigQuery and Storage.
 The ingestion beam job is deployed as a Dataflow job and the Apache Airflow ETL pipeline runs in a Cloud Composer environment.
-- Machine Learning Pipelines: Each pipeline handles both retrieval and ranking steps. For retrieval step, the pipeline starts by generating the train/val/test data for retrieval, then trains a retrieval model and finally runs batch inference for retrieval and saves the results. For ranking step, the pipeline starts by generating the train/val/test data for ranking, then trains a ranking model and finally runs batch inference for ranking on the retrieved results and saves the final results. 
+- Machine Learning Pipelines: Each pipeline handles both retrieval and ranking steps. <br /> For retrieval step, the pipeline starts by generating the train/val/test data for retrieval, then trains a retrieval model and finally runs batch inference for retrieval and saves the results. <br /> For ranking step, the pipeline starts by generating the train/val/test data for ranking, then trains a ranking model and finally runs batch inference for ranking on the retrieved results and saves the final results. <br /> 
 The pipelines are Kubeflow pipelines and they run on Google VertexAI pipelines. Data is fetched from and saved to both BigQuery and Storage.
 - Web App: The generated recommendations are ingested into a Redis database and a small flask web application fetches the recommendations from Redis for each user recommendation request. 
 
@@ -69,15 +69,15 @@ Both tables have the same schema:
     last_inspected_date TIMESTAMP,
     inspected_count INT
 ```
-`url` is the anime/profile url on myanimelist. <br />
-`last_scheduled_date` is the datetime of the last time the anime/profile was pushed to the schedule queue. <br />
-`scheduled_count` is the number of times the anime/profile was pushed to the schedule queue. <br />
-`last_crawled_date` is the datetime of the last time the anime/profile data item was pushed to the data ingestion queue. <br />
-`scheduled_count` is the number of times the anime/profile data item was pushed to the data ingestion queue. <br />
-`last_inspected_date` is the datetime of the last time the anime/profile was inspected when crawling another anime/profile. <br />
-`inspected_count` is the number of times the anime/profile was inspected when crawling another anime/profile. <br />
+- `url` is the anime/profile url on myanimelist.
+- `last_scheduled_date` is the datetime of the last time the anime/profile was pushed to the schedule queue. 
+- `scheduled_count` is the number of times the anime/profile was pushed to the schedule queue. 
+- `last_crawled_date` is the datetime of the last time the anime/profile data item was pushed to the data ingestion queue.
+- `scheduled_count` is the number of times the anime/profile data item was pushed to the data ingestion queue. 
+- `last_inspected_date` is the datetime of the last time the anime/profile was inspected when crawling another anime/profile.
+- `inspected_count` is the number of times the anime/profile was inspected when crawling another anime/profile.
 
-When we call the scheduler to get the list of anime/profiles to crawl, it first returns those that have never been scheduled, then those that were last crawled a long time ago, then those that have been inspected not a long time. <br /> It also discards the anime/profiles that were scheduled not long ago but weren't crawled. There was an issue when crawling those anime/profiles and we don't want them to always be returned wheneveer we want to schedule animes/profiles.
+When we call the scheduler to get the list of anime/profiles to crawl, it first returns those that have never been scheduled, then those that were last crawled a long time ago, then those that have been inspected not a long time. <br /> It also discards the anime/profiles that were scheduled not long ago but weren't crawled. There probably is an issue when crawling those anime/profiles and we don't want them to always be returned whenever we want to schedule animes/profiles.
 
 ### Crawler
 We have anime and profile crawlers that can either crawl [myanimelist.net](https://myanimelist.net/) or the [Jikan API](https://docs.api.jikan.moe/). <br /> 
@@ -93,14 +93,17 @@ When we crawl a user, we scrape:
 - the user's favorite animes and update the "inspected" fields for the animes in the scheduler db
 - the user's friends and update the "inspected" fields for the new users in the scheduler db
 
-The crawler can be run as crawl jobs that pull messages from the schedule queue and crawl the anime/profile urls in the pulled messages.
-The crawler can also be run as a web service where you can issue requests for one or a list of animes/profile urls to be crawled. 
+The crawler can be run as crawl jobs that pull messages from the schedule queue and crawl the anime/profile urls in the pulled messages. <br />
+The crawler can also be run as a web service where you can issue requests for one or a list of animes/profile urls to be crawled. <br />
 We can also issue a request to the crawl app to scrape a random list of anime url or profile urls from myanimelist and only update the scheduler DB. This will be used to start populating the scheduler DB (initial seed).
 
+<br /> 
 The crawlers can be configured to save the scraped data either locally in JSON files, directly to the BigQuery landing table or to a PubSub topic.
 
 ### Data Ingestion and ETL
 When data is crawled, it is pushed to a PubSub topic. We then have a Dataflow job that pulls data from the PubSub topic and appends it to the corresponding BigQuery tables in a "landing area" (a BigQuery dataset). For more details on the landing tables schemas, see `etl/landing_area_schemas/`
+
+<br /> 
 
 Landing area is not clean. We could have duplicates (animes and profiles crawled more than once), inconsistencies, etc... We need to run an ETL pipeline that aggregates, merges and cleans up the data and saves it in a "staging area". After that the pipeline validates the data in the "staging area" and if it is valid, moves it to the "processed area".
 
@@ -129,7 +132,7 @@ Below is a description of the schema of the tables in the processed area:
 - watching_count: Number of users watching the anime
 - completed_count: Number of users that have completed the anime
 - on_hold_count: Number of users that have the anime on hold
-- dropped_count: NNumber of users that have dropped the anime
+- dropped_count: Number of users that have dropped the anime
 - plan_to_watch_count: Number of users that plan to watch the anime
 - total_count: Total number of users that either completed, plan to watch, are watching, dropped or have the anime on hold
 - score_10_count: Number of users that score the anime a 10
@@ -214,7 +217,7 @@ We use these pairs of animes to train a Tensorflow Recommenders Retrieval model.
 We only use the anime ids as a features and pass them through an embedding layers. Experiemtation is needed to decide on which features to add and might be the focus of subsequent iterations on this project.
 Once the model is trained we run batch inference and retrieve the top 300 animeB for each animeA.
 
-#### Ranking step
+##### Ranking step
 ![Anime Anime Ranking](images/anime_anime_ranking.png)
 We train a model that takes an anchor anime_id and a pair of retrieved animes and scores the more relevant one higher.
 We then use the trained scoring module to score and rank animes.
@@ -225,7 +228,7 @@ The train/val/test dataset has 4 fields anime_id, retrieved_anime_id_1, retrieve
 - If label = 1 then retrieved_anime_id_1 is more relevant to anime_id than retrieved_anime_id_2. 
 - If label = 0 then retrieved_anime_id_2 is more relevant to anime_id than retrieved_anime_id_2.
 
-During training, the model will return score_1 for (anime, retrieved_anime_id_1) and score_2 for (anime_id, retrieved_anime_id_2). <br /> If label = 1 we want score_1 > score_2 else score_1 < score_2.
+During training, the model will return score_1 for (anime, retrieved_anime_id_1) and score_2 for (anime_id, retrieved_anime_id_2). <br /> If label = 1 we want score_1 > score_2 else we want score_1 < score_2.
 
 We only use the anime ids as a features and pass them through an embedding layers. Experiemtation is needed to decide on which features to add and might be the focus of subsequent iterations on this project.
 
@@ -236,16 +239,16 @@ Now that we have ranked anime pairs, we can get ranked animes for each user base
 #### User Anime
 ##### Retrieval step
 ![User Anime Retrieval](images/user_anime_retrieval.png)
-For each user_id we select anime_id that the user completed.
-We use these (user_id, anime_id) pairs to train a Tensorflow Recommenders Retrieval model.
-We only use the user ids and anime ids as a features and pass them through an embedding layers. Experiemtation is needed to decide on which features to add and might be the focus of subsequent iterations on this project.
+For each user_id we select anime_id that the user completed. <br />
+We use these (user_id, anime_id) pairs to train a Tensorflow Recommenders Retrieval model. <br />
+We only use the user ids and anime ids as a features and pass them through an embedding layers. Experiemtation is needed to decide on which features to add and might be the focus of subsequent iterations on this project. <br />
 Once the model is trained we run batch inference and retrieve the top 300 animes for each user_id.
 
-#### Ranking step
+##### Ranking step
 ![User Anime Ranking](images/user_anime_ranking.png)
 There are 2 approaches to train the user anime ranking model:
 - Ranking approach: We train a model that given (user_id, anime_id) tries to predict the score and minimize the MSE loss.
-- List ranking approach: We train a model that given (user_id, list of anime_ids) tries to predict the scre for each anime and minimize the ListMLELoss using Tensorflow Recommenders Ranking.
+- List ranking approach: We train a model that given (user_id, list of anime_ids) tries to predict the score for each anime and minimize the ListMLELoss using Tensorflow Recommenders Ranking.
 
 Once the model is trained, we iterate over all pairs of (user, anime) that we generated during the inference step of the retrieval model and get a score which will be used to rank the retrieved animes.
 
