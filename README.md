@@ -24,7 +24,7 @@ When I started this project I had a couple of ambitious goals:
 
 ## Architecture Design and components
 ### System design overview
-![System Design Pic](system_design.png)
+![System Design Pic](images/system_design.png)
 The project is composed of 5 main parts:
 - Crawl scheduler: A job that when called will fetch a list of anime or profile urls from a database and push them to a message queue.
 The crawl schedulers are deployed as Cloud Functions, the database as postgres Cloud SQL db and the message queue as a Pub/Sub topic.
@@ -196,16 +196,29 @@ We currently have two type of approaches to recommend animes to users:
 Below are some details on how the two approaches that are currently implemented:
 #### Anime Anime
 ##### Retrieval step
-For each animeA we select animeB that are related, have the most number of users that recommend them on MAL, have high cosine similarity of the genres and are co_completed by many users in a short period of time.
+![Anime Anime Retrieval](images/anime_anime_retrieval.png)
+For each animeA we select animeB that are either 
+- related
+- have the most number of users that recommend them on MAL
+- have high cosine similarity of the genres
+- are co_completed by many users in a short period of time
+
 We use these pairs of animes to train a Tensorflow Recommenders Retrieval model.
 We only use the anime ids as a features and pass them through an embedding layers. Experiemtation is needed to decide on which features to add and might be the focus of subsequent iterations on this project.
 Once the model is trained we run batch inference and retrieve the top 300 animeB for each animeA.
 
 #### Ranking step
-The train/val/test dataset has 4 fields anime_id, retrieved_anime_id_1, retrieved_anime_id_2 and label. anime_id is the anchor anime and retrieved_anime_id_1
-and retrieved_anime_id_2 are two potential retrieved animes. If label = 1 then retrieved_anime_id_1 is more relevant to anime_id than retrieved_anime_id_2. If label = 0 then retrieved_anime_id_2 is more relevant to anime_id than retrieved_anime_id_2.
-We train a model to take anime_id and retrieved_anime and return a score.
-During training, the model will return score_1 for (anime, retrieved_anime_id_1) and score_2 for (anime_id, retrieved_anime_id_2). If label = 1 we want score_1 > score_2 else score_1 < score_2.
+![Anime Anime Ranking](images/anime_anime_ranking.png)
+We train a model that takes an anchor anime_id and a pair of retrieved animes and scores the more relevant one higher.
+We then use the trained scoring module to score and rank animes.
+The train/val/test dataset has 4 fields anime_id, retrieved_anime_id_1, retrieved_anime_id_2 and label. 
+- anime_id is the anchor anime
+- retrieved_anime_id_1 is the first retrieved anime
+- retrieved_anime_id_2 is the second retrieved anime. 
+- If label = 1 then retrieved_anime_id_1 is more relevant to anime_id than retrieved_anime_id_2. 
+- If label = 0 then retrieved_anime_id_2 is more relevant to anime_id than retrieved_anime_id_2.
+
+During training, the model will return score_1 for (anime, retrieved_anime_id_1) and score_2 for (anime_id, retrieved_anime_id_2). <br /> If label = 1 we want score_1 > score_2 else score_1 < score_2.
 
 We only use the anime ids as a features and pass them through an embedding layers. Experiemtation is needed to decide on which features to add and might be the focus of subsequent iterations on this project.
 
@@ -215,12 +228,15 @@ Now that we have ranked anime pairs, we can get ranked animes for each user base
 
 #### User Anime
 ##### Retrieval step
+![User Anime Retrieval](images/user_anime_retrieval.png)
 For each user_id we select anime_id that the user completed.
 We use these (user_id, anime_id) pairs to train a Tensorflow Recommenders Retrieval model.
 We only use the user ids and anime ids as a features and pass them through an embedding layers. Experiemtation is needed to decide on which features to add and might be the focus of subsequent iterations on this project.
 Once the model is trained we run batch inference and retrieve the top 300 animes for each user_id.
 
 #### Ranking step
+![User Anime Ranking](images/user_anime_ranking.png)
+There are 2 approaches to train the user anime ranking model:
 - Ranking approach: We train a model that given (user_id, anime_id) tries to predict the score and minimize the MSE loss.
 - List ranking approach: We train a model that given (user_id, list of anime_ids) tries to predict the scre for each anime and minimize the ListMLELoss using Tensorflow Recommenders Ranking.
 
@@ -229,9 +245,9 @@ Once the model is trained, we iterate over all pairs of (user, anime) that we ge
 ### Web app
 The generated recommendation are saved to a Redis database for low latency access.
 When a user enters the web app, it will be asked to enter its MAL id
-![Web app 1](web_app_1.png)
-Once that is the app will show the user 5 random animes from the top 20 animes that we recommend for that user.
-![Web app 2](web_app_2.png)
+![Web app 1](images/web_app_1.png)
+Once that is done the app will show the user 5 random animes from the top 20 animes that we recommend for that user.
+![Web app 2](images/web_app_2.png)
 
 ## Steps to run
 ### Step 1: Setup local .env file
